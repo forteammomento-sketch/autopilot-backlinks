@@ -1,0 +1,433 @@
+<!-- =========================================================================
+     Michigan Sports Outdoor — PRODUCT PAGE TEMPLATE
+     Homepage-styled. Replace every {{TOKEN}}.
+     Requires product-page.css installed once in Site Settings → Custom CSS.
+
+     WHY THIS LAYOUT
+     Your catalogue runs on a wholesale feed, so the manufacturer copy is
+     identical on hundreds of dealer sites. The two blocks that make YOUR
+     version worth indexing and worth buying from are the full specs table
+     and real customer reviews. Both are below, and both are the reason
+     this template exists.
+
+     ELEMENTOR BUILD
+       Container (Full Width, padding 0) → HTML widget → paste all of this.
+       Page settings → Hide Title = ON (this file has its own H1).
+     ========================================================================= -->
+
+<div class="mso-pdp">
+<div class="mso-pdp__inner">
+
+  <p class="mso-pdp__crumb">
+    <a href="/">Home</a> &rsaquo;
+    <a href="/collections/{{CATEGORY_SLUG}}/">{{CATEGORY}}</a> &rsaquo;
+    <a href="/brand/{{BRAND_SLUG}}/">{{BRAND}}</a> &rsaquo;
+    {{PRODUCT_NAME}}
+  </p>
+
+  <!-- ==================== GALLERY + BUY BOX ========================== -->
+  <div class="mso-pdp__top">
+
+    <!-- ---------- gallery ---------- -->
+    <div class="mso-pdp__gallery">
+      <div class="mso-pdp__stage">
+        <span class="mso-pdp__flag">Save {{SAVE_PCT}}%</span>
+        <img id="pdpStage" src="{{IMG_1}}" alt="{{PRODUCT_NAME}} — {{BRAND}} {{TYPE}}" width="800" height="800">
+      </div>
+      <div class="mso-pdp__thumbs">
+        <button class="mso-pdp__thumb" type="button" aria-current="true"  data-full="{{IMG_1}}"><img src="{{IMG_1}}" alt="" loading="lazy" width="160" height="160"></button>
+        <button class="mso-pdp__thumb" type="button" aria-current="false" data-full="{{IMG_2}}"><img src="{{IMG_2}}" alt="" loading="lazy" width="160" height="160"></button>
+        <button class="mso-pdp__thumb" type="button" aria-current="false" data-full="{{IMG_3}}"><img src="{{IMG_3}}" alt="" loading="lazy" width="160" height="160"></button>
+        <button class="mso-pdp__thumb" type="button" aria-current="false" data-full="{{IMG_4}}"><img src="{{IMG_4}}" alt="" loading="lazy" width="160" height="160"></button>
+        <button class="mso-pdp__thumb" type="button" aria-current="false" data-full="{{IMG_5}}"><img src="{{IMG_5}}" alt="" loading="lazy" width="160" height="160"></button>
+      </div>
+    </div>
+
+    <!-- ---------- buy box ---------- -->
+    <div class="mso-pdp__buy">
+
+      <p class="mso-pdp__brand"><a href="/brand/{{BRAND_SLUG}}/">{{BRAND}}</a></p>
+      <h1>{{PRODUCT_NAME}}</h1>
+
+      <!-- Rating row. DELETE this whole block until the review app has real
+           data for this product — a hard-coded rating is a lie, and the
+           schema below would then be false too. -->
+      <p class="mso-pdp__rating">
+        <span class="mso-pdp__stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span class="mso-pdp__num">{{RATING}} out of 5</span>
+        <a href="#pdp-reviews">{{REVIEW_COUNT}} reviews</a>
+        <span class="mso-pdp__sku">SKU {{SKU}}</span>
+      </p>
+
+      <div class="mso-pdp__price">
+        <span class="mso-pdp__now mso-pdp__num">${{PRICE}}</span>
+        <span class="mso-pdp__was mso-pdp__num">${{RRP}}</span>
+        <span class="mso-pdp__save">Save ${{SAVE_AMOUNT}}</span>
+      </div>
+
+      <!-- Stock. Modifiers: --low (amber) | --out (red) -->
+      <p class="mso-pdp__stock">In stock &mdash; ships in 2&ndash;3 business days</p>
+
+      <!-- SPECS AT A GLANCE. Six fields a knife buyer checks before price.
+           This is also where your blade-length and edge-count attributes
+           surface, so fill them from the product data, not by hand. -->
+      <dl class="mso-pdp__glance">
+        <div><dt>Blade Length</dt><dd>{{BLADE_LENGTH}}&Prime;</dd></div>
+        <div><dt>Blade Steel</dt><dd>{{STEEL}}</dd></div>
+        <div><dt>Handle</dt><dd>{{HANDLE}}</dd></div>
+        <div><dt>Lock Type</dt><dd>{{LOCK}}</dd></div>
+        <div><dt>Overall Length</dt><dd>{{OAL}}&Prime;</dd></div>
+        <div><dt>Weight</dt><dd>{{WEIGHT}} oz</dd></div>
+      </dl>
+
+      <div class="mso-pdp__cart">
+        <div class="mso-pdp__qty">
+          <button type="button" data-qty="-1" aria-label="Decrease quantity">&minus;</button>
+          <input id="pdpQty" type="number" value="1" min="1" aria-label="Quantity">
+          <button type="button" data-qty="1" aria-label="Increase quantity">+</button>
+        </div>
+        <button class="mso-pdp__btn mso-pdp__btn--wide" type="submit">Add to Cart</button>
+      </div>
+      <a class="mso-pdp__btn mso-pdp__btn--ghost" href="{{CHECKOUT_URL}}">Buy It Now</a>
+
+      <!-- Your genuine differentiators. Every other dealer on this feed has
+           the same photos and the same copy — they do not all have a
+           prepaid return label. Say it here, not in the footer. -->
+      <ul class="mso-pdp__assure">
+        <li><strong>Authorised {{BRAND}} dealer</strong> &mdash; genuine stock, full manufacturer warranty</li>
+        <li><strong>30-day returns with a prepaid label</strong> &mdash; we email it, you post it back</li>
+        <li><strong>Free shipping over $50</strong> &mdash; flat ${{SHIP_COST}} below that</li>
+        <li><strong>Ships in 2&ndash;3 business days</strong> from Michigan &mdash; weekdays only</li>
+      </ul>
+
+    </div>
+  </div>
+
+  <!-- ======================= TRUST BAR =============================== -->
+  <div class="mso-pdp__trust">
+    <div class="mso-pdp__trust-item"><span class="mso-pdp__trust-ico">&#9992;</span><span class="mso-pdp__trust-t">Free Shipping</span><span class="mso-pdp__trust-s">On orders over $50</span></div>
+    <div class="mso-pdp__trust-item"><span class="mso-pdp__trust-ico">&#9873;</span><span class="mso-pdp__trust-t">Authorised Dealer</span><span class="mso-pdp__trust-s">Genuine stock only</span></div>
+    <div class="mso-pdp__trust-item"><span class="mso-pdp__trust-ico">&#8635;</span><span class="mso-pdp__trust-t">30 Days Return</span><span class="mso-pdp__trust-s">Prepaid label</span></div>
+    <div class="mso-pdp__trust-item"><span class="mso-pdp__trust-ico">&#9878;</span><span class="mso-pdp__trust-t">Secure Payment</span><span class="mso-pdp__trust-s">100% protected</span></div>
+    <div class="mso-pdp__trust-item"><span class="mso-pdp__trust-ico">&#9993;</span><span class="mso-pdp__trust-t">Help Center</span><span class="mso-pdp__trust-s">24/7 support</span></div>
+  </div>
+
+  <!-- ========================== TABS ================================= -->
+  <div class="mso-pdp__sec">
+    <div class="mso-pdp__tabs" role="tablist">
+      <button class="mso-pdp__tab" role="tab" aria-selected="true"  aria-controls="pdp-p1" id="pdp-t1" type="button">Description</button>
+      <button class="mso-pdp__tab" role="tab" aria-selected="false" aria-controls="pdp-p2" id="pdp-t2" type="button">Specifications</button>
+      <button class="mso-pdp__tab" role="tab" aria-selected="false" aria-controls="pdp-p3" id="pdp-t3" type="button">Shipping &amp; Returns</button>
+    </div>
+
+    <!-- ---------- description ----------
+         DO NOT paste the manufacturer's feed text here. That copy is
+         identical on every dealer running this catalogue, which is exactly
+         why so many product URLs sit in "Crawled – currently not indexed".
+         150–250 original words is the whole fix. Structure below. -->
+    <div class="mso-pdp__panel" id="pdp-p1" role="tabpanel" aria-labelledby="pdp-t1">
+      <div class="mso-pdp__prose">
+        <p>{{OPENING — one sentence on who this knife is for and what it does best. Name the steel and the blade length in the first line.}}</p>
+
+        <h3>In the hand</h3>
+        <p>{{HANDLING — grip, weight in the pocket, deployment, lock feel. Write what you notice holding it. This is the paragraph no competitor on this feed has.}}</p>
+
+        <h3>The steel</h3>
+        <p>{{STEEL — what {{STEEL}} is good at and what it asks for in return. Edge retention, corrosion resistance, sharpening. Two or three sentences.}}</p>
+
+        <h3>Best for</h3>
+        <ul>
+          <li>{{USE_CASE_1}}</li>
+          <li>{{USE_CASE_2}}</li>
+          <li>{{USE_CASE_3}}</li>
+        </ul>
+
+        <p>{{CLOSE — one line on fit within the range, or who should look at a different model instead. Honest steering builds more trust than a hard sell.}}</p>
+      </div>
+    </div>
+
+    <!-- ---------- full specs ---------- -->
+    <div class="mso-pdp__panel" id="pdp-p2" role="tabpanel" aria-labelledby="pdp-t2" hidden>
+      <div class="mso-pdp__specs">
+        <table>
+          <tbody>
+            <tr><th scope="row">Brand</th><td>{{BRAND}}</td></tr>
+            <tr><th scope="row">Model</th><td>{{MODEL}}</td></tr>
+            <tr><th scope="row">Knife Type</th><td>{{TYPE}}</td></tr>
+            <tr><th scope="row">Blade Length</th><td>{{BLADE_LENGTH}}&Prime;</td></tr>
+            <tr><th scope="row">Blade Steel</th><td>{{STEEL}}</td></tr>
+            <tr><th scope="row">Blade Shape</th><td>{{BLADE_SHAPE}}</td></tr>
+            <tr><th scope="row">Blade Finish</th><td>{{FINISH}}</td></tr>
+            <tr><th scope="row">Edge Type</th><td>{{EDGE_TYPE}}</td></tr>
+            <tr><th scope="row">Handle Material</th><td>{{HANDLE}}</td></tr>
+            <tr><th scope="row">Lock Type</th><td>{{LOCK}}</td></tr>
+            <tr><th scope="row">Opening Mechanism</th><td>{{OPENING}}</td></tr>
+            <tr><th scope="row">Pocket Clip</th><td>{{CLIP}}</td></tr>
+            <tr><th scope="row">Overall Length</th><td>{{OAL}}&Prime;</td></tr>
+            <tr><th scope="row">Closed Length</th><td>{{CLOSED}}&Prime;</td></tr>
+            <tr><th scope="row">Weight</th><td>{{WEIGHT}} oz</td></tr>
+            <tr><th scope="row">Country of Origin</th><td>{{ORIGIN}}</td></tr>
+            <tr><th scope="row">SKU</th><td>{{SKU}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ---------- shipping ---------- -->
+    <div class="mso-pdp__panel" id="pdp-p3" role="tabpanel" aria-labelledby="pdp-t3" hidden>
+      <div class="mso-pdp__prose">
+        <h3>Shipping</h3>
+        <p>Orders are processed within 2&ndash;3 business days. We do not process or ship on weekends or public holidays. Free shipping on orders over $50; flat ${{SHIP_COST}} below that.</p>
+        <h3>Returns</h3>
+        <p>You may start a return within 30 days of receiving your item. Once approved &mdash; allow up to 3 business days &mdash; we email you a prepaid return label. When the item reaches us we issue a full refund to your original payment method, or store credit if you prefer.</p>
+        <h3>Age and carry</h3>
+        <p>Knives are sold to adults only. Carry rules vary by state and city &mdash; check your local ordinance before carrying.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================= REVIEWS =============================== -->
+  <!-- Delete this whole section until the review app has real reviews for
+       this product. Empty or invented reviews cost more trust than they buy,
+       and the AggregateRating in the schema must match what is shown here. -->
+  <div class="mso-pdp__sec" id="pdp-reviews">
+    <div class="mso-pdp__sec-head">
+      <h2>Customer Reviews</h2>
+      <p class="mso-pdp__sec-sub">Verified buyers from Michigan Sports Outdoor</p>
+    </div>
+
+    <div class="mso-pdp__revsum">
+      <div class="mso-pdp__score">
+        <b class="mso-pdp__num">{{RATING}}</b>
+        <span class="mso-pdp__stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span>{{REVIEW_COUNT}} reviews</span>
+      </div>
+      <div class="mso-pdp__bars">
+        <div class="mso-pdp__bar"><span>5 star</span><span class="mso-pdp__bar-track"><span class="mso-pdp__bar-fill" style="width:{{PCT_5}}%"></span></span><span class="mso-pdp__num">{{PCT_5}}%</span></div>
+        <div class="mso-pdp__bar"><span>4 star</span><span class="mso-pdp__bar-track"><span class="mso-pdp__bar-fill" style="width:{{PCT_4}}%"></span></span><span class="mso-pdp__num">{{PCT_4}}%</span></div>
+        <div class="mso-pdp__bar"><span>3 star</span><span class="mso-pdp__bar-track"><span class="mso-pdp__bar-fill" style="width:{{PCT_3}}%"></span></span><span class="mso-pdp__num">{{PCT_3}}%</span></div>
+        <div class="mso-pdp__bar"><span>2 star</span><span class="mso-pdp__bar-track"><span class="mso-pdp__bar-fill" style="width:{{PCT_2}}%"></span></span><span class="mso-pdp__num">{{PCT_2}}%</span></div>
+        <div class="mso-pdp__bar"><span>1 star</span><span class="mso-pdp__bar-track"><span class="mso-pdp__bar-fill" style="width:{{PCT_1}}%"></span></span><span class="mso-pdp__num">{{PCT_1}}%</span></div>
+      </div>
+    </div>
+
+    <div class="mso-pdp__revs">
+      <!-- ×4. Photo reviews first — they convert best and no feed
+           competitor has them. -->
+      <div class="mso-pdp__rev">
+        <div class="mso-pdp__rev-top">
+          <span class="mso-pdp__rev-av">{{INITIAL}}</span>
+          <span>
+            <span class="mso-pdp__rev-name">{{REVIEWER_NAME}}</span><br>
+            <span class="mso-pdp__rev-meta"><span class="mso-pdp__rev-verified">Verified buyer</span> &middot; {{DATE}}</span>
+          </span>
+        </div>
+        <span class="mso-pdp__stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <p>{{REVIEW_TEXT — real text only, exactly as written}}</p>
+        <div class="mso-pdp__rev-imgs">
+          <img src="{{REVIEW_IMG_1}}" alt="" loading="lazy" width="52" height="52">
+          <img src="{{REVIEW_IMG_2}}" alt="" loading="lazy" width="52" height="52">
+        </div>
+      </div>
+
+      <div class="mso-pdp__rev">
+        <div class="mso-pdp__rev-top">
+          <span class="mso-pdp__rev-av">{{INITIAL}}</span>
+          <span>
+            <span class="mso-pdp__rev-name">{{REVIEWER_NAME}}</span><br>
+            <span class="mso-pdp__rev-meta"><span class="mso-pdp__rev-verified">Verified buyer</span> &middot; {{DATE}}</span>
+          </span>
+        </div>
+        <span class="mso-pdp__stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <p>{{REVIEW_TEXT}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== RELATED PRODUCTS =========================== -->
+  <div class="mso-pdp__sec">
+    <div class="mso-pdp__sec-head">
+      <h2>More from {{BRAND}}</h2>
+      <p class="mso-pdp__sec-sub">Same maker, same 2&ndash;3 day dispatch</p>
+    </div>
+    <div class="mso-pdp__grid">
+      <!-- ×4 — or replace this block with an Elementor Products widget
+           filtered to this brand, so it stays current on its own. -->
+      <div class="mso-pdp__prod">
+        <a class="mso-pdp__prod-img" href="{{URL}}"><img src="{{IMG}}" alt="{{ALT}}" loading="lazy" width="400" height="400"></a>
+        <div class="mso-pdp__prod-body">
+          <span class="mso-pdp__prod-micro">{{BRAND}}</span>
+          <p class="mso-pdp__prod-name"><a href="{{URL}}">{{NAME}}</a></p>
+          <span class="mso-pdp__prod-stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <div class="mso-pdp__prod-price"><span class="mso-pdp__prod-was mso-pdp__num">${{RRP}}</span><span class="mso-pdp__prod-now mso-pdp__num">${{PRICE}}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ALSO CONSIDERED ============================ -->
+  <div class="mso-pdp__sec">
+    <div class="mso-pdp__sec-head">
+      <h2>Customers Also Viewed</h2>
+      <p class="mso-pdp__sec-sub">Similar blade length and price</p>
+    </div>
+    <div class="mso-pdp__grid">
+      <!-- ×4, same card markup -->
+    </div>
+  </div>
+
+</div><!-- /.mso-pdp__inner -->
+</div><!-- /.mso-pdp -->
+
+<!-- ==================== STICKY ADD TO CART ============================ -->
+<div class="mso-pdp-sticky" id="pdpSticky" hidden>
+  <img src="{{IMG_1}}" alt="">
+  <span class="mso-pdp-sticky__t">{{PRODUCT_NAME}}</span>
+  <span class="mso-pdp-sticky__p mso-pdp__num">${{PRICE}}</span>
+  <button class="mso-pdp__btn" type="submit">Add to Cart</button>
+</div>
+
+<script>
+(function () {
+  var root = document.querySelector('.mso-pdp');
+  if (!root) return;
+
+  /* gallery */
+  var stage = document.getElementById('pdpStage');
+  root.querySelectorAll('.mso-pdp__thumb').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      root.querySelectorAll('.mso-pdp__thumb').forEach(function (b) {
+        b.setAttribute('aria-current', b === btn ? 'true' : 'false');
+      });
+      if (stage) stage.src = btn.dataset.full;
+    });
+  });
+
+  /* quantity */
+  var qty = document.getElementById('pdpQty');
+  root.querySelectorAll('[data-qty]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (!qty) return;
+      var next = (parseInt(qty.value, 10) || 1) + parseInt(btn.dataset.qty, 10);
+      qty.value = next < 1 ? 1 : next;
+    });
+  });
+
+  /* tabs */
+  var tabs = [].slice.call(root.querySelectorAll('.mso-pdp__tab'));
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) {
+        var panel = document.getElementById(t.getAttribute('aria-controls'));
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        if (panel) panel.hidden = !on;
+      });
+    });
+  });
+
+  /* sticky add to cart — appears once the buy box scrolls past */
+  var bar = document.getElementById('pdpSticky');
+  var trigger = root.querySelector('.mso-pdp__cart');
+  if (bar && trigger && 'IntersectionObserver' in window) {
+    bar.hidden = false;
+    new IntersectionObserver(function (entries) {
+      var e = entries[0];
+      bar.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0);
+    }, { threshold: 0 }).observe(trigger);
+  }
+})();
+</script>
+
+<!-- =========================== STRUCTURED DATA ==========================
+     Product + Offer + AggregateRating + BreadcrumbList.
+
+     This is the block that puts star ratings, price and stock into your
+     Google listing. It is the single biggest CTR lever available on the
+     12,000 pages already indexed.
+
+     TWO RULES:
+     1. AggregateRating must match the reviews actually shown on the page.
+        If a product has no reviews yet, DELETE the aggregateRating object
+        and the on-page rating row together. Marking up ratings you do not
+        display is a structured-data violation and risks a manual action.
+     2. Never mark up Google Business Profile reviews as product reviews.
+
+     Also set Yoast / Rank Math schema to None for products, or you will
+     ship two competing Product blocks on the same page.
+     ==================================================================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "@id": "https://www.michigansportsoutdoor.com/product/{{PRODUCT_SLUG}}/#product",
+      "name": "{{PRODUCT_NAME}}",
+      "sku": "{{SKU}}",
+      "mpn": "{{MPN}}",
+      "description": "{{META_DESCRIPTION — 150-160 chars of your OWN copy, not the feed's}}",
+      "image": ["{{IMG_1}}", "{{IMG_2}}", "{{IMG_3}}"],
+      "brand": { "@type": "Brand", "name": "{{BRAND}}" },
+      "category": "{{CATEGORY}}",
+      "additionalProperty": [
+        { "@type": "PropertyValue", "name": "Blade Length", "value": "{{BLADE_LENGTH}} in" },
+        { "@type": "PropertyValue", "name": "Blade Steel", "value": "{{STEEL}}" },
+        { "@type": "PropertyValue", "name": "Handle Material", "value": "{{HANDLE}}" },
+        { "@type": "PropertyValue", "name": "Lock Type", "value": "{{LOCK}}" }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{RATING}}",
+        "reviewCount": "{{REVIEW_COUNT}}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.michigansportsoutdoor.com/product/{{PRODUCT_SLUG}}/",
+        "price": "{{PRICE}}",
+        "priceCurrency": "USD",
+        "priceValidUntil": "{{YYYY-MM-DD}}",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@type": "Organization", "name": "Michigan Sports Outdoor" },
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": "{{SHIP_COST}}",
+            "currency": "USD"
+          },
+          "shippingDestination": {
+            "@type": "DefinedRegion",
+            "addressCountry": "US"
+          },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": { "@type": "QuantitativeValue", "minValue": 2, "maxValue": 3, "unitCode": "DAY" },
+            "transitTime": { "@type": "QuantitativeValue", "minValue": 2, "maxValue": 6, "unitCode": "DAY" }
+          }
+        },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "US",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 30,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
+        }
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home",         "item": "https://www.michigansportsoutdoor.com/" },
+        { "@type": "ListItem", "position": 2, "name": "{{CATEGORY}}", "item": "https://www.michigansportsoutdoor.com/collections/{{CATEGORY_SLUG}}/" },
+        { "@type": "ListItem", "position": 3, "name": "{{BRAND}}",    "item": "https://www.michigansportsoutdoor.com/brand/{{BRAND_SLUG}}/" },
+        { "@type": "ListItem", "position": 4, "name": "{{PRODUCT_NAME}}" }
+      ]
+    }
+  ]
+}
+</script>
