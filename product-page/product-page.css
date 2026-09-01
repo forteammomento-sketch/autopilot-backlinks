@@ -292,6 +292,80 @@
 .mso-pdp-sticky__p{font-size:15px;font-weight:800;color:var(--pd-accent);white-space:nowrap}
 .mso-pdp-sticky .mso-pdp__btn{padding:10px 22px;font-size:14px}
 
+
+/* ==================================================================== */
+/* OCTOBER LAYER — delivery estimate, bundle, AOV nudge, recently viewed */
+/* Every date here is computed from real business days. Do not hardcode  */
+/* a delivery promise you cannot keep — a missed opener is a refund.     */
+/* ==================================================================== */
+
+/* ---- season badge on the gallery ---- */
+.mso-pdp__season{
+  position:absolute;top:12px;right:12px;z-index:2;
+  background:var(--pd-header);color:#fff;font-size:10px;font-weight:800;
+  letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;
+}
+
+/* ---- delivery estimate: the highest-converting block on a seasonal PDP -- */
+.mso-pdp__deliver{
+  border:1px solid var(--pd-border);border-left:4px solid var(--pd-ok);
+  background:var(--pd-ok-soft);padding:14px 17px;display:flex;flex-direction:column;gap:6px;
+}
+.mso-pdp__deliver--tight{border-left-color:var(--pd-warn);background:var(--pd-warn-soft)}
+.mso-pdp__deliver--late{border-left-color:var(--pd-no);background:#FBEBE9}
+.mso-pdp__deliver-t{font-size:15px;font-weight:700;color:var(--pd-heading);line-height:1.35}
+.mso-pdp__deliver-t b{color:var(--pd-ok)}
+.mso-pdp__deliver--tight .mso-pdp__deliver-t b{color:var(--pd-warn)}
+.mso-pdp__deliver--late .mso-pdp__deliver-t b{color:var(--pd-no)}
+.mso-pdp__deliver-s{font-size:12.5px;color:var(--pd-body);line-height:1.5}
+.mso-pdp__deliver-s strong{color:var(--pd-heading)}
+
+/* ---- free-gift progress ---- */
+.mso-pdp__gift{
+  border:1px solid var(--pd-accent);background:#FCF3E3;padding:13px 16px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.mso-pdp__gift-t{font-size:13.5px;line-height:1.45;color:var(--pd-heading)}
+.mso-pdp__gift-t b{font-weight:800}
+.mso-pdp__gift-track{height:7px;background:rgba(27,43,57,.12);overflow:hidden}
+.mso-pdp__gift-fill{height:100%;background:var(--pd-accent)}
+
+/* ---- frequently bought together ---- */
+.mso-pdp__fbt{border:2px solid var(--pd-accent);background:var(--pd-bg);padding:24px 26px}
+.mso-pdp__fbt-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.mso-pdp__fbt-item{
+  width:112px;flex:none;display:flex;flex-direction:column;gap:6px;text-decoration:none;
+}
+.mso-pdp__fbt-item img{width:112px;height:112px;object-fit:contain;border:1px solid var(--pd-border);background:var(--pd-bg-alt)}
+.mso-pdp__fbt-item span{font-size:11.5px;line-height:1.35;color:var(--pd-heading);font-weight:600}
+.mso-pdp__fbt-item b{font-size:12.5px;color:var(--pd-price);font-weight:700}
+.mso-pdp__plus{font-size:22px;font-weight:800;color:var(--pd-faint);flex:none}
+.mso-pdp__fbt-buy{
+  margin-left:auto;display:flex;flex-direction:column;gap:9px;align-items:flex-start;min-width:210px;
+}
+.mso-pdp__fbt-price{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.mso-pdp__fbt-price .was{font-size:14px;color:var(--pd-faint);text-decoration:line-through}
+.mso-pdp__fbt-price .now{font-size:24px;font-weight:800;color:var(--pd-price);letter-spacing:-.02em}
+.mso-pdp__fbt-price .save{font-size:11px;font-weight:800;color:var(--pd-no);background:#FBEBE9;padding:3px 8px}
+.mso-pdp__fbt-checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.mso-pdp__fbt-checks li{font-size:12.5px;color:var(--pd-body);position:relative;padding-left:19px}
+.mso-pdp__fbt-checks li::before{
+  content:"";position:absolute;left:0;top:.3em;width:11px;height:6px;
+  border-left:2px solid var(--pd-ok);border-bottom:2px solid var(--pd-ok);transform:rotate(-45deg);
+}
+
+/* ---- recently viewed, returning visitors only ---- */
+.mso-pdp__recent[hidden]{display:none}
+
+@media (max-width:600px){
+  .mso-pdp__fbt{padding:18px}
+  .mso-pdp__fbt-row{gap:10px}
+  .mso-pdp__fbt-item{width:88px}
+  .mso-pdp__fbt-item img{width:88px;height:88px}
+  .mso-pdp__fbt-buy{margin-left:0;width:100%;min-width:0}
+  .mso-pdp__fbt-buy .mso-pdp__btn{width:100%}
+}
+
 /* ==================================================================== */
 /* RESPONSIVE                                                           */
 /* ==================================================================== */

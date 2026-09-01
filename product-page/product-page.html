@@ -32,6 +32,7 @@
     <div class="mso-pdp__gallery">
       <div class="mso-pdp__stage">
         <span class="mso-pdp__flag">Save {{SAVE_PCT}}%</span>
+        <span class="mso-pdp__season">Deer season ready</span>
         <img id="pdpStage" src="{{IMG_1}}" alt="{{PRODUCT_NAME}} — {{BRAND}} {{TYPE}}" width="800" height="800">
       </div>
       <div class="mso-pdp__thumbs">
@@ -67,6 +68,28 @@
 
       <!-- Stock. Modifiers: --low (amber) | --out (red) -->
       <p class="mso-pdp__stock">In stock &mdash; ships in 2&ndash;3 business days</p>
+
+      <!-- DELIVERY ESTIMATE — the single highest-converting block on a
+           seasonal product page. Dates are computed live from business days
+           in the script at the foot of this file, never hardcoded. The
+           colour shifts amber then red as the opener gets close. -->
+      <div class="mso-pdp__deliver" id="pdpDeliver">
+        <span class="mso-pdp__deliver-t" id="pdpDeliverT">Order today &mdash; arrives <b id="pdpDeliverDate">&hellip;</b></span>
+        <span class="mso-pdp__deliver-s" id="pdpDeliverS">
+          Packed in <strong>2&ndash;3 business days</strong>, then 2&ndash;6 in transit. Weekends do not count.
+        </span>
+      </div>
+
+      <!-- FREE-GIFT NUDGE. Static by default. To make the bar move with the
+           real basket, feed the cart total into data-cart — in WooCommerce
+           that is WC()->cart->get_subtotal(). Leave it static rather than
+           faking a number. -->
+      <div class="mso-pdp__gift" id="pdpGift" data-threshold="75" data-cart="0">
+        <span class="mso-pdp__gift-t" id="pdpGiftT">
+          <b>Spend $75 this month, get a field sharpener free.</b> Added automatically at checkout.
+        </span>
+        <span class="mso-pdp__gift-track"><span class="mso-pdp__gift-fill" id="pdpGiftFill" style="width:0%"></span></span>
+      </div>
 
       <!-- SPECS AT A GLANCE. Six fields a knife buyer checks before price.
            This is also where your blade-length and edge-count attributes
@@ -110,6 +133,48 @@
     <div class="mso-pdp__trust-item"><span class="mso-pdp__trust-ico">&#8635;</span><span class="mso-pdp__trust-t">30 Days Return</span><span class="mso-pdp__trust-s">Prepaid label</span></div>
     <div class="mso-pdp__trust-item"><span class="mso-pdp__trust-ico">&#9878;</span><span class="mso-pdp__trust-t">Secure Payment</span><span class="mso-pdp__trust-s">100% protected</span></div>
     <div class="mso-pdp__trust-item"><span class="mso-pdp__trust-ico">&#9993;</span><span class="mso-pdp__trust-t">Help Center</span><span class="mso-pdp__trust-s">24/7 support</span></div>
+  </div>
+
+  <!-- ================ FREQUENTLY BOUGHT TOGETHER ===================== -->
+  <!-- Raises order value instead of cutting price, and it answers the real
+       question: "what else do I need with this?" Pair the knife with a
+       sharpener and a sheath — the two things people come back for anyway. -->
+  <div class="mso-pdp__sec">
+    <div class="mso-pdp__sec-head">
+      <h2>Buy It With</h2>
+      <p class="mso-pdp__sec-sub">The two things people order next, bundled</p>
+    </div>
+    <div class="mso-pdp__fbt">
+      <div class="mso-pdp__fbt-row">
+        <a class="mso-pdp__fbt-item" href="{{PRODUCT_URL}}">
+          <img src="{{IMG_1}}" alt="{{PRODUCT_NAME}}" loading="lazy" width="112" height="112">
+          <span>This item</span><b class="mso-pdp__num">${{PRICE}}</b>
+        </a>
+        <span class="mso-pdp__plus">+</span>
+        <a class="mso-pdp__fbt-item" href="[SHARPENER_URL]">
+          <img src="[SHARPENER_IMG]" alt="" loading="lazy" width="112" height="112">
+          <span>[Field sharpener]</span><b class="mso-pdp__num">$[PRICE]</b>
+        </a>
+        <span class="mso-pdp__plus">+</span>
+        <a class="mso-pdp__fbt-item" href="[SHEATH_URL]">
+          <img src="[SHEATH_IMG]" alt="" loading="lazy" width="112" height="112">
+          <span>[Sheath or pouch]</span><b class="mso-pdp__num">$[PRICE]</b>
+        </a>
+
+        <div class="mso-pdp__fbt-buy">
+          <div class="mso-pdp__fbt-price">
+            <span class="was mso-pdp__num">$[TOTAL]</span>
+            <span class="now mso-pdp__num">$[BUNDLE]</span>
+            <span class="save">Save $[AMOUNT]</span>
+          </div>
+          <ul class="mso-pdp__fbt-checks">
+            <li>Ships together in one box</li>
+            <li>Clears the $75 free-gift threshold</li>
+          </ul>
+          <button class="mso-pdp__btn" type="submit">Add All Three</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ========================== TABS ================================= -->
@@ -265,6 +330,17 @@
     </div>
   </div>
 
+  <!-- ==================== RECENTLY VIEWED ============================ -->
+  <!-- Populated from this browser's own history via localStorage. Hidden
+       entirely on a first visit — it never invents a history. -->
+  <div class="mso-pdp__sec mso-pdp__recent" id="pdpRecent" hidden>
+    <div class="mso-pdp__sec-head">
+      <h2>Recently Viewed</h2>
+      <p class="mso-pdp__sec-sub">Picking up where you left off</p>
+    </div>
+    <div class="mso-pdp__grid" id="pdpRecentGrid"></div>
+  </div>
+
   <!-- ==================== ALSO CONSIDERED ============================ -->
   <div class="mso-pdp__sec">
     <div class="mso-pdp__sec-head">
@@ -325,6 +401,113 @@
       });
     });
   });
+
+  /* ============== OCTOBER LAYER — config in one block ============== */
+  var OPENER      = new Date('2026-10-01T00:00:00-04:00'); // Michigan archery opener
+  var PACK_MIN    = 2, PACK_MAX = 3;   // business days to pack
+  var SHIP_MIN    = 2, SHIP_MAX = 6;   // business days in transit
+  var RECENT_MAX  = 4;                 // recently-viewed slots
+  /* ================================================================= */
+
+  /* add N business days to a date, skipping Sat and Sun */
+  function addBiz(from, n) {
+    var d = new Date(from.getTime());
+    while (n > 0) {
+      d.setDate(d.getDate() + 1);
+      var day = d.getDay();
+      if (day !== 0 && day !== 6) n--;
+    }
+    return d;
+  }
+  var FMT = { weekday: 'short', day: 'numeric', month: 'short' };
+
+  var wrap = document.getElementById('pdpDeliver');
+  if (wrap) {
+    var now  = new Date();
+    var soon = addBiz(now, PACK_MIN + SHIP_MIN);
+    var late = addBiz(now, PACK_MAX + SHIP_MAX);
+    var dEl  = document.getElementById('pdpDeliverDate');
+    var sEl  = document.getElementById('pdpDeliverS');
+    if (dEl) {
+      dEl.textContent = soon.toLocaleDateString('en-US', FMT) +
+                        ' \u2013 ' + late.toLocaleDateString('en-US', FMT);
+    }
+    /* only claim "before the opener" when the LATE date clears it */
+    if (OPENER - now > 0 && sEl) {
+      if (late < OPENER) {
+        wrap.classList.add('mso-pdp__deliver');
+        sEl.innerHTML = '<strong>Arrives before the 1 October opener.</strong> ' +
+                        'Packed in 2\u20133 business days, then 2\u20136 in transit.';
+      } else if (soon < OPENER) {
+        wrap.classList.add('mso-pdp__deliver--tight');
+        sEl.innerHTML = '<strong>Cutting it fine for the 1 October opener.</strong> ' +
+                        'It may land just after \u2014 order today to give it the best chance.';
+      } else {
+        wrap.classList.add('mso-pdp__deliver--late');
+        sEl.innerHTML = '<strong>This will arrive after the 1 October opener.</strong> ' +
+                        'Still in good time for firearm season on 15 November.';
+      }
+    }
+  }
+
+  /* free-gift progress — moves only when a real cart total is supplied */
+  var gift = document.getElementById('pdpGift');
+  if (gift) {
+    var thr  = parseFloat(gift.dataset.threshold || '75');
+    var cart = parseFloat(gift.dataset.cart || '0');
+    var fill = document.getElementById('pdpGiftFill');
+    var gt   = document.getElementById('pdpGiftT');
+    if (cart > 0) {
+      var pct = Math.min(100, (cart / thr) * 100);
+      if (fill) fill.style.width = pct.toFixed(0) + '%';
+      if (gt) {
+        gt.innerHTML = cart >= thr
+          ? '<b>Your free field sharpener is unlocked.</b> Added automatically at checkout.'
+          : '<b>$' + (thr - cart).toFixed(2) + ' away from a free field sharpener.</b> Added automatically at checkout.';
+      }
+    }
+  }
+
+  /* recently viewed — this browser's own history, nothing invented */
+  try {
+    var KEY = 'mso_recent';
+    var me = {
+      url:   window.location.pathname,
+      name:  (document.querySelector('.mso-pdp h1') || {}).textContent || '',
+      img:   (document.getElementById('pdpStage') || {}).src || '',
+      price: (document.querySelector('.mso-pdp__now') || {}).textContent || '',
+      brand: (document.querySelector('.mso-pdp__brand a') || {}).textContent || ''
+    };
+    var list = JSON.parse(window.localStorage.getItem(KEY) || '[]')
+                 .filter(function (p) { return p.url !== me.url; });
+
+    if (list.length) {
+      var grid = document.getElementById('pdpRecentGrid');
+      var sec  = document.getElementById('pdpRecent');
+      list.slice(0, RECENT_MAX).forEach(function (p) {
+        var d = document.createElement('div');
+        d.className = 'mso-pdp__prod';
+        d.innerHTML =
+          '<a class="mso-pdp__prod-img" href="' + p.url + '"><img src="' + p.img + '" alt="" loading="lazy"></a>' +
+          '<div class="mso-pdp__prod-body">' +
+            '<span class="mso-pdp__prod-micro"></span>' +
+            '<p class="mso-pdp__prod-name"><a href="' + p.url + '"></a></p>' +
+            '<div class="mso-pdp__prod-price"><span class="mso-pdp__prod-now"></span></div>' +
+          '</div>';
+        /* textContent, never innerHTML, for anything that came from storage */
+        d.querySelector('.mso-pdp__prod-micro').textContent = p.brand;
+        d.querySelector('.mso-pdp__prod-name a').textContent = p.name;
+        d.querySelector('.mso-pdp__prod-now').textContent = p.price;
+        if (grid) grid.appendChild(d);
+      });
+      if (sec && grid && grid.children.length) sec.hidden = false;
+    }
+
+    if (me.name) {
+      list.unshift(me);
+      window.localStorage.setItem(KEY, JSON.stringify(list.slice(0, 12)));
+    }
+  } catch (e) { /* storage blocked — the block simply stays hidden */ }
 
   /* sticky add to cart — appears once the buy box scrolls past */
   var bar = document.getElementById('pdpSticky');
