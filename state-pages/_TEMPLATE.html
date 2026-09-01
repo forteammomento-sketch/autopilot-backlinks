@@ -1,0 +1,155 @@
+<!-- =========================================================================
+     MSO — Knife Laws · {{STATE}}   [BLANK TEMPLATE]
+     Duplicate this file per state. Replace every {{TOKEN}}.
+     Delete any rule card you cannot cite to a primary source. An incomplete
+     page beats a page with an invented statute number.
+     URL: /knife-laws/{{state-slug}}/
+     ========================================================================= -->
+
+<div class="mso-kl">
+
+  <header class="mso-kl__head">
+    <p class="mso-kl__eyebrow">Knife Laws by State &middot; {{NN}} &mdash; {{STATE}}</p>
+    <h1>{{STATE}} Knife Laws ({{YEAR}}): What You Can Legally Own and Carry</h1>
+    <p class="mso-kl__standfirst">{{ONE_SENTENCE_VERDICT — lead with the single most useful fact for a carrier, then name the biggest trap. Do not open with "Knife laws vary by state."}}</p>
+    <p class="mso-kl__byline">
+      <span>Last reviewed <strong>{{REVIEW_DATE}}</strong></span>
+      <span>Reviewed by <strong>{{REVIEWER_NAME, TITLE}}</strong></span>
+      <span>Sources: {{PRIMARY_SOURCE_NAMES}}</span>
+    </p>
+  </header>
+
+  <div class="mso-kl__glance">
+    <table>
+      <caption class="mso-kl__eyebrow" style="text-align:left;padding:13px 16px 0">{{STATE}} at a glance</caption>
+      <thead>
+        <tr><th scope="col">Question</th><th scope="col">Answer</th></tr>
+      </thead>
+      <tbody>
+        <!-- Pill classes: --ok (green) | --warn (amber) | --no (red) -->
+        <tr><th scope="row">Automatic / switchblade knives</th>
+            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
+        <tr><th scope="row">Statewide blade-length limit</th>
+            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
+        <tr><th scope="row">Open carry, ordinary folder</th>
+            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
+        <tr><th scope="row">Concealed carry</th>
+            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
+        <tr><th scope="row">Balisong / butterfly knives</th>
+            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
+        <tr><th scope="row">Statewide preemption of local rules</th>
+            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>What {{STATE}} actually prohibits</h2>
+
+  <div class="mso-kl__rules">
+
+    <article class="mso-kl__rule">
+      <div class="mso-kl__rule-top">
+        <h3>{{RULE_HEADING}}</h3>
+        <span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span>
+      </div>
+      <p>{{PLAIN_ENGLISH_EXPLANATION. Name the penalty in full — years and dollars — where the statute states it.}}</p>
+      <p>{{SECOND_PARAGRAPH: the practical consequence, or the misconception this rule corrects.}}</p>
+      <a class="mso-kl__cite" href="{{STATUTE_URL}}" rel="noopener">{{STATUTE_CITATION}}</a>
+    </article>
+
+    <!-- Repeat the article block per rule. Aim for 4–6. Every one needs a
+         citation link to the state legislature, not to a blog. -->
+
+  </div>
+
+  <div class="mso-kl__note mso-kl__note--warn">
+    <strong>The single most common mistake.</strong> {{THE_MYTH_AND_THE_CORRECTION. Every state has one — find it in forum threads and correct it here. This paragraph is what earns links.}}
+  </div>
+
+  <!-- ==================== COMMERCIAL BRIDGE — never delete ============== -->
+  <section class="mso-kl__shop" aria-labelledby="mso-kl-shop-h">
+    <span class="mso-kl__shop-label">Shop by what is legal here</span>
+    <h2 id="mso-kl-shop-h">Knives you can carry in {{STATE}}</h2>
+    <p>{{ONE_LINE tying the collection to this state's actual restriction — blade length, edge count, or lock type. Generic copy here wastes the whole page.}}</p>
+    <div class="mso-kl__ctas">
+      <a class="mso-kl__btn mso-kl__btn--solid" href="/collections/{{state-slug}}-legal-carry-knives/">{{STATE}}-legal folders</a>
+      <a class="mso-kl__btn mso-kl__btn--ghost" href="/collections/{{SECONDARY_COLLECTION}}/">{{SECONDARY_CTA}}</a>
+    </div>
+    <p class="mso-kl__trust">
+      <span>Authorised dealer</span>
+      <span>Ships in 2&ndash;3 business days</span>
+      <span>30-day returns, prepaid label</span>
+    </p>
+  </section>
+
+  <h2>Sources</h2>
+  <ul class="mso-kl__sources">
+    <li><a href="{{STATUTE_URL}}" rel="noopener">{{CITATION}} &mdash; {{TITLE}}</a>, {{STATE}} Legislature</li>
+    <li><a href="https://www.akti.org/state-knife-laws/{{state-slug}}/" rel="noopener">{{STATE}} Knife Laws</a>, American Knife &amp; Tool Institute</li>
+  </ul>
+
+  <div class="mso-kl__disclaimer">
+    <strong>This is not legal advice.</strong> Knife law changes, and local ordinances vary within {{STATE}}. This page summarises the statutes cited above as of the review date and is published for general information. Confirm the current text with the {{STATE}} Legislature, and consult a licensed {{STATE}} attorney before relying on it.
+  </div>
+
+  <h2>Knife laws in other states</h2>
+  <ul class="mso-kl__states">
+    <li><a href="/knife-laws/michigan/">Michigan</a></li>
+    <li><a href="/knife-laws/texas/">Texas</a></li>
+    <li><a href="/knife-laws/florida/">Florida</a></li>
+    <li><a href="/knife-laws/pennsylvania/">Pennsylvania</a></li>
+    <li><a href="/knife-laws/ohio/">Ohio</a></li>
+    <li><a href="/knife-laws/new-york/">New York</a></li>
+    <li><a href="/knife-laws/georgia/">Georgia</a></li>
+    <li><a href="/knife-laws/north-carolina/">North Carolina</a></li>
+    <li><a href="/knife-laws/tennessee/">Tennessee</a></li>
+    <li><a href="/knife-laws/california/">California</a></li>
+    <li><a href="/knife-laws/">All 50 states &rarr;</a></li>
+  </ul>
+
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "https://www.michigansportsoutdoor.com/knife-laws/{{state-slug}}/#article",
+      "headline": "{{STATE}} Knife Laws ({{YEAR}}): What You Can Legally Own and Carry",
+      "description": "{{META_DESCRIPTION — 150-160 chars, lead with the verdict}}",
+      "datePublished": "{{YYYY-MM-DD}}",
+      "dateModified": "{{YYYY-MM-DD}}",
+      "inLanguage": "en-US",
+      "author": {
+        "@type": "Organization",
+        "name": "Michigan Sports Outdoor",
+        "url": "https://www.michigansportsoutdoor.com/"
+      },
+      "publisher": { "@id": "https://www.michigansportsoutdoor.com/#organization" },
+      "about": { "@type": "Thing", "name": "Knife laws in {{STATE}}" },
+      "spatialCoverage": {
+        "@type": "State",
+        "name": "{{STATE}}",
+        "identifier": "US-{{XX}}"
+      },
+      "citation": [
+        "{{STATUTE_URL_1}}",
+        "{{STATUTE_URL_2}}"
+      ],
+      "isPartOf": {
+        "@type": "WebPage",
+        "@id": "https://www.michigansportsoutdoor.com/knife-laws/{{state-slug}}/"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home",       "item": "https://www.michigansportsoutdoor.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Knife Laws", "item": "https://www.michigansportsoutdoor.com/knife-laws/" },
+        { "@type": "ListItem", "position": 3, "name": "{{STATE}}" }
+      ]
+    }
+  ]
+}
+</script>
