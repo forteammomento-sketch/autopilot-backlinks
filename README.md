@@ -9,6 +9,11 @@ SEO strategy and execution assets for **michigansportsoutdoor.com** (MSO).
 | [`strategy/mso-q4-2026-seo-gameplan.md`](strategy/mso-q4-2026-seo-gameplan.md) | Full Q4 2026 diagnosis, goal maths, and 5-phase plan |
 | [`strategy/september-sprint.md`](strategy/september-sprint.md) | The 30-day checklist for Phase 0 + Phase 1 |
 
+> **Note:** the knife-laws-by-state build was dropped. It was a Phase 2 item
+> that could not contribute to the September revenue target, so the effort
+> moved back to Phase 0 — the work that converts impressions the site
+> already earns. The files remain in git history if they are ever wanted.
+
 ## The one-paragraph version
 
 MSO indexed 4K → 12K URLs with no impression lift and ~28K stuck in *Crawled – currently not
