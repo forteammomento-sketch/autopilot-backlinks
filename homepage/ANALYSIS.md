@@ -123,3 +123,69 @@ Three focused guides beat a thin imitation of Knife Life.
 
 The move is from "here is our catalogue" to **"here is how to find the right
 knife, and here is why buying from us is safe."**
+
+---
+
+# October layer — added after the first pass
+
+## What was added
+
+| Block | Job |
+|---|---|
+| Announcement bar | Opener date + order-by date, above everything |
+| Countdown strip | Live count to 1 October, with the shipping cutoff beside it |
+| Hero rewrite | *"30 Days to the Opener. Be Ready."* |
+| Field Dressing Kit | Bundle, not a discount |
+| Free-gift threshold | Spend $75, free sharpener |
+| Welcome-back strip | Shown only to returning visitors |
+| MSO Insiders | Two offers — first order, and coming back |
+
+## Why a bundle rather than a discount
+
+A discount cuts margin on orders you were going to get anyway. A bundle
+raises order value and answers the question the buyer actually has in
+September: *"what do I need for the opener?"*
+
+Same reason the free gift sits at **$75** — set the threshold above your
+current average order, never below it. Below it, you are paying for baskets
+you already had.
+
+## Why Insiders has no tiers
+
+Blade Club works because Blade HQ has the order volume to make tier two
+reachable. At three orders a month, a tiered programme mostly produces
+customers stuck at the bottom tier, which reads worse than no programme.
+
+Two plain offers instead: 10% off a first order, 10% back in store credit
+for repeat buyers. Both feed the email list, and the list is what carries
+November.
+
+Note the third bullet on the returning side — **free returns, no tier
+needed.** That is a direct contrast with Blade Club, where free returns are
+the top-tier perk. Worth saying where a returning customer will read it.
+
+## Honesty rules built into the code
+
+These are the difference between urgency that converts and urgency that
+costs you the sale:
+
+- **The countdown points at a real date** and hides itself the moment that
+  date passes. `OPENER` is a constant at the top of the script — change it
+  to the firearm opener on 15 November and update the copy with it.
+- **The order-by date is real arithmetic.** 2–3 business days to pack plus
+  2–6 in transit, weekends excluded. Do not shorten it to manufacture
+  pressure; a missed opener is a refund and a bad review.
+- **The welcome-back strip only appears on a genuine second visit**, and
+  never if storage is blocked. It shows no fabricated browsing history.
+- **No "only 3 left" anywhere.** If you add stock scarcity later, wire it to
+  real inventory or leave it out.
+
+## When October ends
+
+Three edits, all in one place:
+
+1. `OPENER` → `2026-11-15` (firearm opener), countdown copy to match
+2. Order-by date → recalculate from the new opener
+3. Hero, kit and gift threshold → swap to Black Friday, then gifting
+
+The rest of the page needs no change.
