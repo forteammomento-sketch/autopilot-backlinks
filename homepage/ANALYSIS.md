@@ -189,3 +189,74 @@ Three edits, all in one place:
 3. Hero, kit and gift threshold → swap to Black Friday, then gifting
 
 The rest of the page needs no change.
+
+---
+
+# October popup
+
+`october-popup.html` — self-contained CSS + HTML + JS in one block. Paste it
+**site-wide**, not only on the home page: a visitor landing on a product page
+from Google is exactly who it is for.
+
+Elementor Pro → Templates → Custom Code → Location **Body - End**, Display
+Conditions **Entire Site**. Without Pro, drop it before `</body>` in the child
+theme footer.
+
+## Desktop and mobile behave differently, on purpose
+
+Google treats a popup that covers main content on **mobile**, shortly after
+arrival from search, as an **intrusive interstitial** — a ranking negative.
+
+So the same snippet renders two ways:
+
+| | Desktop (>768px) | Mobile (≤768px) |
+|---|---|---|
+| Form | Centred modal, dimmed background | Bottom slide-up bar |
+| Background | Dimmed | **Not dimmed** |
+| Content | Covered | **Not covered** |
+| Penalty risk | None | None |
+
+The mobile version drops the artwork and the bullet list to stay short. Same
+offer, same form, no ranking exposure.
+
+## Config — six values, one block
+
+```js
+var DELAY_MS    = 5000;                        // wait before showing
+var OPENER      = '2026-10-01T00:00:00-04:00'; // hides itself after this date
+var SNOOZE_DAYS = 7;                           // after "close"
+var SIGNED_DAYS = 180;                         // after a signup
+var MIN_SCROLL  = 0;                           // 0 = time only; 15 = needs a scroll
+var SKIP_PATHS  = ['/cart', '/checkout', '/my-account'];
+```
+
+**Worth testing:** set `MIN_SCROLL = 15`. Requiring a small scroll before
+firing typically converts better than time alone, because it waits for a
+signal of interest instead of interrupting on arrival. Leave it at `0` if you
+want the plain five-second behaviour.
+
+## What it will not do
+
+- **Never fires on cart, checkout or account pages.** Interrupting a purchase
+  costs more than the signup is worth.
+- **Hides itself once 1 October passes.** Change `OPENER` to `2026-11-15` for
+  the firearm opener and update the copy with it.
+- **Remembers a dismissal for 7 days**, and a signup for 180. Nobody gets
+  asked twice in a week.
+- **Does nothing if storage is blocked** — private windows simply never see it.
+
+## Accessibility
+
+`role="dialog"`, `aria-modal`, labelled by its heading. Escape closes it, Tab
+stays inside while it is open, focus returns to where it was on close, and
+animation is dropped under `prefers-reduced-motion`. A popup that traps
+keyboard users is a complaint, not a conversion.
+
+## Before you publish
+
+- [ ] `[YOUR FORM ENDPOINT]` replaced, or the form swapped for your provider's
+- [ ] `popup-october.jpg` uploaded — 500×600, portrait
+- [ ] The 10% code exists and works
+- [ ] Tested on a phone: bottom bar, not full screen
+- [ ] Tested with keyboard: Tab, Escape
+- [ ] Checked it does not fire on `/checkout`
