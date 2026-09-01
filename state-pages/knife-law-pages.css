@@ -339,51 +339,114 @@
 .mso-kl__keyfacts li strong{color:var(--kl-heading);font-weight:700}
 
 /* ======================================================================== */
-/* Q&A SECTIONS — one question-form H2 each, answer in the first sentence.  */
-/* Answer-first is the single strongest signal for featured snippets and    */
-/* for AI engines quoting the page.                                         */
+/* COMPACT Q&A — short answers, homepage register. Not an essay.           */
 /* ======================================================================== */
 .mso-kl__qa{
   border:1px solid var(--kl-border);background:var(--kl-bg);
-  padding:26px 28px;margin-bottom:16px;border-top:3px solid var(--kl-accent);
+  padding:20px 22px;display:flex;flex-direction:column;gap:9px;
 }
-.mso-kl__qa--no{border-top-color:var(--kl-no)}
-.mso-kl__qa--ok{border-top-color:var(--kl-ok)}
-.mso-kl__qa h2{
-  font-size:clamp(19px,2.4vw,24px);font-weight:700;letter-spacing:-.012em;margin-bottom:14px;
+.mso-kl__qa h2,.mso-kl__qa h3{font-size:16.5px;font-weight:700;line-height:1.35}
+.mso-kl__qa p{font-size:14.5px;line-height:1.6;margin:0}
+.mso-kl__qa p strong{color:var(--kl-heading)}
+.mso-kl__cite{
+  display:inline-block;align-self:flex-start;margin-top:3px;
+  font-family:var(--kl-mono);font-size:11px;color:var(--kl-faint);
+  text-decoration:none;
 }
-.mso-kl__qa h3{font-size:16.5px;font-weight:700;margin:18px 0 8px}
-.mso-kl__qa p{font-size:15.5px;line-height:1.65}
-/* the extractable answer sentence */
-.mso-kl__answer{
-  font-size:17px!important;line-height:1.6;color:var(--kl-heading);
-  background:var(--kl-bg-alt);border-left:3px solid var(--kl-accent);
-  padding:14px 18px;margin:0 0 16px;font-weight:500;
+.mso-kl__cite:hover{color:var(--kl-accent-dk);text-decoration:none}
+
+/* ======================================================================== */
+/* HERO BANNER — mirrors the homepage hero slide                           */
+/* ======================================================================== */
+.mso-kl__banner{
+  position:relative;background:var(--kl-header);overflow:hidden;
+  min-height:340px;display:flex;align-items:center;margin-bottom:0;
 }
-.mso-kl__answer strong{font-weight:700}
-.mso-kl__qa-tag{
-  display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--kl-faint);margin-bottom:8px;
+.mso-kl__banner-bg{position:absolute;inset:0;z-index:0}
+.mso-kl__banner-bg img{width:100%;height:100%;object-fit:cover;opacity:.42}
+.mso-kl__banner-in{position:relative;z-index:1;padding:52px 0;width:100%}
+.mso-kl__banner-badge{
+  display:inline-block;background:var(--kl-accent);color:var(--kl-accent-ink);
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:5px 12px;margin-bottom:16px;
+}
+.mso-kl__banner h1{
+  color:#fff;font-size:clamp(28px,5vw,48px);font-weight:800;
+  letter-spacing:-.025em;line-height:1.05;max-width:19ch;
+}
+.mso-kl__banner p{
+  color:rgba(255,255,255,.85);font-size:17px;margin:14px 0 0;max-width:52ch;line-height:1.5;
+}
+.mso-kl__banner .mso-kl__ctas{justify-content:flex-start;margin-top:24px}
+.mso-kl__banner-meta{
+  margin-top:22px;padding-top:14px;border-top:1px solid rgba(255,255,255,.18);
+  font-size:12.5px;color:rgba(255,255,255,.6);display:flex;flex-wrap:wrap;gap:5px 22px;max-width:70ch;
+}
+.mso-kl__banner-meta strong{color:var(--kl-accent);font-weight:600}
+
+/* ======================================================================== */
+/* BRAND STRIP — mirrors the homepage brand row                            */
+/* ======================================================================== */
+.mso-kl__brands{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;align-items:stretch}
+.mso-kl__brand{
+  border:1px solid var(--kl-border);background:var(--kl-bg);
+  display:flex;align-items:center;justify-content:center;padding:14px 10px;
+  aspect-ratio:3/2;text-decoration:none;transition:border-color .15s ease;
+}
+.mso-kl__brand:hover{border-color:var(--kl-accent)}
+.mso-kl__brand img{max-height:100%;width:auto;object-fit:contain}
+.mso-kl__brands-cta{display:flex;justify-content:flex-end;margin-top:14px}
+
+/* ======================================================================== */
+/* PROMO TILE inside a product grid — the homepage "Sharp Choices" pattern */
+/* ======================================================================== */
+.mso-kl__tile{
+  grid-row:span 2;position:relative;overflow:hidden;background:var(--kl-header);
+  display:flex;align-items:flex-end;min-height:220px;text-decoration:none;
+}
+.mso-kl__tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.mso-kl__tile-in{position:relative;z-index:1;padding:20px;color:#fff}
+.mso-kl__tile-in strong{display:block;font-size:19px;font-weight:800;line-height:1.2;margin-bottom:5px}
+.mso-kl__tile-in span{display:block;font-size:13px;color:rgba(255,255,255,.8);margin-bottom:12px}
+.mso-kl__tile-in em{
+  font-style:normal;display:inline-block;background:var(--kl-accent);color:var(--kl-accent-ink);
+  font-size:12px;font-weight:700;padding:8px 15px;
 }
 
-/* practical note — guidance, clearly separated from statute text */
-.mso-kl__tip{
-  background:var(--kl-ok-soft);border-left:3px solid var(--kl-ok);
-  padding:13px 17px;margin:16px 0 0;font-size:14.5px;line-height:1.6;
+/* ======================================================================== */
+/* TABS — the homepage "Our Featured Products" pattern                     */
+/* ======================================================================== */
+.mso-kl__tabs{display:flex;flex-wrap:wrap;gap:26px;justify-content:center;margin-bottom:24px}
+.mso-kl__tab{
+  background:none;border:0;border-bottom:2px solid transparent;padding:6px 2px;
+  font-family:inherit;font-size:15px;font-weight:600;color:var(--kl-faint);cursor:pointer;
 }
-.mso-kl__tip strong{color:var(--kl-heading)}
+.mso-kl__tab[aria-selected="true"]{color:var(--kl-heading);border-bottom-color:var(--kl-accent)}
+.mso-kl__tab:hover{color:var(--kl-heading)}
+.mso-kl__panel[hidden]{display:none}
 
-@media (max-width:600px){
-  .mso-kl__qa{padding:20px 18px}
-  .mso-kl__keyfacts{padding:18px 20px}
-  .mso-kl__answer{font-size:16px!important;padding:12px 14px}
+/* ======================================================================== */
+/* REVIEW CARDS — mirrors the homepage Google review row                   */
+/* ======================================================================== */
+.mso-kl__revs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mso-kl__rev{border:1px solid var(--kl-border);background:var(--kl-bg);padding:18px;display:flex;flex-direction:column;gap:9px}
+.mso-kl__rev-top{display:flex;align-items:center;gap:10px}
+.mso-kl__rev-av{
+  width:32px;height:32px;border-radius:50%;background:var(--kl-bg-alt);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--kl-heading);flex:none;
 }
+.mso-kl__rev-name{font-size:13.5px;font-weight:700;color:var(--kl-heading)}
+.mso-kl__rev-stars{color:var(--kl-accent);font-size:13px;letter-spacing:1px}
+.mso-kl__rev p{font-size:13.5px;line-height:1.55;margin:0}
 
 /* ======================================================================== */
 /* RESPONSIVE                                                               */
 /* ======================================================================== */
 @media (max-width:1024px){
   .mso-kl__grid,.mso-kl__grid--6{grid-template-columns:repeat(3,1fr)}
+  .mso-kl__brands{grid-template-columns:repeat(4,1fr)}
+  .mso-kl__revs{grid-template-columns:repeat(2,1fr)}
+  .mso-kl__tile{grid-row:span 1}
   .mso-kl__states{grid-template-columns:repeat(4,1fr)}
   .mso-kl__trust{grid-template-columns:repeat(3,1fr)}
   .mso-kl__trust-item:nth-child(3){border-right:0}
@@ -397,6 +460,11 @@
 @media (max-width:600px){
   .mso-kl{font-size:15.5px}
   .mso-kl__grid,.mso-kl__grid--6,.mso-kl__grid--3{grid-template-columns:repeat(2,1fr)}
+  .mso-kl__brands{grid-template-columns:repeat(3,1fr)}
+  .mso-kl__revs{grid-template-columns:1fr}
+  .mso-kl__banner{min-height:260px}
+  .mso-kl__banner-in{padding:34px 0}
+  .mso-kl__tabs{gap:16px}
   .mso-kl__states{grid-template-columns:repeat(2,1fr)}
   .mso-kl__trust{grid-template-columns:repeat(2,1fr)}
   .mso-kl__trust-item{border-right:0;border-bottom:1px solid var(--kl-hair)}
