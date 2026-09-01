@@ -1,0 +1,53 @@
+slug,title,group,url_pattern,driven_by,indexable,priority,notes
+hunting-knives,Hunting Knives,primary_category,/collections/,manual assignment,YES,1,Breadcrumb parent
+edc-folding-knives,EDC Folding Knives,primary_category,/collections/,manual assignment,YES,1,Breadcrumb parent
+fixed-blade-knives,Fixed Blade Knives,primary_category,/collections/,manual assignment,YES,1,Breadcrumb parent
+automatic-knives,Automatic Knives,primary_category,/collections/,manual assignment,YES,1,"Never link from CA, NY, IL state pages"
+fillet-bait-knives,Fillet & Bait Knives,primary_category,/collections/,manual assignment,YES,2,Breadcrumb parent
+camping-survival-knives,Camping & Survival Knives,primary_category,/collections/,manual assignment,YES,2,Breadcrumb parent
+multi-tools,Multi-Tools,primary_category,/collections/,manual assignment,YES,3,Breadcrumb parent
+sharpeners-knife-care,Sharpeners & Knife Care,primary_category,/collections/,manual assignment,YES,3,Breadcrumb parent
+optics,Optics,primary_category,/collections/,manual assignment,YES,3,"Binoculars, rangefinders, magnifiers"
+flashlights-headlamps,Flashlights & Headlamps,primary_category,/collections/,manual assignment,YES,3,Non-knife
+fishing-tackle,Fishing Tackle,primary_category,/collections/,manual assignment,YES,3,Non-knife
+apparel,Apparel,primary_category,/collections/,manual assignment,YES,3,Non-knife
+vosteed,Vosteed,brand_hub,/brand/,BRAND field,YES,1,Low competition — prioritise
+kansept-knives,Kansept Knives,brand_hub,/brand/,BRAND field,YES,1,Low competition — prioritise
+kubey-knives,Kubey Knives,brand_hub,/brand/,BRAND field,YES,1,Low competition — prioritise
+bestech-knives,Bestech Knives,brand_hub,/brand/,BRAND field,YES,1,Low competition — prioritise
+kunwu-knives,Kunwu Knives,brand_hub,/brand/,BRAND field,YES,1,Low competition — prioritise
+vixino-knives,Vixino Knives,brand_hub,/brand/,BRAND field,YES,1,Low competition — prioritise
+begg-knives,Begg Knives,brand_hub,/brand/,BRAND field,YES,1,Low competition — prioritise
+ruike,RUIKE,brand_hub,/brand/,BRAND field,YES,2,Moderate competition
+cjrb,CJRB,brand_hub,/brand/,BRAND field,YES,2,Moderate competition
+qsp-knives,QSP Knives,brand_hub,/brand/,BRAND field,YES,2,Moderate competition
+civivi,CIVIVI,brand_hub,/brand/,BRAND field,YES,2,Moderate competition
+rough-rider,Rough Rider,brand_hub,/brand/,BRAND field,YES,2,Volume seller
+elk-ridge,Elk Ridge,brand_hub,/brand/,BRAND field,YES,2,Volume seller
+esee,ESEE,brand_hub,/brand/,BRAND field,YES,3,Blade HQ dominates
+cold-steel,Cold Steel,brand_hub,/brand/,BRAND field,YES,3,Blade HQ dominates
+knife-steel/d2,D2 Steel Knives,steel_hub,/collections/,STEEL field,YES,1,Named in the game plan
+knife-steel/14c28n,14C28N Steel Knives,steel_hub,/collections/,STEEL field,YES,1,Named in the game plan
+knife-steel/s35vn,S35VN Steel Knives,steel_hub,/collections/,STEEL field,YES,1,Named in the game plan
+knife-steel/154cm,154CM Steel Knives,steel_hub,/collections/,STEEL field,YES,1,Named in the game plan
+knife-steel/8cr13mov,8Cr13MoV Steel Knives,steel_hub,/collections/,STEEL field,YES,2,Budget tier
+knife-steel/damascus,Damascus Knives,steel_hub,/collections/,STEEL field,YES,2,Strong visual appeal
+knives-under-25,Knives Under $25,price_facet,/collections/,PRICE field,YES,1,Real search volume
+knives-under-50,Knives Under $50,price_facet,/collections/,PRICE field,YES,1,Real search volume
+knives-under-100,Knives Under $100,price_facet,/collections/,PRICE field,YES,1,Real search volume
+edc-knives-under-3-inch,Knives Under 3-inch,length_facet,/collections/,BLADE_LENGTH field,YES,1,Linked from state pages for city carry
+edc-knives-under-5-5-inch,Knives Under 5.5-inch,length_facet,/collections/,BLADE_LENGTH field,YES,2,Texas tile
+made-in-usa-knives,Made in USA Knives,origin_facet,/collections/,ORIGIN field,YES,2,Real search volume
+crossbar-lock-knives,Crossbar Lock Knives,lock_facet,/collections/,LOCK field,YES,3,Trending mechanism
+blade-length-3-to-4-inch,Blade 3-4 inch,length_facet,/collections/,BLADE_LENGTH field,NO,4,Filter only — noindex
+blade-length-over-4-inch,Blade Over 4 inch,length_facet,/collections/,BLADE_LENGTH field,NO,4,Filter only — noindex
+framelock-knives,Framelock Knives,lock_facet,/collections/,LOCK field,NO,4,Filter only — noindex
+linerlock-knives,Linerlock Knives,lock_facet,/collections/,LOCK field,NO,4,Filter only — noindex
+slipjoint-knives,Slipjoint Knives,lock_facet,/collections/,LOCK field,NO,4,Filter only — noindex
+g10-handle-knives,G-10 Handle Knives,handle_facet,/collections/,HANDLE field,NO,4,Filter only — noindex
+micarta-handle-knives,Micarta Handle Knives,handle_facet,/collections/,HANDLE field,NO,4,Filter only — noindex
+titanium-handle-knives,Titanium Handle Knives,handle_facet,/collections/,HANDLE field,NO,4,Filter only — noindex
+wood-handle-knives,Wood Handle Knives,handle_facet,/collections/,HANDLE field,NO,4,Filter only — noindex
+drop-point-knives,Drop Point Knives,shape_facet,/collections/,BLADE_SHAPE field,NO,4,Filter only — noindex
+tanto-knives,Tanto Blade Knives,shape_facet,/collections/,BLADE_SHAPE field,NO,4,Filter only — noindex
+assisted-opening-knives,Assisted Opening Knives,opening_facet,/collections/,OPENING field,NO,4,Filter only — noindex
