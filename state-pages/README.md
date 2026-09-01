@@ -5,10 +5,10 @@ Michigan Sports Outdoor · commerce-first state landing pages, Elementor-ready.
 | File | Where it goes |
 |---|---|
 | `state-pages.css` | **Once**, Elementor → Site Settings → Custom CSS |
-| Ten state files — `california` `new-york` `ohio` `texas` `pennsylvania` `georgia` `north-carolina` `tennessee` `illinois` `wisconsin` | HTML widget, one per page |
-| `build_states.py` | Regenerates all ten. Add a state to **both** `STATES` and `SIBLINGS`, then rerun. |
+| Twelve state files — `michigan` `florida` `california` `new-york` `ohio` `texas` `pennsylvania` `georgia` `north-carolina` `tennessee` `illinois` `wisconsin` | HTML widget, one per page |
+| `build_states.py` | Regenerates all twelve. Add a state to **both** `STATES` and `SIBLINGS`, then rerun. |
 
-URLs: `/knives/{state-slug}/` — ten states, listed above
+URLs: `/knives/{state-slug}/` — twelve states, listed above
 Hub: `/knives/` — build this first, it is what they all link up to.
 
 ## What these are
@@ -39,6 +39,8 @@ notice saying so plainly:
 | Tennessee | Included | Legal since the 2014 repeal |
 | **Illinois** | **Filtered out** | Lawful only for FOID cardholders — unverifiable at checkout |
 | Wisconsin | Included | Legal since Act 149, February 2016 |
+| Michigan | Included, with a caveat | Legal since PA 96 of 2017; blade *shape* still governs concealed carry |
+| Florida | Included | No state ban; Miami-Dade keeps its own ordinance |
 
 Telling a California buyer up front that you will not sell them a switchblade
 is worth more than the sale you lose. It prevents a return, it prevents a
@@ -68,7 +70,8 @@ against that state before applying the chip.
 - [ ] Season dates verified — every page carries a `[VERIFY]` marker with the
       agency to check (CDFW, NY DEC, Ohio Division of Wildlife, TPWD, PA Game
       Commission, Georgia DNR, NC Wildlife Resources Commission, TWRA,
-      Illinois DNR, Wisconsin DNR)
+      Illinois DNR, Wisconsin DNR, Florida FWC). Michigan dates are already
+      filled in and verified against the Michigan DNR.
 - [ ] Images uploaded: hero 1600×600, tile 400×500, promo 640×400,
       6 categories 320×240, 8 brand logos, product shots 400×400
 - [ ] Every source link clicked once to confirm it resolves
@@ -103,6 +106,8 @@ it. Four wrong facts in a box that says "at a glance" is worse than no box.
 | Tennessee | Legal | None since 2014 | **Yes**, 39-17-1314(f) since 2013 | 2014 Tenn. Acts ch. 870 |
 | Illinois | FOID card only | None statewide; 3″ rule for public buildings | No | 720 ILCS 5/24-1 |
 | Wisconsin | Legal | None | **Yes**, Wis. Stat. 66.0409 | 2015 Act 149 |
+| Michigan | Legal | None statewide; Detroit and Lansing cap at 3″ | No | MCL 750.226, 750.227 |
+| Florida | Legal | None in statute | No | HB 543 (2023), 790.001, 790.225 |
 
 Two things worth getting right, because most pages online do not:
 
@@ -120,6 +125,12 @@ Two things worth getting right, because most pages online do not:
   verified at checkout.
 - Wisconsin's **Act 149 wiped out Milwaukee's three-inch rule** along with the
   state switchblade ban. Guides still citing Milwaukee are out of date.
+
+- **Michigan** restricts by blade *shape*, not opening mechanism. A legal
+  automatic is still an illegal concealed weapon if the blade is dagger-shaped,
+  and the rule covers your vehicle whether or not the knife is reachable.
+- **Florida's** July 2023 change is the one most guides have not caught up
+  with — eligible adults 21+ no longer need a Concealed Weapon Licence.
 
 **North Carolina preemption is deliberately not claimed either way.** Research
 did not settle it, so the page uses location restrictions as its fourth fact

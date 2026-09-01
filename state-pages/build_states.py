@@ -4,7 +4,8 @@ import json
 
 # Only list states that actually have a page built, or you ship broken links
 # on every other page. Add a row here at the same time you add one to STATES.
-SIBLINGS = [("California","california"),("New York","new-york"),("Ohio","ohio"),
+SIBLINGS = [("Michigan","michigan"),("Florida","florida"),
+            ("California","california"),("New York","new-york"),("Ohio","ohio"),
             ("Texas","texas"),("Pennsylvania","pennsylvania"),("Georgia","georgia"),
             ("North Carolina","north-carolina"),("Tennessee","tennessee"),
             ("Illinois","illinois"),("Wisconsin","wisconsin")]
@@ -256,6 +257,53 @@ STATES = {
   sources=[("2015 Wisconsin Act 149","https://docs.legis.wisconsin.gov/2015/related/acts/149"),
            ("Wis. Stat. 66.0409 &mdash; Local regulation of weapons","https://docs.legis.wisconsin.gov/statutes/statutes/66/iv/0409"),
            ("Wisconsin Knife Laws","https://www.akti.org/state-knife-laws/wisconsin/")],
+),
+"michigan": dict(
+  name="Michigan", abbr="MI",
+  h1="Hunting &amp; EDC Knives in Michigan",
+  hero="This is home. No statewide blade-length limit, switchblades legal since 2017, and every order packed and shipped from Michigan in 2&ndash;3 business days.",
+  tile=("Shipped From<br>Michigan","Our home state","hunting-knives"),
+  chip="MI-Legal",
+  cats=BASE_CATS+[CAT_AUTO, CAT_FILLET],
+  season_kicker="Michigan season &middot; 2026",
+  season_h="Archery Opens 1 October. Firearm Opens 15 November.",
+  season_p="Field dressing knives, gut hooks, skinners and bone saws &mdash; picked for Michigan whitetail by people who hunt here, and shipped in two to three business days.",
+  season_slug="michigan-deer-season-gear",
+  season_sub="Archery 1 Oct &ndash; 14 Nov &middot; Firearm 15&ndash;30 Nov &middot; Muzzleloader 5&ndash;14 Dec",
+  legal=[
+    ("Blade length","ok","No limit","Michigan sets no statewide blade-length restriction. The three-inch figure in MCL 750.226 only bites once unlawful intent is proven &mdash; it is not a carry limit."),
+    ("Switchblades &amp; automatics","ok","Legal","Public Act 96 of 2017 repealed the switchblade prohibition, effective 11 October 2017."),
+    ("Concealed daggers &amp; stilettos","no","Felony","Carrying a concealed dagger, dirk, stiletto or double-edged non-folding blade is a felony under MCL 750.227(1) &mdash; up to 5 years and a $2,500 fine. The same rule covers your vehicle, reachable or not."),
+    ("City rules","warn","They apply","Michigan has no knife preemption. Detroit and Lansing both restrict blades over three inches in public places."),
+  ],
+  notice="<strong>Michigan draws its line at blade shape, not opening mechanism.</strong> An automatic knife is legal here, but if its blade is dagger-shaped or double-edged it still falls under the concealed-carry felony. Every knife in the grid above is a single-edge folder, which keeps you clear of that entirely.",
+  sources=[("MCL 750.227 &mdash; Concealed weapons","https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-227"),
+           ("MCL 750.226 &mdash; Dangerous weapon with unlawful intent","https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-226"),
+           ("Michigan Knife Laws","https://www.akti.org/state-knife-laws/michigan/")],
+),
+"florida": dict(
+  name="Florida", abbr="FL",
+  h1="Hunting, Fishing &amp; EDC Knives in Florida",
+  hero="Since July 2023 an eligible adult can carry a concealed knife in Florida with no licence at all. No blade-length limit in statute either. Shipped in 2&ndash;3 business days.",
+  tile=("No Licence<br>Needed","Since July 2023","edc-folding-knives"),
+  chip="FL-Legal",
+  cats=BASE_CATS+[CAT_AUTO, CAT_FILLET],
+  season_kicker="Florida season &middot; 2026",
+  season_h="Whitetail, Hog and Inshore Fishing",
+  season_p="Fillet knives, bait knives and field dressing blades &mdash; picked for Florida inshore and year-round hog, and shipped in two to three business days.",
+  season_slug="florida-hunting-fishing-knives",
+  season_sub="[VERIFY season dates with Florida FWC]",
+  legal=[
+    ("Concealed carry, 21+","ok","No licence","House Bill 543 extended permitless concealed carry to weapons including knives on 1 July 2023. You must meet the criteria for a Concealed Weapon Licence and carry valid ID."),
+    ("Blade length","ok","None in statute","The four-inch figure is case law on what counts as a &ldquo;common pocketknife&rdquo; under 790.001 &mdash; not a carry limit."),
+    ("Ballistic knives","no","Banned","Fla. Stat. 790.225 makes it unlawful to manufacture, display, sell, own, possess or use a ballistic self-propelled knife."),
+    ("City rules","warn","They apply","Fla. Stat. 790.33 preempts firearms and ammunition only, not knives. Miami-Dade County keeps its own switchblade ordinance."),
+  ],
+  notice="<strong>Most knife guides still tell Florida readers they need a Concealed Weapon Licence.</strong> That stopped being true on 1 July 2023. If you are 21 or over and eligible for a licence, you can carry concealed without holding one &mdash; just carry ID. Miami-Dade buyers should still check the county switchblade ordinance.",
+  sources=[("CS/HB 543 (2023) &mdash; staff analysis","https://www.flsenate.gov/Session/Bill/2023/543/Analyses/h0543b.JDC.PDF"),
+           ("Fla. Stat. 790.001 &mdash; Definitions","https://www.flsenate.gov/Laws/Statutes/2024/790.001"),
+           ("Fla. Stat. 790.225 &mdash; Ballistic knives","https://www.flsenate.gov/Laws/Statutes/2024/790.225"),
+           ("Florida Knife Laws","https://www.akti.org/state-knife-laws/florida/")],
 ),
 }
 
