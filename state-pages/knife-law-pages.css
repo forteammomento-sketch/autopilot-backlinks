@@ -315,6 +315,70 @@
 }
 .mso-kl-sticky__x:hover{color:#fff}
 
+
+/* ======================================================================== */
+/* KEY FACTS — LLM / AI Overview extraction block. Sits directly under H1.  */
+/* Short, declarative, dated, entity-rich. This is the block AI engines     */
+/* quote most often, so keep every line self-contained.                     */
+/* ======================================================================== */
+.mso-kl__keyfacts{
+  border:1px solid var(--kl-border);border-left:4px solid var(--kl-accent);
+  background:var(--kl-bg-alt);padding:22px 26px;margin:0 0 26px;
+}
+.mso-kl__keyfacts h2{
+  font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--kl-heading);margin-bottom:12px;
+}
+.mso-kl__keyfacts ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.mso-kl__keyfacts li{
+  position:relative;padding-left:19px;font-size:15.5px;line-height:1.55;color:var(--kl-body);
+}
+.mso-kl__keyfacts li::before{
+  content:"";position:absolute;left:0;top:.62em;width:9px;height:2px;background:var(--kl-accent);
+}
+.mso-kl__keyfacts li strong{color:var(--kl-heading);font-weight:700}
+
+/* ======================================================================== */
+/* Q&A SECTIONS — one question-form H2 each, answer in the first sentence.  */
+/* Answer-first is the single strongest signal for featured snippets and    */
+/* for AI engines quoting the page.                                         */
+/* ======================================================================== */
+.mso-kl__qa{
+  border:1px solid var(--kl-border);background:var(--kl-bg);
+  padding:26px 28px;margin-bottom:16px;border-top:3px solid var(--kl-accent);
+}
+.mso-kl__qa--no{border-top-color:var(--kl-no)}
+.mso-kl__qa--ok{border-top-color:var(--kl-ok)}
+.mso-kl__qa h2{
+  font-size:clamp(19px,2.4vw,24px);font-weight:700;letter-spacing:-.012em;margin-bottom:14px;
+}
+.mso-kl__qa h3{font-size:16.5px;font-weight:700;margin:18px 0 8px}
+.mso-kl__qa p{font-size:15.5px;line-height:1.65}
+/* the extractable answer sentence */
+.mso-kl__answer{
+  font-size:17px!important;line-height:1.6;color:var(--kl-heading);
+  background:var(--kl-bg-alt);border-left:3px solid var(--kl-accent);
+  padding:14px 18px;margin:0 0 16px;font-weight:500;
+}
+.mso-kl__answer strong{font-weight:700}
+.mso-kl__qa-tag{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--kl-faint);margin-bottom:8px;
+}
+
+/* practical note — guidance, clearly separated from statute text */
+.mso-kl__tip{
+  background:var(--kl-ok-soft);border-left:3px solid var(--kl-ok);
+  padding:13px 17px;margin:16px 0 0;font-size:14.5px;line-height:1.6;
+}
+.mso-kl__tip strong{color:var(--kl-heading)}
+
+@media (max-width:600px){
+  .mso-kl__qa{padding:20px 18px}
+  .mso-kl__keyfacts{padding:18px 20px}
+  .mso-kl__answer{font-size:16px!important;padding:12px 14px}
+}
+
 /* ======================================================================== */
 /* RESPONSIVE                                                               */
 /* ======================================================================== */
