@@ -83,42 +83,87 @@ Fill these before writing any HTML. `state-data.csv` is set up for exactly this.
 
 ---
 
-## Design notes
+## Matching the site theme
 
-**Verdict pills** — three semantic states, used in both the table and the rule cards:
-
-```html
-<span class="mso-kl__pill mso-kl__pill--ok">Legal</span>      <!-- green  -->
-<span class="mso-kl__pill mso-kl__pill--warn">Check city</span><!-- amber  -->
-<span class="mso-kl__pill mso-kl__pill--no">Felony</span>      <!-- red    -->
-```
-
-**Rebranding** — change the four tokens at the top of the CSS and the whole system
-follows. Nothing else hardcodes a colour:
+The stylesheet opens with a **theme block** — ten variables read off your homepage.
+That is the only part you should need to touch:
 
 ```css
---kl-accent:#B93B0C;   --kl-accent-soft:#F6E6DE;
---kl-pine:#24463A;     --kl-pine-soft:#E1EAE4;
+--kl-accent:#EDA53B;      /* amber CTA — search button, Browse Categories */
+--kl-accent-dk:#D18F2A;   /* amber hover */
+--kl-accent-ink:#1B2B39;  /* text ON amber — dark, as your buttons use */
+--kl-header:#20303F;      /* dark slate header bar */
+--kl-heading:#1B2B39;     /* near-black navy — section titles */
+--kl-price:#5E9F32;       /* green sale price */
+--kl-body:#5A6673;        /* body grey */
+--kl-border:#E3E6E9;      /* card / divider grey */
 ```
 
-**Typography** inherits from your Elementor theme (`font-family:inherit`), so the
-pages will look native to the site rather than bolted on. Only the citation chips and
-labels use a monospace stack, deliberately — they read as data, not prose.
+These were read off screenshots, so they are close but not exact. To correct them in
+two minutes: right-click the amber **Search** button on your homepage → Inspect → copy
+the computed `background-color` → paste it into `--kl-accent`. Repeat for the header
+bar and a green sale price. Nothing else hardcodes a colour.
 
-**Dark mode is opt-in.** Add `mso-kl--auto-dark` to the wrapper *only* if your theme
-actually has a dark mode:
+**Typography needs no configuration.** Everything uses `font-family: inherit`, so the
+pages pick up your theme font automatically. There is no font to match and no way for
+it to drift if you change themes later.
+
+### Site patterns reused
+
+| Homepage pattern | Where it appears on the state page |
+|---|---|
+| Product card — micro-label, name, struck price + green price | Blocks 03 and 08 |
+| Category tile — image, name, product count | Block 06 |
+| Five-icon trust bar | Above the sources block |
+| Centred section title + amber subline | Every section heading |
+| Amber button, dark text | All CTAs |
+| Dark slate header band | Hero and email capture |
+
+**Verdict pills** — three semantic states, used in the glance table and rule cards:
 
 ```html
-<div class="mso-kl mso-kl--auto-dark">
+<span class="mso-kl__pill mso-kl__pill--ok">Legal</span>       <!-- green -->
+<span class="mso-kl__pill mso-kl__pill--warn">Check city</span> <!-- amber -->
+<span class="mso-kl__pill mso-kl__pill--no">Felony</span>       <!-- red   -->
 ```
 
-On a light-only site, leaving it off is correct — otherwise a visitor whose OS is set
-to dark gets a dark block sitting on your white page.
+**Compliance chip** on product cards — the device that makes a product grid read as a
+continuation of the legal answer rather than an ad break:
 
-**Everything is scoped** under `.mso-kl`, so it cannot leak into or collide with
-Elementor's own styles or your theme.
+```html
+<span class="mso-kl__legal-chip">MI-Legal</span>
+<span class="mso-kl__legal-chip mso-kl__legal-chip--warn">Under 3&Prime;</span>
+```
 
----
+Only apply it to knives you have actually confirmed against the state's restriction.
+It is a legal-adjacent claim and needs the same care as the statute text.
+
+## Recommended build split
+
+You do not need to put all 13 blocks in one HTML widget:
+
+| Widget | Blocks |
+|---|---|
+| HTML widget A | 01–07 — hero through restricted places |
+| **Elementor Products widget** | 08 — set to *Top Rated*, 4 columns |
+| HTML widget B | 09–13 — seasonal through sibling states |
+
+The CSS styles both. Using the native Products widget for block 08 means it keeps
+itself current instead of you hand-editing 51 pages.
+
+## Blocks that stay hidden at launch
+
+- **Block 08** ships labelled **"Staff Picks"**. Relabel to *"Best Rated by Our
+  Customers"* only once the review app has genuine counts. **Never** label it
+  "top sellers in {State}" until state-level order volume truthfully supports it.
+- **Block 10** (photo review wall) is omitted from the template entirely until the
+  review back-fill campaign has run. An empty block is worse than no block.
+
+## Prerequisite before block 03 can ship
+
+Blade-length and edge-count attributes on every SKU. Without them you cannot build
+`/collections/{state}-legal-carry-knives/` or apply the compliance chip honestly.
+This is on the critical path.
 
 ## Rollout order
 

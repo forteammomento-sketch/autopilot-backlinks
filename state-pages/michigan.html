@@ -1,41 +1,51 @@
 <!-- =========================================================================
-     MSO — Knife Laws · MICHIGAN  (fully populated reference example)
-     Paste into: Elementor → HTML widget
-     Requires knife-law-pages.css installed once in Site Settings → Custom CSS
-     URL: /knife-laws/michigan/
+     MSO — Knife Laws · MICHIGAN   ·   v2, built to the approved wireframe
+     Blocks 01–13. Matches the homepage colour system, card patterns and
+     trust bar. Typography inherits from the theme.
+
+     BUILD NOTE — you do not have to put all of this in one HTML widget.
+     Recommended split, so you can use native Elementor widgets in between:
+       HTML widget A .... blocks 01–07   (hero → restricted places)
+       Elementor widget . block 08 — Products widget, "Top Rated", 4 cols
+       HTML widget B .... blocks 09–13   (seasonal → sibling states)
+     The CSS styles both, and the Elementor Products widget keeps block 08
+     updating itself instead of you hand-editing 51 pages.
      ========================================================================= -->
 
 <div class="mso-kl">
 
-  <header class="mso-kl__head">
-    <p class="mso-kl__eyebrow">Knife Laws by State &middot; 03 &mdash; Michigan</p>
+<!-- ============================ 01 · HERO ============================== -->
+<div class="mso-kl__hero">
+  <div class="mso-kl__inner">
+    <p class="mso-kl__crumb"><a href="/">Home</a> &rsaquo; <a href="/knife-laws/">Knife Laws by State</a> &rsaquo; Michigan</p>
     <h1>Michigan Knife Laws (2026): What You Can Legally Own and Carry</h1>
-    <p class="mso-kl__standfirst">Michigan repealed its switchblade ban in 2017, and there is no statewide blade-length limit. The real risk is concealed carry &mdash; carrying a dagger, dirk or stiletto out of sight is a felony, and that includes having one in your vehicle.</p>
+    <p class="mso-kl__standfirst">Michigan repealed its switchblade ban in 2017 and has no statewide blade-length limit. The real risk is concealed carry &mdash; a dagger, dirk or stiletto out of sight is a felony, and that includes one sitting in your vehicle.</p>
     <p class="mso-kl__byline">
       <span>Last reviewed <strong>1 September 2026</strong></span>
       <span>Reviewed by <strong>[REVIEWER NAME, TITLE]</strong></span>
-      <span>Sources: Michigan Legislature &middot; AKTI</span>
+      <span>Primary sources: <strong>Michigan Legislature</strong>, <strong>AKTI</strong></span>
     </p>
-  </header>
+  </div>
+</div>
 
-  <!-- ============ AT-A-GLANCE — this is the featured-snippet target ====== -->
+<div class="mso-kl__inner">
+
+  <!-- ====================== 02 · AT-A-GLANCE ========================== -->
+  <!-- Featured-snippet target. Keep it above the fold. No commerce above it. -->
   <div class="mso-kl__glance">
+    <div class="mso-kl__glance-hd">Michigan knife law at a glance</div>
     <table>
-      <caption class="mso-kl__eyebrow" style="text-align:left;padding:13px 16px 0">Michigan at a glance</caption>
-      <thead>
-        <tr><th scope="col">Question</th><th scope="col">Answer</th></tr>
-      </thead>
       <tbody>
         <tr>
           <th scope="row">Automatic / switchblade knives</th>
-          <td><span class="mso-kl__pill mso-kl__pill--ok">Legal to own</span> Ban repealed 11 Oct 2017</td>
+          <td><span class="mso-kl__pill mso-kl__pill--ok">Legal to own</span> Ban repealed 11 October 2017</td>
         </tr>
         <tr>
           <th scope="row">Statewide blade-length limit</th>
           <td><span class="mso-kl__pill mso-kl__pill--ok">None</span> No general limit in Michigan law</td>
         </tr>
         <tr>
-          <th scope="row">Open carry, ordinary folder</th>
+          <th scope="row">Open carry of an ordinary folder</th>
           <td><span class="mso-kl__pill mso-kl__pill--ok">Generally lawful</span></td>
         </tr>
         <tr>
@@ -43,7 +53,7 @@
           <td><span class="mso-kl__pill mso-kl__pill--no">Felony</span> Up to 5 years and a $2,500 fine</td>
         </tr>
         <tr>
-          <th scope="row">Same knives inside your vehicle</th>
+          <th scope="row">The same knives inside your vehicle</th>
           <td><span class="mso-kl__pill mso-kl__pill--no">Felony</span> Applies whether or not it is reachable</td>
         </tr>
         <tr>
@@ -53,111 +63,362 @@
       </tbody>
     </table>
   </div>
+  <p class="mso-kl__q">Summarised from MCL 750.226, MCL 750.227 and Public Act 96 of 2017. Full citations at the foot of this page.</p>
 
-  <h2>What Michigan actually prohibits</h2>
-
-  <div class="mso-kl__rules">
-
-    <article class="mso-kl__rule">
-      <div class="mso-kl__rule-top">
-        <h3>Concealed carry of stabbing weapons</h3>
-        <span class="mso-kl__pill mso-kl__pill--no">Felony</span>
-      </div>
-      <p>It is a felony to carry a <strong>dagger, dirk, stiletto, double-edged non-folding stabbing instrument</strong> or other dangerous weapon concealed on your person. The penalty is imprisonment of up to five years, a fine of up to $2,500, or both.</p>
-      <p>The same prohibition covers possession of those weapons <strong>in any vehicle you operate or occupy</strong> &mdash; and it applies whether or not the knife is within reach. A dagger in a locked toolbox in the trunk is still covered.</p>
-      <a class="mso-kl__cite" href="https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-227" rel="noopener">MCL 750.227(1)</a>
-    </article>
-
-    <article class="mso-kl__rule">
-      <div class="mso-kl__rule-top">
-        <h3>Carrying any knife with unlawful intent</h3>
-        <span class="mso-kl__pill mso-kl__pill--no">Felony</span>
-      </div>
-      <p>Separately, it is an offence to carry a dangerous weapon &mdash; including a knife with a blade over three inches &mdash; <strong>with intent to use it unlawfully against another person</strong>.</p>
-      <p>This is where the widely repeated &ldquo;three-inch rule&rdquo; comes from, and it is almost always misquoted. The three-inch threshold only matters once unlawful intent is established. <strong>Michigan has no general three-inch carry limit.</strong></p>
-      <a class="mso-kl__cite" href="https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-226" rel="noopener">MCL 750.226</a>
-    </article>
-
-    <article class="mso-kl__rule">
-      <div class="mso-kl__rule-top">
-        <h3>Automatic and switchblade knives</h3>
-        <span class="mso-kl__pill mso-kl__pill--ok">Legal</span>
-      </div>
-      <p>Public Act 96 of 2017 repealed Michigan&rsquo;s switchblade prohibition, effective <strong>11 October 2017</strong>. Adults may lawfully own and possess automatic-opening knives in Michigan.</p>
-      <p>The repeal did not create a carry exemption. An automatic knife that also meets the description of a dagger or double-edged stabbing instrument remains subject to the concealed-carry felony above.</p>
-      <a class="mso-kl__cite" href="https://www.legislature.mi.gov/documents/2017-2018/billanalysis/Senate/htm/2017-SFA-0245-N.htm" rel="noopener">Public Act 96 of 2017, repealing MCL 750.226a</a>
-    </article>
-
-    <article class="mso-kl__rule">
-      <div class="mso-kl__rule-top">
-        <h3>Local ordinances &mdash; no state preemption</h3>
-        <span class="mso-kl__pill mso-kl__pill--warn">Check your city</span>
-      </div>
-      <p>Michigan has <strong>no knife preemption statute</strong>. The state&rsquo;s preemption law, MCL 123.1102, covers pistols, firearms, pneumatic guns and ammunition &mdash; it does not mention knives. A knife preemption bill passed both chambers in 2021 and was vetoed.</p>
-      <p>Cities may therefore set their own limits. <strong>Detroit and Lansing both restrict carrying knives with blades over three inches in public places.</strong> Check the municipal code for the city you are carrying in, not just state law.</p>
-      <a class="mso-kl__cite" href="https://www.akti.org/state-knife-laws/michigan/" rel="noopener">AKTI &mdash; Michigan</a>
-    </article>
-
-    <!-- ADD VERIFIED ROWS HERE. Suggested next: weapon-free school zones,
-         courthouses and government buildings, minors. Do not publish a statute
-         number you have not read on legislature.mi.gov. -->
-
-  </div>
-
-  <div class="mso-kl__note mso-kl__note--warn">
-    <strong>The single most common mistake.</strong> People assume the switchblade repeal legalised concealed carry of everything. It did not. Michigan draws its line at the <em>shape and function</em> of the blade &mdash; double-edged, non-folding, built to stab &mdash; not at how it opens.
-  </div>
-
-  <!-- ==================== COMMERCIAL BRIDGE ============================== -->
-  <!-- This is why a retailer builds this page. Point it at real collections. -->
-  <section class="mso-kl__shop" aria-labelledby="mso-kl-shop-h">
-    <span class="mso-kl__shop-label">Shop by what is legal here</span>
-    <h2 id="mso-kl-shop-h">Knives you can carry in Michigan</h2>
-    <p>Single-edged folding knives, hand-picked to stay clear of Michigan&rsquo;s dagger and double-edged restrictions. Sub-3&Prime; options included for carry inside Detroit and Lansing.</p>
-    <div class="mso-kl__ctas">
-      <a class="mso-kl__btn mso-kl__btn--solid" href="/collections/michigan-legal-carry-knives/">Michigan-legal folders</a>
-      <a class="mso-kl__btn mso-kl__btn--ghost" href="/collections/edc-knives-under-3-inch/">Under 3&Prime; for city carry</a>
+  <!-- ============ 03 · COMMERCE — primary, at peak intent ============= -->
+  <!-- VERIFY before publishing: only apply the MI-LEGAL chip to knives you
+       have confirmed are single-edged and non-dagger. The chip is a
+       legal-adjacent claim, so it needs the same care as the statute text. -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__sec-head">
+      <h2>Knives You Can Carry in Michigan</h2>
+      <p class="mso-kl__sec-sub">Single-edged folders, clear of Michigan&rsquo;s dagger and double-edged restrictions</p>
     </div>
-    <p class="mso-kl__trust">
-      <span>Authorised dealer</span>
-      <span>Ships in 2&ndash;3 business days</span>
-      <span>30-day returns, prepaid label</span>
-    </p>
-  </section>
 
-  <h2>Sources</h2>
-  <ul class="mso-kl__sources">
-    <li><a href="https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-227" rel="noopener">MCL 750.227 &mdash; Concealed weapons; carrying</a>, Michigan Legislature</li>
-    <li><a href="https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-226" rel="noopener">MCL 750.226 &mdash; Carrying firearm or dangerous weapon with unlawful intent</a>, Michigan Legislature</li>
-    <li><a href="https://www.legislature.mi.gov/documents/2017-2018/billanalysis/Senate/htm/2017-SFA-0245-N.htm" rel="noopener">SB 245 bill analysis as enacted &mdash; repeal of switchblade prohibition</a>, Michigan Senate Fiscal Agency, 15 August 2017</li>
-    <li><a href="https://www.akti.org/state-knife-laws/michigan/" rel="noopener">Michigan Knife Laws</a>, American Knife &amp; Tool Institute</li>
-  </ul>
+    <div class="mso-kl__grid">
 
-  <div class="mso-kl__disclaimer">
-    <strong>This is not legal advice.</strong> Knife law changes, and local ordinances vary widely across Michigan&rsquo;s cities and townships. This page summarises the statutes cited above as of the review date and is published for general information. Confirm the current text with the Michigan Legislature, and consult a licensed Michigan attorney before relying on it.
+      <div class="mso-kl__prod">
+        <span class="mso-kl__legal-chip">MI-Legal</span>
+        <a class="mso-kl__prod-img" href="/product/vosteed-crossbar-lock-blue/"><img src="/wp-content/uploads/vosteed-crossbar-blue.jpg" alt="Vosteed Crossbar Lock, blue handle" loading="lazy" width="400" height="400"></a>
+        <div class="mso-kl__prod-body">
+          <span class="mso-kl__prod-micro">Vosteed</span>
+          <p class="mso-kl__prod-name"><a href="/product/vosteed-crossbar-lock-blue/">Vosteed Crossbar Lock Blue</a></p>
+          <span class="mso-kl__prod-spec">3.25&Prime; &middot; 14C28N &middot; single edge</span>
+          <div class="mso-kl__prod-price"><span class="mso-kl__was">$66.00</span><span class="mso-kl__now">$52.80</span></div>
+        </div>
+      </div>
+
+      <div class="mso-kl__prod">
+        <span class="mso-kl__legal-chip">MI-Legal</span>
+        <a class="mso-kl__prod-img" href="/product/kubey-knives-bluff-brown/"><img src="/wp-content/uploads/kubey-bluff-brown.jpg" alt="Kubey Knives Bluff, brown handle" loading="lazy" width="400" height="400"></a>
+        <div class="mso-kl__prod-body">
+          <span class="mso-kl__prod-micro">Kubey Knives</span>
+          <p class="mso-kl__prod-name"><a href="/product/kubey-knives-bluff-brown/">Kubey Knives Bluff Brown</a></p>
+          <span class="mso-kl__prod-spec">3.50&Prime; &middot; D2 &middot; single edge</span>
+          <div class="mso-kl__prod-price"><span class="mso-kl__was">$85.00</span><span class="mso-kl__now">$68.00</span></div>
+        </div>
+      </div>
+
+      <div class="mso-kl__prod">
+        <span class="mso-kl__legal-chip mso-kl__legal-chip--warn">Under 3&Prime;</span>
+        <a class="mso-kl__prod-img" href="/product/elk-ridge-wildlife-linerlock/"><img src="/wp-content/uploads/elk-ridge-linerlock.jpg" alt="Elk Ridge Wildlife linerlock folder" loading="lazy" width="400" height="400"></a>
+        <div class="mso-kl__prod-body">
+          <span class="mso-kl__prod-micro">Elk Ridge</span>
+          <p class="mso-kl__prod-name"><a href="/product/elk-ridge-wildlife-linerlock/">Elk Ridge Wildlife Linerlock</a></p>
+          <span class="mso-kl__prod-spec">2.80&Prime; &middot; stainless &middot; city-carry safe</span>
+          <div class="mso-kl__prod-price"><span class="mso-kl__was">$12.00</span><span class="mso-kl__now">$8.70</span></div>
+        </div>
+      </div>
+
+      <div class="mso-kl__prod">
+        <span class="mso-kl__legal-chip">MI-Legal</span>
+        <a class="mso-kl__prod-img" href="/product/bestech-knives-sanuk/"><img src="/wp-content/uploads/bestech-sanuk.jpg" alt="Bestech Knives Sanuk folder" loading="lazy" width="400" height="400"></a>
+        <div class="mso-kl__prod-body">
+          <span class="mso-kl__prod-micro">Bestech Knives</span>
+          <p class="mso-kl__prod-name"><a href="/product/bestech-knives-sanuk/">Bestech Knives Sanuk</a></p>
+          <span class="mso-kl__prod-spec">3.15&Prime; &middot; 14C28N &middot; single edge</span>
+          <div class="mso-kl__prod-price"><span class="mso-kl__was">$61.00</span><span class="mso-kl__now">$49.00</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mso-kl__ctas">
+      <a class="mso-kl__btn" href="/collections/michigan-legal-carry-knives/">Shop All Michigan-Legal Folders</a>
+      <a class="mso-kl__btn mso-kl__btn--ghost" href="/collections/edc-knives-under-3-inch/">Under 3&Prime; for Detroit &amp; Lansing</a>
+    </div>
   </div>
 
-  <h2>Knife laws in other states</h2>
-  <ul class="mso-kl__states">
-    <li><a href="/knife-laws/texas/">Texas</a></li>
-    <li><a href="/knife-laws/florida/">Florida</a></li>
-    <li><a href="/knife-laws/pennsylvania/">Pennsylvania</a></li>
-    <li><a href="/knife-laws/ohio/">Ohio</a></li>
-    <li><a href="/knife-laws/new-york/">New York</a></li>
-    <li><a href="/knife-laws/georgia/">Georgia</a></li>
-    <li><a href="/knife-laws/north-carolina/">North Carolina</a></li>
-    <li><a href="/knife-laws/tennessee/">Tennessee</a></li>
-    <li><a href="/knife-laws/california/">California</a></li>
-    <li><a href="/knife-laws/">All 50 states &rarr;</a></li>
-  </ul>
+  <!-- ====================== 04 · RULE CARDS =========================== -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__sec-head">
+      <h2>What Michigan Actually Prohibits</h2>
+      <p class="mso-kl__sec-sub">Every rule below cites the statute it comes from</p>
+    </div>
 
+    <div class="mso-kl__rules">
+
+      <article class="mso-kl__rule mso-kl__rule--no">
+        <div class="mso-kl__rule-top">
+          <h3>Concealed carry of stabbing weapons</h3>
+          <span class="mso-kl__pill mso-kl__pill--no">Felony</span>
+        </div>
+        <p>It is a felony to carry a <strong>dagger, dirk, stiletto, double-edged non-folding stabbing instrument</strong> or other dangerous weapon concealed on your person. The penalty is up to five years&rsquo; imprisonment, a fine of up to $2,500, or both.</p>
+        <p>The same prohibition covers possession of those weapons <strong>in any vehicle you operate or occupy</strong> &mdash; and it applies whether or not the knife is within reach. A dagger locked in the trunk is still covered.</p>
+        <a class="mso-kl__cite" href="https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-227" rel="noopener">MCL 750.227(1)</a>
+      </article>
+
+      <article class="mso-kl__rule mso-kl__rule--no">
+        <div class="mso-kl__rule-top">
+          <h3>Carrying any knife with unlawful intent</h3>
+          <span class="mso-kl__pill mso-kl__pill--no">Felony</span>
+        </div>
+        <p>Separately, it is an offence to carry a dangerous weapon &mdash; including a knife with a blade over three inches &mdash; <strong>with intent to use it unlawfully against another person</strong>.</p>
+        <p>This is where the widely repeated &ldquo;three-inch rule&rdquo; comes from, and it is almost always misquoted. The threshold only matters once unlawful intent is established.</p>
+        <a class="mso-kl__cite" href="https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-226" rel="noopener">MCL 750.226</a>
+      </article>
+
+      <article class="mso-kl__rule mso-kl__rule--ok">
+        <div class="mso-kl__rule-top">
+          <h3>Automatic and switchblade knives</h3>
+          <span class="mso-kl__pill mso-kl__pill--ok">Legal</span>
+        </div>
+        <p>Public Act 96 of 2017 repealed Michigan&rsquo;s switchblade prohibition, effective <strong>11 October 2017</strong>. Adults may lawfully own and possess automatic-opening knives in Michigan.</p>
+        <p>The repeal did not create a carry exemption. An automatic that also meets the description of a dagger or double-edged stabbing instrument remains subject to the concealed-carry felony above.</p>
+        <a class="mso-kl__cite" href="https://www.legislature.mi.gov/documents/2017-2018/billanalysis/Senate/htm/2017-SFA-0245-N.htm" rel="noopener">Public Act 96 of 2017, repealing MCL 750.226a</a>
+      </article>
+
+      <article class="mso-kl__rule">
+        <div class="mso-kl__rule-top">
+          <h3>Local ordinances &mdash; no state preemption</h3>
+          <span class="mso-kl__pill mso-kl__pill--warn">Check your city</span>
+        </div>
+        <p>Michigan has <strong>no knife preemption statute</strong>. The state&rsquo;s preemption law, MCL 123.1102, covers pistols, firearms, pneumatic guns and ammunition &mdash; it does not mention knives. A knife preemption bill passed both chambers in 2021 and was vetoed.</p>
+        <p>Cities may therefore set their own limits. <strong>Detroit and Lansing both restrict carrying knives with blades over three inches in public places.</strong></p>
+        <a class="mso-kl__cite" href="https://www.akti.org/state-knife-laws/michigan/" rel="noopener">AKTI &mdash; Michigan</a>
+      </article>
+
+      <!-- ADD VERIFIED CARDS HERE. Next up: weapon-free school zones, courthouses,
+           minors. Do not publish a statute number you have not read on
+           legislature.mi.gov. -->
+
+    </div>
+
+    <!-- ==================== 05 · MYTH CORRECTION ===================== -->
+    <div class="mso-kl__myth">
+      <h3>The mistake almost everyone makes</h3>
+      <p>People assume the 2017 switchblade repeal legalised concealed carry of everything. It did not. <strong>Michigan draws its line at the shape and function of the blade</strong> &mdash; double-edged, non-folding, built to stab &mdash; not at how the knife opens. A legal automatic can still be an illegal concealed weapon if its blade is dagger-shaped.</p>
+    </div>
+  </div>
+
+  <!-- =============== 06 · COMMERCE — top categories =================== -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__sec-head">
+      <h2>Top Knife Categories in Michigan</h2>
+      <p class="mso-kl__sec-sub">Built around how Michigan hunters and EDC carriers actually use them</p>
+    </div>
+    <div class="mso-kl__grid mso-kl__grid--6">
+      <a class="mso-kl__cat" href="/collections/hunting-knives/">
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-hunting.jpg" alt="Hunting knives" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Hunting Knives</span><span class="mso-kl__cat-count">[N] products</span></span>
+      </a>
+      <a class="mso-kl__cat" href="/collections/field-dressing-knives/">
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-field-dressing.jpg" alt="Field dressing knives" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Field Dressing</span><span class="mso-kl__cat-count">[N] products</span></span>
+      </a>
+      <a class="mso-kl__cat" href="/collections/edc-folding-knives/">
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-edc.jpg" alt="EDC folding knives" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">EDC Folders</span><span class="mso-kl__cat-count">[N] products</span></span>
+      </a>
+      <a class="mso-kl__cat" href="/collections/fixed-blade-knives/">
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-fixed.jpg" alt="Fixed blade knives" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Fixed Blades</span><span class="mso-kl__cat-count">[N] products</span></span>
+      </a>
+      <a class="mso-kl__cat" href="/collections/edc-knives-under-3-inch/">
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-under3.jpg" alt="Knives under three inches" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Under 3&Prime; City Carry</span><span class="mso-kl__cat-count">[N] products</span></span>
+      </a>
+      <a class="mso-kl__cat" href="/collections/automatic-knives/">
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-auto.jpg" alt="Automatic knives" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Automatic Knives</span><span class="mso-kl__cat-count">[N] products</span></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ============ 07 · WHERE YOU STILL CANNOT CARRY =================== -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__sec-head">
+      <h2>Where You Still Cannot Carry in Michigan</h2>
+      <p class="mso-kl__sec-sub">State law is only half the picture &mdash; there is no preemption here</p>
+    </div>
+    <div class="mso-kl__where">
+      <table>
+        <thead><tr><th scope="col">Place</th><th scope="col">Restriction</th><th scope="col">Source</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Detroit</td>
+            <td>Blades over three inches restricted in public places</td>
+            <td>City ordinance &mdash; verify current text</td>
+          </tr>
+          <tr>
+            <td>Lansing</td>
+            <td>Blades over three inches restricted in public places</td>
+            <td>City ordinance &mdash; verify current text</td>
+          </tr>
+          <tr>
+            <td>Anywhere, concealed</td>
+            <td>Daggers, dirks, stilettos and double-edged non-folding blades</td>
+            <td>MCL 750.227(1)</td>
+          </tr>
+          <!-- ADD once verified: weapon-free school zones, courthouses,
+               federal buildings, airports. -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========= 08 · COMMERCE + TRUST — fan favourites ================= -->
+  <!-- LAUNCH LABEL: "Staff Picks". Relabel to "Best Rated by Our Customers"
+       only once the review app has genuine review counts. Do NOT label this
+       "top sellers in Michigan" — you do not yet have the order volume to
+       say it truthfully. Alternatively replace this whole block with an
+       Elementor Products widget set to Top Rated. -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__sec-head">
+      <h2>Staff Picks for Michigan Conditions</h2>
+      <p class="mso-kl__sec-sub">Chosen for cold-weather grip, gloved use and deer season</p>
+    </div>
+    <div class="mso-kl__grid">
+      <div class="mso-kl__prod">
+        <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/pick-1.jpg" alt="" loading="lazy" width="400" height="400"></a>
+        <div class="mso-kl__prod-body">
+          <span class="mso-kl__prod-micro">[Brand]</span>
+          <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+          <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+          <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+        </div>
+      </div>
+      <div class="mso-kl__prod">
+        <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/pick-2.jpg" alt="" loading="lazy" width="400" height="400"></a>
+        <div class="mso-kl__prod-body">
+          <span class="mso-kl__prod-micro">[Brand]</span>
+          <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+          <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+          <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+        </div>
+      </div>
+      <div class="mso-kl__prod">
+        <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/pick-3.jpg" alt="" loading="lazy" width="400" height="400"></a>
+        <div class="mso-kl__prod-body">
+          <span class="mso-kl__prod-micro">[Brand]</span>
+          <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+          <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+          <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+        </div>
+      </div>
+      <div class="mso-kl__prod">
+        <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/pick-4.jpg" alt="" loading="lazy" width="400" height="400"></a>
+        <div class="mso-kl__prod-body">
+          <span class="mso-kl__prod-micro">[Brand]</span>
+          <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+          <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+          <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================ 09 · SEASONAL STRIP — swappable ================= -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__promo">
+      <span class="mso-kl__promo-img"><img src="/wp-content/uploads/promo-deer-season.jpg" alt="Michigan deer season" loading="lazy" width="640" height="400"></span>
+      <div class="mso-kl__promo-body">
+        <span class="mso-kl__promo-kicker">Michigan season &middot; 2026</span>
+        <h3>Archery opens 1 October. Firearm opens 15 November.</h3>
+        <p>Field dressing and skinning knives, gut hooks and bone saws &mdash; picked for Michigan whitetail and packed to ship in two to three business days.</p>
+        <a class="mso-kl__btn" href="/collections/michigan-deer-season-gear/">Shop Deer Season Gear</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 11 · EMAIL CAPTURE ============================= -->
+  <!-- Block 10 (photo review wall) stays hidden until the review app has
+       real photo reviews. An empty block is worse than no block. -->
+  <div class="mso-kl__capture">
+    <h3>We&rsquo;ll email you if Michigan knife law changes</h3>
+    <p>No promotions on this list &mdash; just a note when a statute, a court ruling or a city ordinance changes what you can legally carry in Michigan.</p>
+    <form class="mso-kl__capture-form" action="[YOUR FORM ENDPOINT]" method="post">
+      <label class="screen-reader-text" for="mso-kl-email" style="position:absolute;left:-9999px">Email address</label>
+      <input type="email" id="mso-kl-email" name="email" placeholder="your@email.com" required>
+      <button type="submit" class="mso-kl__btn">Notify Me</button>
+    </form>
+    <p class="mso-kl__capture-note">Michigan law updates only. Unsubscribe any time.</p>
+  </div>
+
+  <!-- ==================== TRUST BAR (site pattern) ==================== -->
+  <div class="mso-kl__trust">
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9873;</span><span class="mso-kl__trust-t">Authorised Dealer</span><span class="mso-kl__trust-s">Genuine stock only</span></div>
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9992;</span><span class="mso-kl__trust-t">Free Shipping</span><span class="mso-kl__trust-s">On orders over $50</span></div>
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#8635;</span><span class="mso-kl__trust-t">30 Days Return</span><span class="mso-kl__trust-s">Prepaid label</span></div>
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9878;</span><span class="mso-kl__trust-t">Ships 2&ndash;3 Days</span><span class="mso-kl__trust-s">Weekdays only</span></div>
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9993;</span><span class="mso-kl__trust-t">Help Center</span><span class="mso-kl__trust-s">24/7 support</span></div>
+  </div>
+
+  <!-- ============== 12 · SOURCES + DISCLAIMER ======================== -->
+  <div class="mso-kl__sec mso-kl__sec--left">
+    <div class="mso-kl__sec-head"><h2>Sources</h2></div>
+    <div class="mso-kl__narrow" style="margin:0">
+      <ul class="mso-kl__sources">
+        <li><a href="https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-227" rel="noopener">MCL 750.227 &mdash; Concealed weapons; carrying</a>, Michigan Legislature</li>
+        <li><a href="https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-226" rel="noopener">MCL 750.226 &mdash; Carrying firearm or dangerous weapon with unlawful intent</a>, Michigan Legislature</li>
+        <li><a href="https://www.legislature.mi.gov/documents/2017-2018/billanalysis/Senate/htm/2017-SFA-0245-N.htm" rel="noopener">SB 245 bill analysis as enacted &mdash; repeal of the switchblade prohibition</a>, Michigan Senate Fiscal Agency, 15 August 2017</li>
+        <li><a href="https://www.akti.org/state-knife-laws/michigan/" rel="noopener">Michigan Knife Laws</a>, American Knife &amp; Tool Institute</li>
+      </ul>
+      <div class="mso-kl__disclaimer">
+        <strong>This is not legal advice.</strong> Knife law changes, and local ordinances vary widely across Michigan&rsquo;s cities and townships. This page summarises the statutes cited above as of the review date and is published for general information. Confirm the current text with the Michigan Legislature, and consult a licensed Michigan attorney before relying on it.
+      </div>
+    </div>
+  </div>
+
+  <!-- ================== 13 · SIBLING STATES ========================== -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__sec-head">
+      <h2>Knife Laws in Other States</h2>
+      <p class="mso-kl__sec-sub">Carrying across state lines? Check before you travel</p>
+    </div>
+    <ul class="mso-kl__states">
+      <li><a href="/knife-laws/texas/">Texas</a></li>
+      <li><a href="/knife-laws/florida/">Florida</a></li>
+      <li><a href="/knife-laws/pennsylvania/">Pennsylvania</a></li>
+      <li><a href="/knife-laws/ohio/">Ohio</a></li>
+      <li><a href="/knife-laws/new-york/">New York</a></li>
+      <li><a href="/knife-laws/georgia/">Georgia</a></li>
+      <li><a href="/knife-laws/north-carolina/">North Carolina</a></li>
+      <li><a href="/knife-laws/tennessee/">Tennessee</a></li>
+      <li><a href="/knife-laws/california/">California</a></li>
+      <li><a href="/knife-laws/illinois/">Illinois</a></li>
+      <li><a href="/knife-laws/wisconsin/">Wisconsin</a></li>
+      <li><a class="is-all" href="/knife-laws/">All 50 States &rarr;</a></li>
+    </ul>
+  </div>
+
+</div><!-- /.mso-kl__inner -->
+</div><!-- /.mso-kl -->
+
+<!-- ===================== STICKY BAR (mobile CRO) ======================== -->
+<div class="mso-kl-sticky" id="msoKlSticky" hidden>
+  <p>Michigan-legal folders &mdash; ships in 2&ndash;3 days</p>
+  <a class="mso-kl__btn" href="/collections/michigan-legal-carry-knives/">Shop Now</a>
+  <button class="mso-kl-sticky__x" type="button" aria-label="Dismiss">&times;</button>
 </div>
 
-<!-- =========================== STRUCTURED DATA ============================
-     Article + BreadcrumbList. Deliberately NOT FAQPage: Google removed FAQ
-     rich results for non-government, non-health sites in August 2023, so FAQ
-     markup adds risk without any SERP gain.
-     ====================================================================== -->
+<script>
+(function () {
+  var bar = document.getElementById('msoKlSticky');
+  var trigger = document.querySelector('.mso-kl__glance');
+  if (!bar || !trigger || !('IntersectionObserver' in window)) return;
+  bar.hidden = false;
+  var dismissed = false;
+  bar.querySelector('.mso-kl-sticky__x').addEventListener('click', function () {
+    dismissed = true;
+    bar.classList.remove('is-on');
+  });
+  new IntersectionObserver(function (entries) {
+    if (dismissed) return;
+    // show once the at-a-glance table has scrolled off the top
+    var e = entries[0];
+    bar.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0);
+  }, { threshold: 0 }).observe(trigger);
+})();
+</script>
+
+<!-- =========================== STRUCTURED DATA ==========================
+     Article + BreadcrumbList only. No Product schema here — the page's main
+     entity is the article, and marking up these embedded cards would compete
+     with your real product pages for the same rich result.
+     FAQPage deliberately omitted: Google restricted FAQ rich results to
+     government and health sites in August 2023.
+     ==================================================================== -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -177,11 +438,7 @@
       },
       "publisher": { "@id": "https://www.michigansportsoutdoor.com/#organization" },
       "about": { "@type": "Thing", "name": "Knife laws in Michigan" },
-      "spatialCoverage": {
-        "@type": "State",
-        "name": "Michigan",
-        "identifier": "US-MI"
-      },
+      "spatialCoverage": { "@type": "State", "name": "Michigan", "identifier": "US-MI" },
       "citation": [
         "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-227",
         "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-226",
@@ -195,8 +452,8 @@
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home",        "item": "https://www.michigansportsoutdoor.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Knife Laws",  "item": "https://www.michigansportsoutdoor.com/knife-laws/" },
+        { "@type": "ListItem", "position": 1, "name": "Home",       "item": "https://www.michigansportsoutdoor.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Knife Laws", "item": "https://www.michigansportsoutdoor.com/knife-laws/" },
         { "@type": "ListItem", "position": 3, "name": "Michigan" }
       ]
     }
