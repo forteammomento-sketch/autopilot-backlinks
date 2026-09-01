@@ -42,11 +42,11 @@ STATES = {
   tile=("California<br>Legal Folders","No switchblades, no dirks","folders-california"),
   chip="CA-Legal",
   cats=BASE_CATS+[CAT_CAMP, CAT_FILLET],
-  season_kicker="California season &middot; 2026",
-  season_h="Deer, Hog and Backcountry",
-  season_p="Field dressing and skinning knives for California deer and year-round wild hog &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
+  season_kicker="Open all year &middot; wild pig",
+  season_h="Wild Pig Year-Round, Deer by Zone",
+  season_p="California wild pig is open every day of the year with no bag limit, so a skinner and a good field dressing knife earn their keep here more than anywhere else. Picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="california-hunting-knives",
-  season_sub="[VERIFY season dates with California Dept. of Fish and Wildlife]",
+  season_sub="Wild pig open year-round, no bag limit &middot; Zone A general 8&ndash;30 Aug &middot; Zones B1&ndash;B6 19 Sep &ndash; 25 Oct &middot; Zone D 26 Sep &ndash; 1 Nov &middot; CDFW",
   legal=[
     ("Folding pocket knives","ok","Legal","No statewide blade-length limit. A folder may be carried openly or concealed when closed."),
     ("Switchblades 2&Prime; and over","no","Illegal","Possession, carry or sale is a misdemeanour under Penal Code 21510 &mdash; up to 6 months and a $1,000 fine. There is no open-carry exception."),
@@ -68,7 +68,7 @@ STATES = {
   season_h="Whitetail, Upland and Adirondack Trips",
   season_p="Field dressing knives, skinners and camp blades for New York whitetail and the Adirondacks &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="new-york-hunting-knives",
-  season_sub="[VERIFY season dates with NY DEC]",
+  season_sub="Northern Zone bow 27 Sep, firearm 24 Oct &middot; Southern Zone bow 1 Oct, firearm 21 Nov &middot; NY DEC",
   legal=[
     ("Gravity knives","ok","Legal since 2019","Repealed from the Penal Law weapon lists on 30 May 2019. Simple possession is no longer a crime."),
     ("Switchblades","no","Prohibited","Still listed in Penal Law 265.01(1), with only narrow exceptions such as the hunting and fishing exception in 265.20(6)."),
@@ -90,7 +90,7 @@ STATES = {
   season_h="Get Field-Ready Before the Opener",
   season_p="Field dressing knives, gut hooks, skinners and bone saws for Ohio whitetail &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="ohio-deer-season-gear",
-  season_sub="[VERIFY season dates with Ohio Division of Wildlife]",
+  season_sub="Archery 26 Sep &ndash; 7 Feb &middot; Gun 30 Nov &ndash; 6 Dec, then 19&ndash;20 Dec &middot; Muzzleloader 2&ndash;5 Jan &middot; Ohio Division of Wildlife",
   legal=[
     ("Switchblades &amp; automatics","ok","Legal","Senate Bill 140 repealed the ban on making and selling switchblade, spring-blade and gravity knives, effective 12 April 2021."),
     ("Concealed carry","ok","Legal","A knife counts as a deadly weapon only if it is used as one. Concealed carry of any knife has been lawful statewide since 12 April 2021."),
@@ -112,7 +112,7 @@ STATES = {
   season_h="Whitetail, Hog and Exotics",
   season_p="Field dressing knives, skinners, gut hooks and bone saws for Texas whitetail and year-round hog &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="texas-deer-season-gear",
-  season_sub="[VERIFY season dates with Texas Parks &amp; Wildlife]",
+  season_sub="Archery 3 Oct &ndash; 6 Nov &middot; General from 7 Nov &mdash; North Zone to 3 Jan, South Zone to 17 Jan &middot; TPWD",
   legal=[
     ("Blade length","ok","No carry limit","Any length is legal to carry. Over 5.5&Prime; becomes a &ldquo;location-restricted knife&rdquo; under Penal Code 46.01 &mdash; a limit on where, not whether."),
     ("Daggers, dirks, Bowie knives","ok","Legal","House Bill 1935 deleted that whole category on 1 September 2017."),
@@ -135,7 +135,7 @@ STATES = {
   season_h="Whitetail, Bear and Small Game",
   season_p="Field dressing knives, skinners, gut hooks and bone saws for Pennsylvania whitetail and bear &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="pennsylvania-deer-season-gear",
-  season_sub="[VERIFY season dates with the PA Game Commission]",
+  season_sub="Archery 3 Oct &ndash; 20 Nov &middot; Firearm 28 Nov &ndash; 13 Dec &middot; WMUs 2B, 5C and 5D open 19 Sep &middot; PA Game Commission",
   legal=[
     ("Automatics &amp; balisongs","ok","Legal","Act 119 of 2022 removed automatic knives from the prohibited offensive weapons definition in 18 Pa.C.S. 908, effective 2 January 2023."),
     ("Blade length","ok","No limit","Pennsylvania sets no statewide blade-length restriction for ordinary carry."),
@@ -157,7 +157,7 @@ STATES = {
   season_h="Whitetail, Hog and Coastal Fishing",
   season_p="Field dressing knives, skinners and fillet blades for Georgia whitetail, year-round hog and the coast &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="georgia-hunting-fishing-knives",
-  season_sub="[VERIFY season dates with Georgia DNR]",
+  season_sub="Archery from 12 Sep &middot; Primitive weapons 10&ndash;16 Oct &middot; Firearms 17 Oct &ndash; 10 Jan &middot; Georgia DNR",
   legal=[
     ("Blades 12&Prime; and under","ok","Carry freely","Georgia defines a &ldquo;knife&rdquo; as a blade greater than 12 inches. Anything at or under that is not a weapon under state law and needs no licence."),
     ("Blades over 12&Prime;","warn","Licence needed","Counts as a weapon under O.C.G.A. 16-11-125.1. Carrying one beyond your home, property, vehicle or business needs a Georgia weapons carry licence."),
@@ -180,7 +180,7 @@ STATES = {
   season_h="Whitetail, Bear and Mountain Trips",
   season_p="Field dressing knives, skinners, gut hooks and bone saws for North Carolina whitetail and bear &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="north-carolina-hunting-knives",
-  season_sub="[VERIFY season dates with NC Wildlife Resources Commission]",
+  season_sub="Archery statewide from 12 Sep &middot; Gun opens 17 Oct in the east, 28 Nov in the mountains &middot; every zone closes 1 Jan &middot; NCWRC",
   legal=[
     ("Blade length","ok","No limit","North Carolina sets no statutory blade-length restriction. Case law has treated a folder around 4.5&Prime; closed as an ordinary pocket knife."),
     ("Open carry","ok","Lawful","N.C.G.S. 14-269 restricts concealed carry only. No statute bars open carry of knives generally."),
@@ -202,7 +202,7 @@ STATES = {
   season_h="Whitetail, Turkey and Backcountry",
   season_p="Field dressing knives, skinners, gut hooks and bone saws for Tennessee whitetail &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="tennessee-deer-season-gear",
-  season_sub="[VERIFY season dates with Tennessee Wildlife Resources Agency]",
+  season_sub="Archery from 26 Sep &middot; Muzzleloader 7&ndash;20 Nov &middot; Gun 21 Nov &ndash; 3 Jan &middot; TWRA",
   legal=[
     ("Blade length","ok","No limit","The old four-inch restriction was repealed effective 1 July 2014 by 2014 Tenn. Acts ch. 870."),
     ("Switchblades &amp; automatics","ok","Legal","The switchblade ban went in the same 2014 repeal. Automatics are legal to own and carry."),
@@ -224,7 +224,7 @@ STATES = {
   season_h="Whitetail, Upland and Lake Fishing",
   season_p="Field dressing knives, skinners and fillet blades for Illinois whitetail and lake fishing &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="illinois-hunting-fishing-knives",
-  season_sub="[VERIFY season dates with Illinois DNR]",
+  season_sub="Archery from 1 Oct &middot; Firearm 20&ndash;22 Nov and 3&ndash;6 Dec &middot; Muzzleloader 11&ndash;13 Dec &middot; Illinois DNR",
   legal=[
     ("Folding knives","ok","Legal","Conventional folding knives are legal to own and carry in Illinois with no permit."),
     ("Switchblades &amp; OTF","warn","FOID card only","720 ILCS 5/24-1(a)(1) prohibits switchblades, but 24-1(e)(2) exempts a person holding a currently valid FOID card, which requires being 21 or over."),
@@ -246,7 +246,7 @@ STATES = {
   season_h="Whitetail, Waterfowl and Great Lakes Fishing",
   season_p="Field dressing knives, skinners and fillet blades for Wisconsin whitetail and Great Lakes fishing &mdash; picked by Michigan Sports Outdoor and shipped in two to three business days.",
   season_slug="wisconsin-hunting-fishing-knives",
-  season_sub="[VERIFY season dates with Wisconsin DNR]",
+  season_sub="Archery and crossbow from 12 Sep &middot; Nine-day gun hunt 21&ndash;29 Nov &middot; Muzzleloader 30 Nov &ndash; 9 Dec &middot; Wisconsin DNR",
   legal=[
     ("Switchblades &amp; balisongs","ok","Legal","2015 Wisconsin Act 149 repealed Wis. Stat. 941.24 in February 2016, ending the ban on switchblades and butterfly knives."),
     ("Concealed carry","ok","No permit","Act 149 amended the concealed weapon statute, 941.23, to exempt knives entirely. Any knife may be carried openly or concealed."),
@@ -288,11 +288,11 @@ STATES = {
   tile=("No Licence<br>Needed","Since July 2023","edc-folding-knives"),
   chip="FL-Legal",
   cats=BASE_CATS+[CAT_AUTO, CAT_FILLET],
-  season_kicker="Florida season &middot; 2026",
-  season_h="Whitetail, Hog and Inshore Fishing",
-  season_p="Fillet knives, bait knives and field dressing blades &mdash; picked for Florida inshore and year-round hog, and shipped in two to three business days.",
+  season_kicker="Open all year &middot; wild hog",
+  season_h="Wild Hog Year-Round, Deer by Zone",
+  season_p="Florida wild hog runs year-round on private land with no bag limit and no closed season. Fillet knives, bait knives and field dressing blades &mdash; picked for Florida inshore and hog, shipped in two to three business days.",
   season_slug="florida-hunting-fishing-knives",
-  season_sub="[VERIFY season dates with Florida FWC]",
+  season_sub="Wild hog year-round on private land, no bag limit &middot; Zone A gun 19 Sep &ndash; 18 Oct and 21 Nov &ndash; 3 Jan &middot; Zone C archery 12 Sep &ndash; 11 Oct &middot; FWC",
   legal=[
     ("Concealed carry, 21+","ok","No licence","House Bill 543 extended permitless concealed carry to weapons including knives on 1 July 2023. You must meet the criteria for a Concealed Weapon Licence and carry valid ID."),
     ("Blade length","ok","None in statute","The four-inch figure is case law on what counts as a &ldquo;common pocketknife&rdquo; under 790.001 &mdash; not a carry limit."),
