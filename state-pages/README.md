@@ -5,11 +5,19 @@ Michigan Sports Outdoor · commerce-first state landing pages, Elementor-ready.
 | File | Where it goes |
 |---|---|
 | `state-pages.css` | **Once**, Elementor → Site Settings → Custom CSS |
+| `index.html` | **The `/knives/` hub — build this page first** |
 | Twelve state files — `michigan` `florida` `california` `new-york` `ohio` `texas` `pennsylvania` `georgia` `north-carolina` `tennessee` `illinois` `wisconsin` | HTML widget, one per page |
-| `build_states.py` | Regenerates all twelve. Add a state to **both** `STATES` and `SIBLINGS`, then rerun. |
+| `build_states.py` | Regenerates all twelve **plus the hub**. Add a state to `STATES`, `SIBLINGS` and `HUB`, then rerun. |
 
 URLs: `/knives/{state-slug}/` — twelve states, listed above
-Hub: `/knives/` — build this first, it is what they all link up to.
+Hub: `/knives/` — from `index.html`. **Build this page first**; it is what all
+twelve link up to, and it links back down to each of them.
+
+That reciprocal structure is the whole point. Without it you have twelve
+orphan pages instead of one asset. The hub carries a comparison table of all
+twelve states across blade limit, automatics, concealed carry and preemption
+— which is both the most useful thing on the page and the block most likely
+to win a featured snippet.
 
 ## What these are
 
@@ -81,12 +89,20 @@ against that state before applying the chip.
 
 ## Adding more states
 
-Edit `build_states.py` and rerun. Add the state to **`STATES`** *and* to
-**`SIBLINGS`** — `SIBLINGS` only lists states that actually have a page, so
-forgetting it ships a broken link on every other page.
+Edit `build_states.py` and rerun. Three places need the new state:
+
+| Dict | What it drives | If you forget |
+|---|---|---|
+| `STATES` | The page itself | No page is generated |
+| `SIBLINGS` | Cross-links and hub order | Broken link on every other page |
+| `HUB` | The card and comparison row on `/knives/` | `KeyError` when the hub builds |
 
 Each `STATES` entry needs a headline, a hero line, four legal facts with a
-pill class, source links, season copy, and the category list.
+pill class, source links, season copy, and the category list. Each `HUB`
+entry is a tagline plus four short verdicts with a colour class.
+
+Rerunning regenerates every page and the hub together, so the comparison
+table and the cross-links can never drift out of step with the pages.
 
 **Research the legal facts from the state legislature's own site or AKTI.**
 Use AI to tidy the wording once the verified fact is in hand — never to supply
