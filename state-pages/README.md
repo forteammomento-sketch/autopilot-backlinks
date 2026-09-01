@@ -5,11 +5,11 @@ Michigan Sports Outdoor · commerce-first state landing pages, Elementor-ready.
 | File | Where it goes |
 |---|---|
 | `state-pages.css` | **Once**, Elementor → Site Settings → Custom CSS |
-| `california.html` `new-york.html` `ohio.html` `texas.html` | HTML widget, one per page |
-| `build_states.py` | Regenerates all four. Add a state to `STATES` and rerun. |
+| `california.html` `new-york.html` `ohio.html` `texas.html` `pennsylvania.html` `georgia.html` | HTML widget, one per page |
+| `build_states.py` | Regenerates all six. Add a state to `STATES` and rerun. |
 
-URLs: `/knives/california/`, `/knives/new-york/`, `/knives/ohio/`, `/knives/texas/`
-Hub: `/knives/` — build this first, it is what the four link up to.
+URLs: `/knives/{state-slug}/` — california, new-york, ohio, texas, pennsylvania, georgia
+Hub: `/knives/` — build this first, it is what they all link up to.
 
 ## What these are
 
@@ -33,6 +33,8 @@ notice saying so plainly:
 | New York | **Filtered out** | Switchblades still listed in Penal Law 265.01(1) |
 | Ohio | Included | Legal since SB 140, 12 April 2021 |
 | Texas | Included | Legal since HB 1862, 1 September 2013 |
+| Pennsylvania | Included | Legal since Act 119 of 2022, 2 January 2023 |
+| Georgia | Included | No switchblade ban in Georgia law |
 
 Telling a California buyer up front that you will not sell them a switchblade
 is worth more than the sale you lose. It prevents a return, it prevents a
@@ -60,7 +62,8 @@ against that state before applying the chip.
 - [ ] `[YOUR FORM ENDPOINT]` replaced, or the form swapped for an Elementor Form
 - [ ] Reviews section holds real reviews, **or is deleted entirely**
 - [ ] Season dates verified — every page carries a `[VERIFY]` marker with the
-      agency to check (CDFW, NY DEC, Ohio Division of Wildlife, TPWD)
+      agency to check (CDFW, NY DEC, Ohio Division of Wildlife, TPWD, PA Game
+      Commission, Georgia DNR)
 - [ ] Images uploaded: hero 1600×600, tile 400×500, promo 640×400,
       6 categories 320×240, 8 brand logos, product shots 400×400
 - [ ] Every source link clicked once to confirm it resolves
@@ -86,6 +89,17 @@ it. Four wrong facts in a box that says "at a glance" is worse than no box.
 | New York | Prohibited | None statewide; NYC requires full concealment | No | Penal Law 265.01(1) |
 | Ohio | Legal | None | **Yes**, SB 156 from 13 Sep 2022 | SB 140, SB 156 |
 | Texas | Legal | None for carry; over 5.5″ is location-restricted | **Yes**, Local Gov't Code 229.001 | Penal Code 46.01, HB 1935 |
+| Pennsylvania | Legal | None | No — firearms only | Act 119 of 2022, 18 Pa.C.S. 908 |
+| Georgia | Legal | Over 12″ needs a carry licence | **Yes**, O.C.G.A. 16-11-173 | O.C.G.A. 16-11-125.1 |
 
-Ohio's reform was **SB 140 and SB 156** — HB 243 was introduced but is not the
-law that passed. Cite the right ones.
+Two things worth getting right, because most pages online do not:
+
+- Ohio's reform was **SB 140 and SB 156**. HB 243 was introduced but is not the
+  law that passed.
+- New York's 2019 repeal covered **gravity knives only**. Switchblades are
+  still prohibited there.
+- Pennsylvania's Philadelphia ordinance was declared **unenforceable by a
+  federal court in 2023**, and the city was enjoined from enforcing it. Pages
+  still telling readers Philadelphia bans knife carry are out of date.
+- Georgia raised its weapon threshold from **five inches to twelve** in 2017.
+  Older guides still quote five.
