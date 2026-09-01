@@ -1,290 +1,423 @@
 <!-- =========================================================================
-     Michigan Sports Outdoor — Knife Laws · {{STATE}}   ·   v3 BLANK TEMPLATE
-     SEO + AI-search optimised. Replace every {{TOKEN}}.
-     Keyword map and AI-search rules at the foot of this file.
+     Michigan Sports Outdoor — Knife Laws · {{STATE}}   ·   v4 TEMPLATE
+     Homepage-style layout. Replace every {{TOKEN}}.
 
-     RULE: every answer sentence must be verifiable against a primary source.
-     Delete any question you cannot cite. Never generate legal facts.
+     Fill checklist and keyword map are at the FOOT of this file — read them
+     before you start writing.
+
+     ONE RULE: every legal answer must come from the state legislature's own
+     site or AKTI. Use AI to tidy the wording, never to supply the facts.
+     Delete any question you cannot cite.
 
      BUILD SPLIT for Elementor:
-       HTML widget A .... hero → "which cities" section
-       Elementor widget . Products widget, Top Rated, 4 cols   (staff picks)
-       HTML widget B .... deer season → sibling states
+       HTML widget A .... banner → brand strip
+       HTML widget B .... quick answers → sibling states
      ========================================================================= -->
 
 <div class="mso-kl">
 
-<!-- ============================ 01 · HERO ============================== -->
-<div class="mso-kl__hero">
-  <div class="mso-kl__inner">
-    <p class="mso-kl__crumb"><a href="/">Home</a> &rsaquo; <a href="/knife-laws/">Knife Laws by State</a> &rsaquo; {{STATE}}</p>
-    <h1>{{STATE}} Knife Laws {{YEAR}}: What You Can Legally Own and Carry</h1>
-    <p class="mso-kl__standfirst">{{VERDICT_SENTENCE — lead with the single most useful fact for a carrier, then name the biggest trap. Never open with "Knife laws vary by state."}}</p>
-    <p class="mso-kl__byline">
-      <span>Researched and published by <strong>Michigan Sports Outdoor</strong></span>
-      <span>Last updated <strong>{{REVIEW_DATE}}</strong></span>
-      <span>Primary sources: <strong>{{STATE}} Legislature</strong>, <strong>AKTI</strong></span>
-    </p>
+<!-- ======================= HERO BANNER ================================ -->
+<div class="mso-kl__banner">
+  <span class="mso-kl__banner-bg"><img src="{{BANNER_IMG — 1600x600}}" alt="" loading="eager" width="1600" height="600"></span>
+  <div class="mso-kl__banner-in">
+    <div class="mso-kl__inner">
+      <span class="mso-kl__banner-badge">{{STATE}} &middot; {{YEAR}}</span>
+      <h1>{{STATE}} Knife Laws {{YEAR}}: What You Can Legally Carry</h1>
+      <p>{{TWO_SHORT_FACTS from the table below, then the offer. Example rhythm: "No statewide blade-length limit. Switchblades legal since 2017. Shop knives that stay on the right side of {{STATE}} law — shipped in 2–3 days."}}</p>
+      <div class="mso-kl__ctas">
+        <a class="mso-kl__btn" href="/collections/{{state-slug}}-legal-carry-knives/">Shop {{STATE}}-Legal Knives</a>
+        <a class="mso-kl__btn mso-kl__btn--ghost" style="color:#fff;border-color:rgba(255,255,255,.45)" href="#quick-answers">Read the Rules</a>
+      </div>
+      <p class="mso-kl__banner-meta">
+        <span>By <strong>Michigan Sports Outdoor</strong></span>
+        <span>Updated <strong>{{REVIEW_DATE}}</strong></span>
+        <span>Sources: <strong>{{STATE}} Legislature</strong>, <strong>AKTI</strong></span>
+      </p>
+    </div>
   </div>
 </div>
 
 <div class="mso-kl__inner">
 
-  <!-- ================= KEY FACTS — AI extraction block ================= -->
-  <!-- Every line is self-contained and dated, so it still makes sense when
-       an AI engine quotes it away from the rest of the page. -->
-  <div class="mso-kl__keyfacts">
-    <h2>{{STATE}} knife law &mdash; key facts</h2>
-    <ul>
-      <!-- 5–6 lines. Each MUST be self-contained, declarative and dated — it
-           has to still make sense when an AI engine quotes it on its own.
-           Name {{STATE}} in the sentence. Cite the statute number inline. -->
-      <li><strong>{{DECLARATIVE_FACT naming {{STATE}}.}}</strong> {{One clause of detail with the statute number.}}</li>
-      <li><strong>{{FACT}}</strong> {{Detail}}</li>
-      <li><strong>{{FACT}}</strong> {{Detail}}</li>
-      <li><strong>{{FACT}}</strong> {{Detail}}</li>
-      <li><strong>{{FACT}}</strong> {{Detail}}</li>
-    </ul>
+  <!-- ==================== TRUST BAR (homepage pattern) ================= -->
+  <div class="mso-kl__trust" style="margin-top:0;border-top:0">
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9992;</span><span class="mso-kl__trust-t">Free Shipping</span><span class="mso-kl__trust-s">On orders over $50</span></div>
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9873;</span><span class="mso-kl__trust-t">Authorised Dealer</span><span class="mso-kl__trust-s">Genuine stock only</span></div>
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#8635;</span><span class="mso-kl__trust-t">30 Days Return</span><span class="mso-kl__trust-s">Prepaid label</span></div>
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9878;</span><span class="mso-kl__trust-t">Ships 2&ndash;3 Days</span><span class="mso-kl__trust-s">Weekdays only</span></div>
+    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9993;</span><span class="mso-kl__trust-t">Help Center</span><span class="mso-kl__trust-s">24/7 support</span></div>
   </div>
 
-  <!-- ====================== AT-A-GLANCE TABLE ========================== -->
-  <div class="mso-kl__glance">
-    <div class="mso-kl__glance-hd">{{STATE}} knife law at a glance ({{YEAR}})</div>
-    <table>
-      <tbody>
-        <!-- pill classes: --ok | --warn | --no -->
-        <tr><th scope="row">Statewide blade-length limit</th>
-            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
-        <tr><th scope="row">Automatic / switchblade knives</th>
-            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
-        <tr><th scope="row">Open carry of an ordinary folder</th>
-            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
-        <tr><th scope="row">Concealed carry</th>
-            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
-        <tr><th scope="row">Knives in a vehicle</th>
-            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
-        <tr><th scope="row">Statewide preemption of city rules</th>
-            <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{QUALIFIER}}</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="mso-kl__q">Summarised by Michigan Sports Outdoor from {{STATUTE_LIST}}. Full citations at the foot of this page.</p>
-
-  <!-- ========= COMMERCE (primary) — peak intent, right after answer ==== -->
-  <!-- VERIFY before publishing: apply the {{XX}}-Legal chip only to knives you
-       have confirmed are single-edged and non-dagger. It is a legal-adjacent
-       claim and needs the same care as the statute text. -->
+  <!-- ============ PRODUCTS + PROMO TILE (homepage pattern) ============= -->
   <div class="mso-kl__sec">
     <div class="mso-kl__sec-head">
       <h2>Knives You Can Legally Carry in {{STATE}}</h2>
-      <p class="mso-kl__sec-sub">{{ONE_LINE tied to this state’s actual restriction}}</p>
+      <p class="mso-kl__sec-sub">{{ONE_LINE tied to this state’s actual restriction — blade length, edge count or lock type}}</p>
     </div>
 
     <div class="mso-kl__grid">
-      <!-- ×4. Apply the legal chip ONLY to knives confirmed against this
-           state's restriction — it is a legal-adjacent claim. -->
+
+      <!-- promo tile sits inside the grid, exactly like the homepage.
+           Point it at whatever THIS state's restriction makes relevant —
+           a blade-length collection, a single-edge collection, etc. -->
+      <a class="mso-kl__tile" href="/collections/{{TILE_COLLECTION}}/">
+        <img src="{{TILE_IMG — 400x500}}" alt="" loading="lazy" width="400" height="500">
+        <span class="mso-kl__tile-in">
+          <strong>{{TILE_HEADLINE<br>two short lines}}</strong>
+          <span>{{TILE_SUBLINE}}</span>
+          <em>Shop Now</em>
+        </span>
+      </a>
+
+      <!-- ×6 product cards. Apply the legal chip ONLY to knives you have
+           checked against this state's restriction — it is a claim about
+           legality, so it needs the same care as the statute text.
+           Chip variants:  {{XX}}-Legal  |  class ...--warn for "Under 3″" -->
       <div class="mso-kl__prod">
         <span class="mso-kl__legal-chip">{{XX}}-Legal</span>
         <a class="mso-kl__prod-img" href="{{PRODUCT_URL}}"><img src="{{IMG}}" alt="{{ALT}}" loading="lazy" width="400" height="400"></a>
         <div class="mso-kl__prod-body">
           <span class="mso-kl__prod-micro">{{BRAND}}</span>
           <p class="mso-kl__prod-name"><a href="{{PRODUCT_URL}}">{{PRODUCT_NAME}}</a></p>
-          <span class="mso-kl__prod-spec">{{BLADE}}&Prime; &middot; {{STEEL}} &middot; {{EDGE}}</span>
+          <span class="mso-kl__prod-spec">{{BLADE}}&Prime; &middot; {{STEEL}}</span>
           <div class="mso-kl__prod-price"><span class="mso-kl__was">${{WAS}}</span><span class="mso-kl__now">${{NOW}}</span></div>
         </div>
       </div>
+
     </div>
 
     <div class="mso-kl__ctas">
-      <a class="mso-kl__btn" href="/collections/{{state-slug}}-legal-carry-knives/">Shop All {{STATE}}-Legal Folders</a>
-      <a class="mso-kl__btn mso-kl__btn--ghost" href="/collections/edc-knives-under-3-inch/">{{SECONDARY_CTA}}</a>
+      <a class="mso-kl__btn" href="/collections/{{state-slug}}-legal-carry-knives/">View All {{STATE}}-Legal Knives</a>
     </div>
   </div>
 
-  <!-- ============== Q&A SECTIONS — one target query each =============== -->
-  <!-- Each H2 is a real search query. Each answer sits in the FIRST sentence,
-       inside .mso-kl__answer, so both Google snippets and AI engines can lift
-       it cleanly. Do not add throat-clearing before the answer. -->
+  <!-- ============== QUICK ANSWERS — the block that ranks =============== -->
+  <div class="mso-kl__sec" id="quick-answers">
+    <div class="mso-kl__sec-head">
+      <h2>{{STATE}} Knife Law &mdash; Quick Answers</h2>
+      <p class="mso-kl__sec-sub">Updated {{REVIEW_DATE}} &middot; sourced from the {{STATE}} Legislature</p>
+    </div>
 
-  <div class="mso-kl__sec mso-kl__sec--left" style="margin-top:56px">
-    <div class="mso-kl__sec-head"><h2>{{STATE}} Knife Laws Explained</h2>
-      <p class="mso-kl__sec-sub">The questions {{STATE}} carriers actually ask</p>
+    <div class="mso-kl__glance">
+      <table>
+        <tbody>
+          <!-- 6 rows. Pill classes: --ok (green) | --warn (amber) | --no (red)
+               Keep the qualifier to a few words — this table is what Google
+               lifts for a featured snippet, so it has to scan fast. -->
+          <tr><th scope="row">Blade length limit</th>
+              <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{SHORT_QUALIFIER}}</td></tr>
+          <tr><th scope="row">Switchblades &amp; automatics</th>
+              <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{SHORT_QUALIFIER}}</td></tr>
+          <tr><th scope="row">Folding pocket knives</th>
+              <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{SHORT_QUALIFIER}}</td></tr>
+          <tr><th scope="row">{{RESTRICTED_CATEGORY, concealed}}</th>
+              <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{PENALTY in a few words}}</td></tr>
+          <tr><th scope="row">Those knives in your car</th>
+              <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{SHORT_QUALIFIER}}</td></tr>
+          <tr><th scope="row">City rules override state?</th>
+              <td><span class="mso-kl__pill mso-kl__pill--{{ok|warn|no}}">{{VERDICT}}</span> {{preemption yes/no}}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mso-kl__grid mso-kl__grid--3" style="margin-top:16px">
+
+      <!-- ×6 cards. Each H2 is a real search query — take the phrasing
+           straight from Google's "People also ask" box for this state.
+           Each answer: bold verdict FIRST, then one clarifying sentence.
+           Two sentences total. No preamble, no "it depends". That first
+           bold clause is what Google and AI answers quote. -->
+
+      <div class="mso-kl__qa">
+        <h2>{{QUESTION — exactly as people type it}}</h2>
+        <p><strong>{{DIRECT_VERDICT — a few words.}}</strong> {{One sentence of detail naming {{STATE}} and the statute or the city.}}</p>
+        <a class="mso-kl__cite" href="{{SOURCE_URL}}" rel="noopener">Source: {{CITATION}}</a>
+      </div>
+
+      <div class="mso-kl__qa">
+        <h2>{{QUESTION}}</h2>
+        <p><strong>{{DIRECT_VERDICT}}</strong> {{Detail}}</p>
+        <a class="mso-kl__cite" href="{{SOURCE_URL}}" rel="noopener">Source: {{CITATION}}</a>
+      </div>
+
     </div>
   </div>
 
-  <section class="mso-kl__qa mso-kl__qa--{{ok|no|omit}}">
-    <span class="mso-kl__qa-tag">{{TOPIC_LABEL}}</span>
-    <h2>{{QUESTION_HEADING — write it exactly as people type it into Google}}</h2>
-    <p class="mso-kl__answer"><strong>{{DIRECT_ANSWER — first sentence, no preamble. This is the sentence Google and AI engines will quote.}}</strong> {{ONE clarifying sentence with the statute number and the penalty.}}</p>
-    <p>{{SUPPORTING_PARAGRAPH. Name the state explicitly rather than "here" — the chunk must stand alone when quoted out of context.}}</p>
-    <p>{{SECOND_PARAGRAPH: the practical consequence, or the misconception this corrects.}}</p>
-    <div class="mso-kl__tip"><strong>Practical rule:</strong> {{ACTIONABLE_GUIDANCE. Mark clearly if it is practitioner guidance rather than statute.}}</div>
-    <a class="mso-kl__cite" href="{{STATUTE_URL}}" rel="noopener">Source: {{CITATION}}, {{STATE}} Legislature</a>
-  </section>
-
-  <section class="mso-kl__qa mso-kl__qa--{{ok|no|omit}}">
-    <span class="mso-kl__qa-tag">{{TOPIC_LABEL}}</span>
-    <h2>{{QUESTION_HEADING — write it exactly as people type it into Google}}</h2>
-    <p class="mso-kl__answer"><strong>{{DIRECT_ANSWER — first sentence, no preamble. This is the sentence Google and AI engines will quote.}}</strong> {{ONE clarifying sentence with the statute number and the penalty.}}</p>
-    <p>{{SUPPORTING_PARAGRAPH. Name the state explicitly rather than "here" — the chunk must stand alone when quoted out of context.}}</p>
-    <p>{{SECOND_PARAGRAPH: the practical consequence, or the misconception this corrects.}}</p>
-    <div class="mso-kl__tip"><strong>Practical rule:</strong> {{ACTIONABLE_GUIDANCE. Mark clearly if it is practitioner guidance rather than statute.}}</div>
-    <a class="mso-kl__cite" href="{{STATUTE_URL}}" rel="noopener">Source: {{CITATION}}, {{STATE}} Legislature</a>
-  </section>
-
-  <!-- Repeat the section above per question. Aim for 5–7. Suggested set:
-       1. What size knife can you legally carry in {{STATE}}?
-       2. Are switchblades and automatic knives legal in {{STATE}}?
-       3. Can you carry a concealed knife in {{STATE}}?
-       4. Is it illegal to keep a knife in your car in {{STATE}}?
-       5. {{THE LOCAL MYTH}} — the thing forum threads get wrong. Link magnet.
-       6. Which cities in {{STATE}} restrict knife carry?
-       7. Are butterfly knives legal in {{STATE}}? -->
-
-  <!-- =============== COMMERCE — top categories ======================== -->
+  <!-- ================ CATEGORIES (homepage pattern) ==================== -->
   <div class="mso-kl__sec">
     <div class="mso-kl__sec-head">
-      <h2>Top Knife Categories for {{STATE}} Hunters and EDC Carry</h2>
-      <p class="mso-kl__sec-sub">{{ONE_LINE tied to how this state’s buyers use them}}</p>
+      <h2>Top Knife Categories for {{STATE}} Hunters</h2>
+      <p class="mso-kl__sec-sub">Everything for hunting, camping and everyday carry in {{STATE}}</p>
     </div>
     <div class="mso-kl__grid mso-kl__grid--6">
       <a class="mso-kl__cat" href="/collections/hunting-knives/">
-        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-hunting.jpg" alt="Hunting knives " loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-hunting.jpg" alt="Hunting knives" loading="lazy" width="320" height="240"></span>
         <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Hunting Knives</span><span class="mso-kl__cat-count">[N] products</span></span>
       </a>
       <a class="mso-kl__cat" href="/collections/field-dressing-knives/">
-        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-field-dressing.jpg" alt="Field dressing knives for whitetail deer" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-field-dressing.jpg" alt="Field dressing knives" loading="lazy" width="320" height="240"></span>
         <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Field Dressing</span><span class="mso-kl__cat-count">[N] products</span></span>
       </a>
       <a class="mso-kl__cat" href="/collections/edc-folding-knives/">
-        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-edc.jpg" alt="EDC folding knives " loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-edc.jpg" alt="EDC folding knives" loading="lazy" width="320" height="240"></span>
         <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">EDC Folders</span><span class="mso-kl__cat-count">[N] products</span></span>
       </a>
       <a class="mso-kl__cat" href="/collections/fixed-blade-knives/">
-        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-fixed.jpg" alt="Fixed blade hunting knives" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-fixed.jpg" alt="Fixed blade knives" loading="lazy" width="320" height="240"></span>
         <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Fixed Blades</span><span class="mso-kl__cat-count">[N] products</span></span>
       </a>
       <a class="mso-kl__cat" href="/collections/edc-knives-under-3-inch/">
-        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-under3.jpg" alt="Knives under three inches " loading="lazy" width="320" height="240"></span>
-        <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Under 3&Prime; City Carry</span><span class="mso-kl__cat-count">[N] products</span></span>
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-under3.jpg" alt="Knives under three inches" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">{{LOCAL_LIMIT_CATEGORY}}</span><span class="mso-kl__cat-count">[N] products</span></span>
       </a>
       <a class="mso-kl__cat" href="/collections/automatic-knives/">
-        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-auto.jpg" alt="Automatic knives  since 2017" loading="lazy" width="320" height="240"></span>
+        <span class="mso-kl__cat-img"><img src="/wp-content/uploads/cat-auto.jpg" alt="Automatic knives" loading="lazy" width="320" height="240"></span>
         <span class="mso-kl__cat-body"><span class="mso-kl__cat-name">Automatic Knives</span><span class="mso-kl__cat-count">[N] products</span></span>
       </a>
     </div>
   </div>
 
-  <!-- ================ STAFF PICKS ===================================== -->
-  <!-- LAUNCH LABEL: "Staff Picks". Relabel to "Best Rated by Our Customers"
-       only when the review app has genuine counts. Never "top sellers in
-       {{STATE}}" until state-level order volume truly supports the claim.
-       Or replace this block with an Elementor Products widget, Top Rated. -->
+  <!-- ================== BRAND STRIP (homepage pattern) ================= -->
   <div class="mso-kl__sec">
     <div class="mso-kl__sec-head">
-      <h2>Michigan Sports Outdoor Staff Picks for {{STATE}} Conditions</h2>
-      <p class="mso-kl__sec-sub">{{WHY these — climate, terrain, season, typical use}}</p>
+      <h2>Shop {{STATE}}-Legal Knives by Brand</h2>
+      <p class="mso-kl__sec-sub">Authorised dealer for every brand we carry</p>
     </div>
-    <div class="mso-kl__grid">
-      <div class="mso-kl__prod">
-        <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/pick-1.jpg" alt="" loading="lazy" width="400" height="400"></a>
-        <div class="mso-kl__prod-body">
-          <span class="mso-kl__prod-micro">[Brand]</span>
-          <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
-          <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
-          <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
-        </div>
-      </div>
-      <div class="mso-kl__prod">
-        <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/pick-2.jpg" alt="" loading="lazy" width="400" height="400"></a>
-        <div class="mso-kl__prod-body">
-          <span class="mso-kl__prod-micro">[Brand]</span>
-          <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
-          <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
-          <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
-        </div>
-      </div>
-      <div class="mso-kl__prod">
-        <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/pick-3.jpg" alt="" loading="lazy" width="400" height="400"></a>
-        <div class="mso-kl__prod-body">
-          <span class="mso-kl__prod-micro">[Brand]</span>
-          <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
-          <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
-          <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
-        </div>
-      </div>
-      <div class="mso-kl__prod">
-        <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/pick-4.jpg" alt="" loading="lazy" width="400" height="400"></a>
-        <div class="mso-kl__prod-body">
-          <span class="mso-kl__prod-micro">[Brand]</span>
-          <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
-          <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
-          <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
-        </div>
-      </div>
+    <div class="mso-kl__brands">
+      <a class="mso-kl__brand" href="/brand/vosteed/"><img src="/wp-content/uploads/brand-vosteed.png" alt="Vosteed" loading="lazy" width="120" height="80"></a>
+      <a class="mso-kl__brand" href="/brand/kansept-knives/"><img src="/wp-content/uploads/brand-kansept.png" alt="Kansept Knives" loading="lazy" width="120" height="80"></a>
+      <a class="mso-kl__brand" href="/brand/kubey-knives/"><img src="/wp-content/uploads/brand-kubey.png" alt="Kubey Knives" loading="lazy" width="120" height="80"></a>
+      <a class="mso-kl__brand" href="/brand/bestech-knives/"><img src="/wp-content/uploads/brand-bestech.png" alt="Bestech Knives" loading="lazy" width="120" height="80"></a>
+      <a class="mso-kl__brand" href="/brand/ruike/"><img src="/wp-content/uploads/brand-ruike.png" alt="RUIKE" loading="lazy" width="120" height="80"></a>
+      <a class="mso-kl__brand" href="/brand/kunwu-knives/"><img src="/wp-content/uploads/brand-kunwu.png" alt="Kunwu Knives" loading="lazy" width="120" height="80"></a>
+      <a class="mso-kl__brand" href="/brand/elk-ridge/"><img src="/wp-content/uploads/brand-elk-ridge.png" alt="Elk Ridge" loading="lazy" width="120" height="80"></a>
+      <a class="mso-kl__brand" href="/brand/esee/"><img src="/wp-content/uploads/brand-esee.png" alt="ESEE" loading="lazy" width="120" height="80"></a>
     </div>
+    <div class="mso-kl__brands-cta"><a class="mso-kl__btn mso-kl__btn--ghost" href="/brands/">All Brands</a></div>
   </div>
 
-  <!-- ================ SEASONAL STRIP — swappable ====================== -->
+  <!-- ================ SEASONAL PROMO (homepage pattern) ================ -->
   <div class="mso-kl__sec">
     <div class="mso-kl__sec-head">
-      <h2>Best Knives for {{STATE}} {{SEASON}} {{YEAR}}</h2>
-      <p class="mso-kl__sec-sub">{{SEASON_DATES}}</p>
+      <h2>{{SEASONAL_H2 — e.g. Best Knives for {{STATE}} Deer Season {{YEAR}}}}</h2>
+      <p class="mso-kl__sec-sub">{{REAL_SEASON_DATES for this state — look them up, do not guess}}</p>
     </div>
     <div class="mso-kl__promo">
-      <span class="mso-kl__promo-img"><img src="/wp-content/uploads/promo-deer-season.jpg" alt="{{ALT}}" loading="lazy" width="640" height="400"></span>
+      <span class="mso-kl__promo-img"><img src="{{PROMO_IMG}}" alt="{{ALT}}" loading="lazy" width="640" height="400"></span>
       <div class="mso-kl__promo-body">
-        <span class="mso-kl__promo-kicker">{{STATE}} season &middot; {{YEAR}}</span>
-        <h3>{{SEASONAL_HEADLINE with real dates}}</h3>
-        <p>{{ONE_LINE}}</p>
-        <a class="mso-kl__btn" href="/collections/{{SEASONAL_COLLECTION}}/">Shop Deer Season Gear</a>
+        <span class="mso-kl__promo-kicker">{{SEASON_KICKER}}</span>
+        <h3>{{PROMO_HEADLINE}}</h3>
+        <p>{{ONE_LINE naming the game or the use case for this state.}}</p>
+        <a class="mso-kl__btn" href="/collections/{{SEASONAL_COLLECTION}}/">{{SEASONAL_CTA}}</a>
       </div>
     </div>
   </div>
 
-  <!-- ================= EMAIL CAPTURE ================================== -->
+  <!-- =================== REVIEWS (homepage pattern) ==================== -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__sec-head">
+      <h2>What {{STATE}} Customers Say</h2>
+      <p class="mso-kl__sec-sub">Verified reviews from Michigan Sports Outdoor buyers</p>
+    </div>
+    <div class="mso-kl__revs">
+      <!-- Pull these from your review app once it is collecting. Until then,
+           use real Google reviews and keep the wording exactly as written. -->
+      <div class="mso-kl__rev">
+        <div class="mso-kl__rev-top"><span class="mso-kl__rev-av">[A]</span><span><span class="mso-kl__rev-name">[Reviewer name]</span><br><span class="mso-kl__rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span></div>
+        <p>[Real review text &mdash; do not paraphrase or invent.]</p>
+      </div>
+      <div class="mso-kl__rev">
+        <div class="mso-kl__rev-top"><span class="mso-kl__rev-av">[B]</span><span><span class="mso-kl__rev-name">[Reviewer name]</span><br><span class="mso-kl__rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span></div>
+        <p>[Real review text]</p>
+      </div>
+      <div class="mso-kl__rev">
+        <div class="mso-kl__rev-top"><span class="mso-kl__rev-av">[C]</span><span><span class="mso-kl__rev-name">[Reviewer name]</span><br><span class="mso-kl__rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span></div>
+        <p>[Real review text]</p>
+      </div>
+      <div class="mso-kl__rev">
+        <div class="mso-kl__rev-top"><span class="mso-kl__rev-av">[D]</span><span><span class="mso-kl__rev-name">[Reviewer name]</span><br><span class="mso-kl__rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span></span></div>
+        <p>[Real review text]</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FEATURED PRODUCTS WITH TABS (homepage pattern) ======= -->
+  <div class="mso-kl__sec">
+    <div class="mso-kl__sec-head">
+      <h2>Featured Knives</h2>
+      <p class="mso-kl__sec-sub">All shipped from Michigan Sports Outdoor in 2&ndash;3 business days</p>
+    </div>
+
+    <div class="mso-kl__tabs" role="tablist">
+      <button class="mso-kl__tab" role="tab" aria-selected="true"  aria-controls="mso-p1" id="mso-t1" type="button">New Arrivals</button>
+      <button class="mso-kl__tab" role="tab" aria-selected="false" aria-controls="mso-p2" id="mso-t2" type="button">Best Sellers</button>
+      <button class="mso-kl__tab" role="tab" aria-selected="false" aria-controls="mso-p3" id="mso-t3" type="button">On Sale</button>
+    </div>
+
+    <div class="mso-kl__panel" id="mso-p1" role="tabpanel" aria-labelledby="mso-t1">
+      <div class="mso-kl__grid">
+        <!-- ×4 — swap in your real products, or replace this whole block
+             with an Elementor Products widget set to "Recent". -->
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/new-1.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/new-2.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/new-3.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/new-4.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mso-kl__panel" id="mso-p2" role="tabpanel" aria-labelledby="mso-t2" hidden>
+      <div class="mso-kl__grid">
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/best-1.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/best-2.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/best-3.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/best-4.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mso-kl__panel" id="mso-p3" role="tabpanel" aria-labelledby="mso-t3" hidden>
+      <div class="mso-kl__grid">
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/sale-1.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/sale-2.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/sale-3.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+        <div class="mso-kl__prod">
+          <a class="mso-kl__prod-img" href="#"><img src="/wp-content/uploads/sale-4.jpg" alt="" loading="lazy" width="400" height="400"></a>
+          <div class="mso-kl__prod-body">
+            <span class="mso-kl__prod-micro">[Brand]</span>
+            <p class="mso-kl__prod-name"><a href="#">[Product name]</a></p>
+            <span class="mso-kl__prod-spec">[Blade]&Prime; &middot; [Steel]</span>
+            <div class="mso-kl__prod-price"><span class="mso-kl__was">$0.00</span><span class="mso-kl__now">$0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EMAIL CAPTURE =============================== -->
   <div class="mso-kl__capture">
-    <h3>We&rsquo;ll email you if {{STATE}} knife law changes</h3>
-    <p>No promotions on this list &mdash; just a note from Michigan Sports Outdoor when a statute, a court ruling or a city ordinance changes what you can legally carry in {{STATE}}.</p>
+    <h3>{{STATE}} knife law changes? We&rsquo;ll tell you.</h3>
+    <p>One email from Michigan Sports Outdoor when a rule changes &mdash; plus first access to {{SEASON}} deals.</p>
     <form class="mso-kl__capture-form" action="[YOUR FORM ENDPOINT]" method="post">
       <label for="mso-kl-email" style="position:absolute;left:-9999px">Email address</label>
       <input type="email" id="mso-kl-email" name="email" placeholder="your@email.com" required>
-      <button type="submit" class="mso-kl__btn">Notify Me</button>
+      <button type="submit" class="mso-kl__btn">Sign Up</button>
     </form>
-    <p class="mso-kl__capture-note">{{STATE}} law updates only. Unsubscribe any time.</p>
+    <p class="mso-kl__capture-note">Unsubscribe any time.</p>
   </div>
 
-  <!-- ==================== TRUST BAR ==================================== -->
-  <div class="mso-kl__trust">
-    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9873;</span><span class="mso-kl__trust-t">Authorised Dealer</span><span class="mso-kl__trust-s">Genuine stock only</span></div>
-    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9992;</span><span class="mso-kl__trust-t">Free Shipping</span><span class="mso-kl__trust-s">On orders over $50</span></div>
-    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#8635;</span><span class="mso-kl__trust-t">30 Days Return</span><span class="mso-kl__trust-s">Prepaid label</span></div>
-    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9878;</span><span class="mso-kl__trust-t">Ships 2&ndash;3 Days</span><span class="mso-kl__trust-s">Weekdays only</span></div>
-    <div class="mso-kl__trust-item"><span class="mso-kl__trust-ico">&#9993;</span><span class="mso-kl__trust-t">Help Center</span><span class="mso-kl__trust-s">24/7 support</span></div>
-  </div>
-
-  <!-- ============== SOURCES + DISCLAIMER ============================== -->
+  <!-- ================= SOURCES + SHORT DISCLAIMER ====================== -->
   <div class="mso-kl__sec mso-kl__sec--left">
-    <div class="mso-kl__sec-head"><h2>{{STATE}} Knife Law Sources and Citations</h2></div>
-    <div class="mso-kl__narrow" style="margin:0">
-      <ul class="mso-kl__sources">
-        <li><a href="{{STATUTE_URL_1}}" rel="noopener">{{CITATION_1}} &mdash; {{TITLE}}</a>, {{STATE}} Legislature</li>
-        <li><a href="{{STATUTE_URL_2}}" rel="noopener">{{CITATION_2}} &mdash; {{TITLE}}</a>, {{STATE}} Legislature</li>
-        <li><a href="https://www.akti.org/state-knife-laws/{{state-slug}}/" rel="noopener">{{STATE}} Knife Laws</a>, American Knife &amp; Tool Institute</li>
-      </ul>
-      <div class="mso-kl__disclaimer">
-        <strong>This is not legal advice.</strong> Michigan Sports Outdoor is a knife and outdoor gear retailer, not a law firm. Knife law changes, and local ordinances vary within {{STATE}}. This page summarises the statutes cited above as of {{REVIEW_DATE}} and is published for general information. Confirm the current text with the {{STATE}} Legislature, and consult a licensed {{STATE}} attorney before relying on it.
-      </div>
+    <div class="mso-kl__sec-head"><h2>Sources</h2></div>
+    <ul class="mso-kl__sources">
+      <!-- Primary sources only. The state legislature's own site, and AKTI.
+           Never a competitor's blog. -->
+      <li><a href="{{STATUTE_URL_1}}" rel="noopener">{{CITATION_1}} &mdash; {{TITLE}}</a>, {{STATE}} Legislature</li>
+      <li><a href="{{STATUTE_URL_2}}" rel="noopener">{{CITATION_2}} &mdash; {{TITLE}}</a>, {{STATE}} Legislature</li>
+      <li><a href="https://www.akti.org/state-knife-laws/{{state-slug}}/" rel="noopener">{{STATE}} Knife Laws</a>, American Knife &amp; Tool Institute</li>
+    </ul>
+    <div class="mso-kl__disclaimer">
+      General information only, accurate as of {{REVIEW_DATE}}. Michigan Sports Outdoor is a retailer, not a law firm &mdash; check your local city ordinance before you carry.
     </div>
   </div>
 
-  <!-- ================== SIBLING STATES ================================ -->
+  <!-- ==================== SIBLING STATES =============================== -->
   <div class="mso-kl__sec">
     <div class="mso-kl__sec-head">
       <h2>Knife Laws in Other States</h2>
-      <p class="mso-kl__sec-sub">Carrying across state lines? Check before you travel</p>
+      <p class="mso-kl__sec-sub">Travelling with a knife? Check before you go</p>
     </div>
+    <!-- Remove the row for THIS state and add Michigan back in its place.
+         Every state links to its siblings and up to /knife-laws/ — that
+         reciprocal linking is what turns 51 pages into one asset. -->
     <ul class="mso-kl__states">
+      <li><a href="/knife-laws/michigan/">Michigan</a></li>
       <li><a href="/knife-laws/texas/">Texas</a></li>
       <li><a href="/knife-laws/florida/">Florida</a></li>
       <li><a href="/knife-laws/pennsylvania/">Pennsylvania</a></li>
@@ -303,7 +436,7 @@
 </div><!-- /.mso-kl__inner -->
 </div><!-- /.mso-kl -->
 
-<!-- ===================== STICKY BAR (mobile CRO) ======================== -->
+<!-- ======================= STICKY BAR ================================== -->
 <div class="mso-kl-sticky" id="msoKlSticky" hidden>
   <p>{{STATE}}-legal folders &mdash; ships in 2&ndash;3 days</p>
   <a class="mso-kl__btn" href="/collections/{{state-slug}}-legal-carry-knives/">Shop Now</a>
@@ -312,6 +445,20 @@
 
 <script>
 (function () {
+  /* tabs */
+  var tabs = [].slice.call(document.querySelectorAll('.mso-kl__tab'));
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) {
+        var panel = document.getElementById(t.getAttribute('aria-controls'));
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        if (panel) panel.hidden = !on;
+      });
+    });
+  });
+
+  /* sticky bar */
   var bar = document.getElementById('msoKlSticky');
   var trigger = document.querySelector('.mso-kl__glance');
   if (!bar || !trigger || !('IntersectionObserver' in window)) return;
@@ -329,20 +476,16 @@
 })();
 </script>
 
-<!-- =========================== STRUCTURED DATA ==========================
-     Article + BreadcrumbList + FAQPage.
+<!-- ========================= STRUCTURED DATA ==========================
+     Article + FAQPage + BreadcrumbList.
 
-     FAQPage note: Google stopped showing FAQ rich results for retail sites in
-     August 2023, so this earns no SERP feature. It is included anyway because
-     it gives AI search engines a clean, machine-readable question/answer map
-     of the page. Zero risk while every answer below matches the on-page text
-     word for word — if you edit the page copy, edit these answers too.
+     Add one Question object per Q&A card on the page, and copy each answer
+     VERBATIM from the card. Schema that does not match the visible text is
+     worse than no schema at all.
 
-     No Product schema here: the page's main entity is the article, and marking
-     up the embedded cards would compete with your real product pages.
-
-     REPEAT the Question object below once per Q&A section on the page.
-     JSON allows no comments — do not paste notes inside the script tag.
+     JSON allows no comments — never paste a note inside the script tag.
+     No Product schema here: the page's main entity is the article, and
+     marking up these cards would compete with your real product pages.
      ==================================================================== -->
 <script type="application/ld+json">
 {
@@ -351,8 +494,8 @@
     {
       "@type": "Article",
       "@id": "https://www.michigansportsoutdoor.com/knife-laws/{{state-slug}}/#article",
-      "headline": "{{STATE}} Knife Laws {{YEAR}}: What You Can Legally Own and Carry",
-      "description": "{{META_DESCRIPTION — 150-160 chars, lead with the verdict, name {{STATE}}}}",
+      "headline": "{{STATE}} Knife Laws {{YEAR}}: What You Can Legally Carry",
+      "description": "{{META_DESCRIPTION — 150-160 chars. Lead with the verdict, name {{STATE}}, end with the offer.}}",
       "datePublished": "{{YYYY-MM-DD}}",
       "dateModified": "{{YYYY-MM-DD}}",
       "inLanguage": "en-US",
@@ -363,15 +506,11 @@
       },
       "publisher": { "@id": "https://www.michigansportsoutdoor.com/#organization" },
       "about": { "@type": "Thing", "name": "Knife laws in {{STATE}}" },
-      "mentions": [
-        { "@type": "Legislation", "name": "{{CITATION_1}}", "jurisdiction": "{{STATE}}" },
-        { "@type": "Legislation", "name": "{{CITATION_2}}", "jurisdiction": "{{STATE}}" }
-      ],
       "spatialCoverage": { "@type": "State", "name": "{{STATE}}", "identifier": "US-{{XX}}" },
       "citation": [
-        "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-227",
-        "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-750-226",
-        "https://www.akti.org/state-knife-laws/michigan/"
+        "{{STATUTE_URL_1}}",
+        "{{STATUTE_URL_2}}",
+        "https://www.akti.org/state-knife-laws/{{state-slug}}/"
       ],
       "isPartOf": {
         "@type": "WebPage",
@@ -384,11 +523,13 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "{{QUESTION_HEADING — copy the H2 verbatim}}",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "{{ANSWER — copy the .mso-kl__answer sentence verbatim. If you edit the page copy, edit this too. Mismatched schema is worse than no schema.}}"
-          }
+          "name": "{{QUESTION — copy the H2 verbatim}}",
+          "acceptedAnswer": { "@type": "Answer", "text": "{{ANSWER — copy the card's two sentences verbatim, tags stripped}}" }
+        },
+        {
+          "@type": "Question",
+          "name": "{{QUESTION}}",
+          "acceptedAnswer": { "@type": "Answer", "text": "{{ANSWER}}" }
         }
       ]
     },
@@ -404,61 +545,87 @@
 }
 </script>
 
-<!-- ==================== KEYWORD & HEADING MAP ===========================
+<!-- ==================== FILL CHECKLIST & KEYWORD MAP ====================
 
-  Fill this in per state BEFORE writing. One H2 = one real search query.
+  ---------------------------------------------------------------- 1. TOKENS
+  {{STATE}}         Full state name, e.g. Texas
+  {{state-slug}}    texas
+  {{XX}}            TX
+  {{YEAR}}          2026
+  {{REVIEW_DATE}}   1 September 2026
+  {{YYYY-MM-DD}}    2026-09-01
 
-  H1  {{STATE}} Knife Laws {{YEAR}}: What You Can Legally Own and Carry
+  ---------------------------------------------------- 2. RESEARCH (do first)
+  Fill state-data.csv BEFORE touching this file. Twelve fields per state.
+  Sources: the state legislature's own website, and AKTI. Nothing else.
+
+  Do NOT let the autopilot content pipeline write these facts. Use AI to
+  tidy the phrasing once the verified fact is already in the CSV. One
+  invented statute number destroys the trust this page exists to build.
+
+  ------------------------------------------------------- 3. HEADING MAP
+  H1  {{STATE}} Knife Laws {{YEAR}}: What You Can Legally Carry
       → "{{state}} knife laws", "{{state}} knife laws {{year}}"
-  H2  Knives You Can Legally Carry in {{STATE}}                 [commercial]
-  H2  {{STATE}} Knife Laws Explained                            [section label]
-  H2  What Size Knife Can You Legally Carry in {{STATE}}?
-      → "what size knife can you carry in {{state}}", "{{state}} knife length law"
-  H2  Are Switchblades and Automatic Knives Legal in {{STATE}}?
-      → "are switchblades legal in {{state}}"
-  H2  Can You Carry a Concealed Knife in {{STATE}}?
-      → "{{state}} concealed knife law"
-  H2  Is It Illegal to Keep a Knife in Your Car in {{STATE}}?
-      → "knife in car {{state}}"
-  H2  {{THE LOCAL MYTH, phrased as a question}}          [link magnet]
-  H2  Which Cities in {{STATE}} Restrict Knife Carry?
-      → "{{biggest city}} knife laws"
-  H2  Top Knife Categories for {{STATE}} Hunters and EDC Carry  [commercial]
-  H2  Michigan Sports Outdoor Staff Picks for {{STATE}} Conditions [commercial]
-  H2  Best Knives for {{STATE}} {{SEASON}} {{YEAR}}             [commercial]
-  H2  {{STATE}} Knife Law Sources and Citations
+  H2  Knives You Can Legally Carry in {{STATE}}          [commercial]
+  H2  {{STATE}} Knife Law — Quick Answers                [the ranking block]
+  H2  ×6 question cards — see below
+  H2  Top Knife Categories for {{STATE}} Hunters         [commercial]
+  H2  Shop {{STATE}}-Legal Knives by Brand               [commercial]
+  H2  {{SEASONAL_H2}}                                    [commercial]
+  H2  What {{STATE}} Customers Say
+  H2  Featured Knives                                    [commercial]
+  H2  Sources
   H2  Knife Laws in Other States
 
-  ------------------------------------------------------------------------
-  HOW TO PICK THE HEADINGS (2 minutes per state, no paid tool needed)
+  ------------------------------------------- 4. FINDING THE SIX QUESTIONS
+  Two minutes per state, no paid tool needed:
 
-  1. Type "{{state}} knife law" into Google. Read the People Also Ask box.
+  1. Google "{{state}} knife law". Read the "People also ask" box.
      Those questions ARE your H2s — copy the phrasing exactly.
-  2. Expand two PAA questions; Google loads more. Take the ones with a
-     clear yes/no answer.
-  3. Check Google autocomplete for "is it legal to ... in {{state}}".
-  4. Skip any question you cannot answer from a primary source.
+  2. Expand two of them; Google loads more. Keep the ones with a clean
+     yes/no answer.
+  3. Check autocomplete for "is it legal to ... in {{state}}".
+  4. Drop any question you cannot answer from a primary source.
 
-  Head terms ("{{state}} knife laws") are high volume and contested.
-  The question forms are lower competition, convert better, and are what
-  AI search engines quote. Win the questions first.
+  The head term ("{{state}} knife laws") is contested. The question forms
+  are lower competition, convert better, and are what AI answers quote.
+  Win the questions first.
 
-  ------------------------------------------------------------------------
-  WRITING FOR AI SEARCH (AI Overviews, ChatGPT, Perplexity)
+  Reliable six for most states:
+    · What size knife can you carry in {{STATE}}?
+    · Are switchblades legal in {{STATE}}?
+    · Can you keep a knife in your car in {{STATE}}?
+    · Which knives are illegal to conceal in {{STATE}}?
+    · Which {{STATE}} cities restrict knives?
+    · {{THE LOCAL MYTH, as a question}}   ← this one earns the links
 
-  · ANSWER FIRST. The first sentence under each H2 answers the question
-    outright, in bold, inside .mso-kl__answer. No preamble, no "it depends".
-  · SELF-CONTAINED CHUNKS. Name {{STATE}} inside the sentence, not "here"
-    or "this state". Retrieval quotes one passage at a time — it must
-    stand alone.
-  · NAME ENTITIES IN FULL. "Michigan Sports Outdoor", not "we". "MCL
-    750.227", not "the statute".
-  · BE SPECIFIC AND DATED. "effective 11 October 2017", not "a few years
-    ago". "up to five years and a $2,500 fine", not "serious penalties".
-  · DEFINE TERMS. "A dirk is a long, straight-bladed stabbing knife."
-    Definitional sentences get quoted more than any other kind.
-  · CITE INLINE. Put the statute number in the prose, not only in the link.
-  · TABLES AND LISTS extract cleanly. Prose walls do not.
-  · CUT THE FLUFF. Every sentence that says nothing is a sentence an AI
-    engine will pick instead of your answer.
+  --------------------------------------------- 5. WRITING THE ANSWER CARDS
+  Two sentences. That is the whole budget.
+
+    <strong>Bold verdict first.</strong> One sentence of detail.
+
+  · Verdict FIRST — no "it depends", no wind-up.
+  · Name {{STATE}} inside the sentence, not "here" or "this state" —
+    an AI answer quotes one card at a time and it must stand alone.
+  · Statute number in the text, not only in the link.
+  · Be specific: "up to 5 years and a $2,500 fine", not "serious penalties".
+  · Cut every sentence that says nothing.
+
+  ------------------------------------------------------ 6. IMAGES NEEDED
+  Banner 1600x600 · promo tile 400x500 · seasonal promo 640x400
+  6 category images 320x240 · 8 brand logos · product images 400x400
+
+  Brand strip and category tiles are the same on every state page — set
+  them once and copy them forward.
+
+  ------------------------------------------------------- 7. BEFORE PUBLISH
+  [ ] Every {{TOKEN}} replaced — search the file for "{{" to confirm
+  [ ] Legal chips applied only to knives actually checked for this state
+  [ ] FAQ schema answers match the visible cards word for word
+  [ ] This state removed from the sibling-state list, Michigan added back
+  [ ] Season dates verified against the state wildlife agency
+  [ ] Review cards hold real reviews, or the whole block is deleted
+  [ ] Elementor: Hide Title ON, container padding 0
+  [ ] Yoast / Rank Math schema set to None for this page
+  [ ] Rich Results Test passes with zero errors
   ==================================================================== -->

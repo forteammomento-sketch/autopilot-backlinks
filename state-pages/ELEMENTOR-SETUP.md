@@ -84,45 +84,70 @@ taraf safed gaps aa jayenge.
 
 Search box mein **"HTML"** likhein → **HTML widget** container mein drag karein.
 
-### Recommended split — 3 widgets, ek nahi
+### Recommended split — 2 widgets
 
 | Widget | Kya paste karein |
 |---|---|
-| **HTML widget A** | `michigan.html` ka start se `Which Cities in Michigan Restrict Knife Carry` section ke `</section>` tak |
-| **Elementor Products widget** | Beech mein — Staff Picks ki jagah |
-| **HTML widget B** | Baaki sab, `<script>` blocks samet |
+| **HTML widget A** | File ke start se brand strip ke `</div>` tak (hero banner → trust bar → products → categories → brands) |
+| **HTML widget B** | Baaki sab — seasonal promo → reviews → featured tabs → sibling states, **dono `<script>` blocks samet** |
 
-**Products widget kaise set karein** (WooCommerce zaroori hai):
-- Widget search: `Products`
-- **Columns:** 4 · **Products Per Page:** 4
-- **Query → Source:** `Top Rated` (ya `Featured`)
-- Isse yeh block khud update hota rahega — aapko 51 pages haath se edit
-  nahi karne padenge
+**Simple rakhna hai?** Poori `michigan.html` ek hi HTML widget mein paste kar
+dein. Bilkul theek kaam karega — split sirf isliye hai taake beech mein
+Elementor ke apne widgets daal sakein.
 
-**Simple rakhna hai?** Poori `michigan.html` ek hi HTML widget mein paste
-kar dein. Kaam karega — bas Staff Picks block manually update karna padega.
+### Elementor ke native widgets kahan use karein (optional)
+
+Do blocks aise hain jo khud update ho sakte hain agar Elementor widget
+use karein:
+
+- **Featured Knives (tabs wala block)** → HTML hata kar **Products widget**
+  daalein, Query → Source: `Recent` / `Best Selling` / `On Sale`. Phir
+  aapko 51 pages haath se update nahi karne padenge.
+- **Reviews row** → agar review plugin ka apna widget hai to wahi use karein.
+
+Lekin **product grid (Knives You Can Legally Carry)** hamesha manual rakhein —
+usme legal chips hain jo aapne khud verify karne hain, koi automatic query
+nahi laga sakti.
 
 ### Zaroori: dono `<script>` blocks bhi paste karein
 
-File ke aakhir mein do script hain — sticky bar wala JavaScript aur
-JSON-LD schema. **Dono HTML widget B mein aane chahiye.** Elementor inhein
-bina badle output karta hai. Inhein "Custom Code" mein daalne ki zaroorat
+File ke aakhir mein do script hain — ek tabs + sticky bar ka JavaScript,
+doosra JSON-LD schema. **Dono HTML widget B mein aane chahiye.** Elementor
+inhein bina badle output karta hai. "Custom Code" mein daalne ki zaroorat
 nahi.
+
+> **Agar tabs kaam na karein:** iska matlab JavaScript wala block paste
+> nahi hua. Woh block Featured Knives section ke *baad* aana chahiye.
 
 ---
 
-## Step 6 · Publish se pehle 3 cheezein fill karein
+## Step 6 · Publish se pehle yeh fill karein
 
 `michigan.html` mein yeh placeholders hain:
 
+**Images** — sab `/wp-content/uploads/...` paths abhi dummy hain. Media
+Library se asli URLs nikaal kar replace karein:
+
+| Image | Size |
+|---|---|
+| `banner-michigan-knives.jpg` | 1600 × 600 (hero) |
+| `tile-city-carry.jpg` | 400 × 500 (grid ke andar wala promo tile) |
+| `promo-deer-season.jpg` | 640 × 400 |
+| 6 category images | 320 × 240 |
+| 8 brand logos | ~120 × 80, transparent PNG |
+| Product images | 400 × 400 |
+
+**Text placeholders:**
+
 1. **Form endpoint** — `[YOUR FORM ENDPOINT]` ki jagah apna Mailchimp /
    Klaviyo / WPForms endpoint. Ya poora `<form>` hata kar Elementor ka
-   apna Form widget use karein.
-2. **Staff Picks products** — `[Brand]`, `[Product name]`, `$0.00`
-3. **Category counts** — `[N] products`
-
-Aur images: `/wp-content/uploads/...` paths abhi placeholder hain. Media
-Library se asli image URL nikaal kar replace karein.
+   Form widget use karein.
+2. **Featured tabs ke products** — `[Brand]`, `[Product name]`, `$0.00`
+3. **Reviews** — `[Reviewer name]`, `[Real review text]`. **Asli reviews
+   hi daalein, wording exactly waisi hi.** Agar abhi reviews nahi hain to
+   poora reviews block delete kar dein — khali ya banaya hua block na hone
+   se bhi bura hai.
+4. **Category counts** — `[N] products`
 
 ---
 

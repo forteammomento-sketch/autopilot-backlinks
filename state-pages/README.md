@@ -7,9 +7,24 @@ Production code for the state-level programmatic asset in the
 | File | What it is | Where it goes |
 |---|---|---|
 | `knife-law-pages.css` | Scoped stylesheet | **Once**, in Site Settings → Custom CSS |
-| `michigan.html` | Fully researched, fully cited example | Elementor HTML widget on `/knife-laws/michigan/` |
-| `_TEMPLATE.html` | Blank template with `{{TOKENS}}` | Duplicate per state |
+| `michigan.html` | Working example — researched, cited, homepage-styled | Elementor HTML widget on `/knife-laws/michigan/` |
+| `_TEMPLATE.html` | Blank template with `{{TOKENS}}`, plus keyword map and fill checklist | Duplicate per state |
+| `ELEMENTOR-SETUP.md` | Step-by-step build guide (Roman Urdu) | Read before your first page |
 | `state-data.csv` | The 12 fields to research per state | Your research tracker |
+| `wireframe/` | Approved block structure and CRO reasoning | Reference |
+
+## Page structure
+
+The page follows the home page's own section rhythm, not a document layout:
+
+`hero banner → trust bar → product grid with promo tile → quick-answer table
+→ six short answer cards → category grid → brand strip → seasonal promo →
+reviews → featured knives with tabs → email capture → sources → sibling states`
+
+The legal content is deliberately compact — a six-row table plus six
+two-sentence cards. It is what earns the ranking for "{state} knife laws"
+(a pure product page ranks for nothing here), but it reads at the pace of
+the rest of the site.
 
 ---
 
