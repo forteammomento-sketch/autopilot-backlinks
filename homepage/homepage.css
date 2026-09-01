@@ -1,0 +1,289 @@
+/* ==========================================================================
+   Michigan Sports Outdoor — Home page
+   Paste ONCE into: Elementor → Site Settings → Custom CSS
+   (sits alongside product-page.css and state-pages.css — all scoped apart)
+   ========================================================================== */
+
+.mso-hp{
+  /* ======== THEME BLOCK — keep identical across all three stylesheets ==== */
+  --hp-accent:#EDA53B;
+  --hp-accent-dk:#D18F2A;
+  --hp-accent-ink:#1B2B39;
+  --hp-header:#20303F;
+  --hp-heading:#1B2B39;
+  --hp-price:#5E9F32;
+  --hp-body:#5A6673;
+  --hp-border:#E3E6E9;
+  --hp-bg:#FFFFFF;
+  --hp-bg-alt:#F7F8F9;
+  /* ==================================================================== */
+
+  --hp-faint:#8B95A0;
+  --hp-hair:#EEF0F2;
+  --hp-ok:#2F7D32;
+  --hp-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  color:var(--hp-body);
+  font-family:inherit;
+  line-height:1.6;
+  font-size:16px;
+}
+
+.mso-hp *,.mso-hp *::before,.mso-hp *::after{box-sizing:border-box}
+.mso-hp__inner{max-width:1180px;margin:0 auto;padding:0 16px}
+.mso-hp p{margin:0 0 1em}
+.mso-hp p:last-child{margin-bottom:0}
+.mso-hp a{color:var(--hp-accent-dk);text-decoration:none}
+.mso-hp a:hover{text-decoration:underline}
+.mso-hp a:focus-visible,.mso-hp button:focus-visible{outline:2px solid var(--hp-accent);outline-offset:2px}
+.mso-hp h1,.mso-hp h2,.mso-hp h3{color:var(--hp-heading);font-family:inherit;margin:0;line-height:1.25;text-wrap:balance}
+.mso-hp img{max-width:100%;height:auto;display:block}
+.mso-hp__num{font-variant-numeric:tabular-nums}
+
+.mso-hp__sec{margin-top:52px}
+.mso-hp__sec-head{text-align:center;margin-bottom:26px}
+.mso-hp__sec-head h2{font-size:clamp(21px,2.8vw,29px);font-weight:700;letter-spacing:-.012em}
+.mso-hp__sec-sub{color:var(--hp-accent-dk);font-size:14px;font-weight:600;margin:8px 0 0}
+.mso-hp__more{display:flex;justify-content:center;margin-top:26px}
+
+/* ---- buttons ---- */
+.mso-hp__btn{
+  display:inline-block;padding:14px 28px;font-family:inherit;font-size:14.5px;font-weight:700;
+  letter-spacing:.02em;border:2px solid var(--hp-accent);background:var(--hp-accent);
+  color:var(--hp-accent-ink);line-height:1.2;text-decoration:none;cursor:pointer;
+}
+.mso-hp__btn:hover{background:var(--hp-accent-dk);border-color:var(--hp-accent-dk);color:#fff;text-decoration:none}
+.mso-hp__btn--ghost{background:transparent;color:var(--hp-heading);border-color:var(--hp-border)}
+.mso-hp__btn--ghost:hover{background:var(--hp-heading);border-color:var(--hp-heading);color:#fff}
+.mso-hp__btn--onDark{background:transparent;color:#fff;border-color:rgba(255,255,255,.45)}
+.mso-hp__btn--onDark:hover{background:#fff;border-color:#fff;color:var(--hp-heading)}
+
+/* ==================================================================== */
+/* ANNOUNCEMENT BAR — the two offers that beat Blade HQ                 */
+/* ==================================================================== */
+.mso-hp__announce{
+  background:var(--hp-accent);color:var(--hp-accent-ink);
+  padding:9px 18px;display:flex;flex-wrap:wrap;gap:4px 26px;
+  align-items:center;justify-content:center;
+  font-size:13.5px;font-weight:600;text-align:center;
+}
+.mso-hp__announce b{font-weight:800}
+
+/* ==================================================================== */
+/* HERO — seasonal, dated, not a brand banner                           */
+/* ==================================================================== */
+.mso-hp__hero{position:relative;background:var(--hp-header);overflow:hidden;min-height:420px;display:flex;align-items:center}
+.mso-hp__hero-bg{position:absolute;inset:0;z-index:0}
+.mso-hp__hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.42}
+.mso-hp__hero-in{position:relative;z-index:1;padding:58px 0;width:100%}
+.mso-hp__kicker{
+  display:inline-flex;align-items:center;gap:8px;background:var(--hp-accent);color:var(--hp-accent-ink);
+  font-size:11.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  padding:6px 13px;margin-bottom:18px;
+}
+.mso-hp__hero h1{color:#fff;font-size:clamp(30px,5.4vw,52px);font-weight:800;letter-spacing:-.028em;line-height:1.04;max-width:18ch}
+.mso-hp__hero p{color:rgba(255,255,255,.86);font-size:17.5px;margin:15px 0 0;max-width:52ch;line-height:1.5}
+.mso-hp__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.mso-hp__hero-meta{
+  margin-top:24px;padding-top:15px;border-top:1px solid rgba(255,255,255,.18);
+  display:flex;flex-wrap:wrap;gap:6px 24px;font-size:12.5px;color:rgba(255,255,255,.62);
+}
+.mso-hp__hero-meta strong{color:var(--hp-accent);font-weight:700}
+
+/* ==================================================================== */
+/* TRUST BAR — with the numbers, not just labels                        */
+/* ==================================================================== */
+.mso-hp__trust{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--hp-border);background:var(--hp-bg)}
+.mso-hp__trust-item{
+  padding:18px 14px;text-align:center;border-right:1px solid var(--hp-hair);
+  display:flex;flex-direction:column;gap:3px;align-items:center;
+}
+.mso-hp__trust-item:last-child{border-right:0}
+.mso-hp__trust-ico{color:var(--hp-accent);font-size:19px;line-height:1}
+.mso-hp__trust-t{font-size:13px;font-weight:700;color:var(--hp-heading)}
+.mso-hp__trust-s{font-size:11px;color:var(--hp-faint)}
+
+/* ==================================================================== */
+/* GRIDS — categories, products, price bands                            */
+/* ==================================================================== */
+.mso-hp__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.mso-hp__grid--8{grid-template-columns:repeat(4,1fr)}
+
+.mso-hp__cat{border:1px solid var(--hp-border);background:var(--hp-bg);display:flex;flex-direction:column;text-decoration:none;transition:box-shadow .18s ease}
+.mso-hp__cat:hover{box-shadow:0 3px 14px rgba(27,43,57,.10);text-decoration:none}
+.mso-hp__cat-img{aspect-ratio:4/3;background:var(--hp-bg-alt);overflow:hidden}
+.mso-hp__cat-img img{width:100%;height:100%;object-fit:cover}
+.mso-hp__cat-body{padding:13px;text-align:center}
+.mso-hp__cat-name{font-size:14px;font-weight:700;color:var(--hp-heading);line-height:1.3;display:block}
+.mso-hp__cat-count{font-size:11px;color:var(--hp-faint);margin-top:3px;display:block}
+
+.mso-hp__prod{border:1px solid var(--hp-border);background:var(--hp-bg);display:flex;flex-direction:column;position:relative;transition:box-shadow .18s ease}
+.mso-hp__prod:hover{box-shadow:0 3px 14px rgba(27,43,57,.10)}
+.mso-hp__prod-img{aspect-ratio:1/1;background:var(--hp-bg-alt);overflow:hidden;display:block}
+.mso-hp__prod-img img{width:100%;height:100%;object-fit:contain}
+.mso-hp__prod-body{padding:12px 13px 14px;display:flex;flex-direction:column;gap:5px;flex:1}
+.mso-hp__prod-micro{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--hp-faint);font-weight:600}
+.mso-hp__prod-name{
+  font-size:13.5px;font-weight:600;color:var(--hp-heading);line-height:1.35;margin:0;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.mso-hp__prod-name a{color:inherit}
+.mso-hp__prod-spec{font-size:11.5px;color:var(--hp-faint);font-family:var(--hp-mono)}
+.mso-hp__prod-price{margin-top:auto;padding-top:6px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.mso-hp__was{font-size:12.5px;color:var(--hp-faint);text-decoration:line-through}
+.mso-hp__now{font-size:15.5px;font-weight:700;color:var(--hp-price)}
+.mso-hp__flag{
+  position:absolute;top:8px;left:8px;z-index:2;font-size:9.5px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;color:#fff;background:var(--hp-price);padding:3px 7px;
+}
+
+/* star row — the single biggest gap against Blade HQ */
+.mso-hp__stars{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--hp-faint)}
+.mso-hp__stars b{color:var(--hp-accent);font-size:12.5px;letter-spacing:.5px}
+
+/* ---- price bands ---- */
+.mso-hp__price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mso-hp__band{
+  border:1px solid var(--hp-border);background:var(--hp-bg);padding:26px 20px;text-align:center;
+  text-decoration:none;display:flex;flex-direction:column;gap:5px;
+  border-top:3px solid var(--hp-accent);transition:box-shadow .18s ease;
+}
+.mso-hp__band:hover{box-shadow:0 3px 14px rgba(27,43,57,.10);text-decoration:none}
+.mso-hp__band b{font-size:24px;font-weight:800;color:var(--hp-heading);letter-spacing:-.02em}
+.mso-hp__band span{font-size:12.5px;color:var(--hp-faint)}
+
+/* ==================================================================== */
+/* BRAND STRIP                                                          */
+/* ==================================================================== */
+.mso-hp__brands{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+.mso-hp__brand{
+  border:1px solid var(--hp-border);background:var(--hp-bg);display:flex;align-items:center;
+  justify-content:center;padding:14px 10px;aspect-ratio:3/2;text-decoration:none;transition:border-color .15s ease;
+}
+.mso-hp__brand:hover{border-color:var(--hp-accent)}
+
+/* ==================================================================== */
+/* MICHIGAN STORY — the thing Blade HQ structurally cannot say          */
+/* ==================================================================== */
+.mso-hp__story{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+  border:1px solid var(--hp-border);background:var(--hp-bg-alt);align-items:center;
+}
+.mso-hp__story-img{aspect-ratio:4/3;background:var(--hp-border);overflow:hidden;height:100%}
+.mso-hp__story-img img{width:100%;height:100%;object-fit:cover}
+.mso-hp__story-body{padding:36px 40px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.mso-hp__story h2{font-size:clamp(21px,2.7vw,28px);font-weight:800;letter-spacing:-.018em}
+.mso-hp__story p{font-size:15.5px;line-height:1.65;margin:0}
+.mso-hp__story-pts{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.mso-hp__story-pts li{position:relative;padding-left:24px;font-size:14.5px;line-height:1.5}
+.mso-hp__story-pts li::before{
+  content:"";position:absolute;left:0;top:.32em;width:14px;height:8px;
+  border-left:2px solid var(--hp-ok);border-bottom:2px solid var(--hp-ok);transform:rotate(-45deg);
+}
+.mso-hp__story-pts strong{color:var(--hp-heading);font-weight:700}
+
+/* ==================================================================== */
+/* PROMO STRIP                                                          */
+/* ==================================================================== */
+.mso-hp__promo{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.mso-hp__tile{
+  position:relative;overflow:hidden;background:var(--hp-header);display:flex;
+  align-items:flex-end;min-height:230px;text-decoration:none;
+}
+.mso-hp__tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.mso-hp__tile-in{position:relative;z-index:1;padding:24px;color:#fff}
+.mso-hp__tile-in strong{display:block;font-size:21px;font-weight:800;line-height:1.2;margin-bottom:6px}
+.mso-hp__tile-in span{display:block;font-size:13.5px;color:rgba(255,255,255,.82);margin-bottom:14px}
+.mso-hp__tile-in em{
+  font-style:normal;display:inline-block;background:var(--hp-accent);color:var(--hp-accent-ink);
+  font-size:12.5px;font-weight:700;padding:9px 17px;
+}
+
+/* ==================================================================== */
+/* REVIEWS                                                              */
+/* ==================================================================== */
+.mso-hp__revs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mso-hp__rev{border:1px solid var(--hp-border);background:var(--hp-bg);padding:18px;display:flex;flex-direction:column;gap:9px}
+.mso-hp__rev-top{display:flex;align-items:center;gap:10px}
+.mso-hp__rev-av{
+  width:32px;height:32px;border-radius:50%;background:var(--hp-bg-alt);flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--hp-heading);
+}
+.mso-hp__rev-name{font-size:13.5px;font-weight:700;color:var(--hp-heading)}
+.mso-hp__rev-meta{font-size:11px;color:var(--hp-faint)}
+.mso-hp__rev-meta b{color:var(--hp-ok);font-weight:600}
+.mso-hp__rev p{font-size:13.5px;line-height:1.55;margin:0}
+.mso-hp__rev-prod{font-size:11.5px;color:var(--hp-faint);border-top:1px solid var(--hp-hair);padding-top:8px;margin-top:auto}
+
+/* ==================================================================== */
+/* TABS                                                                 */
+/* ==================================================================== */
+.mso-hp__tabs{display:flex;flex-wrap:wrap;gap:26px;justify-content:center;margin-bottom:24px}
+.mso-hp__tab{
+  background:none;border:0;border-bottom:2px solid transparent;padding:6px 2px;
+  font-family:inherit;font-size:15px;font-weight:600;color:var(--hp-faint);cursor:pointer;
+}
+.mso-hp__tab[aria-selected="true"]{color:var(--hp-heading);border-bottom-color:var(--hp-accent)}
+.mso-hp__tab:hover{color:var(--hp-heading)}
+.mso-hp__panel[hidden]{display:none}
+
+/* ==================================================================== */
+/* GUIDES — surface the blog                                            */
+/* ==================================================================== */
+.mso-hp__guides{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.mso-hp__guide{border:1px solid var(--hp-border);background:var(--hp-bg);display:flex;flex-direction:column;text-decoration:none;transition:box-shadow .18s ease}
+.mso-hp__guide:hover{box-shadow:0 3px 14px rgba(27,43,57,.10);text-decoration:none}
+.mso-hp__guide-img{aspect-ratio:16/9;background:var(--hp-bg-alt);overflow:hidden}
+.mso-hp__guide-img img{width:100%;height:100%;object-fit:cover}
+.mso-hp__guide-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:7px}
+.mso-hp__guide-tag{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--hp-accent-dk)}
+.mso-hp__guide h3{font-size:16px;font-weight:700;line-height:1.35}
+.mso-hp__guide p{font-size:13.5px;line-height:1.5;color:var(--hp-body);margin:0}
+
+/* ==================================================================== */
+/* EMAIL CAPTURE                                                        */
+/* ==================================================================== */
+.mso-hp__capture{background:var(--hp-header);color:#fff;padding:38px 34px;text-align:center;margin-top:52px}
+.mso-hp__capture h2{color:#fff;font-size:clamp(20px,2.5vw,26px);font-weight:700}
+.mso-hp__capture p{color:rgba(255,255,255,.75);font-size:15.5px;margin:10px auto 20px;max-width:52ch}
+.mso-hp__capture-form{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:520px;margin:0 auto}
+.mso-hp__capture input[type="email"]{
+  flex:1 1 260px;padding:13px 16px;border:2px solid transparent;font-size:15px;
+  font-family:inherit;background:#fff;color:var(--hp-heading);min-width:0;
+}
+.mso-hp__capture input[type="email"]:focus{outline:none;border-color:var(--hp-accent)}
+.mso-hp__capture-note{font-size:12px;color:rgba(255,255,255,.5);margin-top:14px}
+
+/* ==================================================================== */
+/* RESPONSIVE                                                           */
+/* ==================================================================== */
+@media (max-width:1024px){
+  .mso-hp__grid,.mso-hp__grid--8{grid-template-columns:repeat(3,1fr)}
+  .mso-hp__brands{grid-template-columns:repeat(4,1fr)}
+  .mso-hp__revs{grid-template-columns:repeat(2,1fr)}
+  .mso-hp__trust{grid-template-columns:repeat(3,1fr)}
+  .mso-hp__trust-item:nth-child(3){border-right:0}
+  .mso-hp__guides{grid-template-columns:1fr}
+}
+@media (max-width:768px){
+  .mso-hp__story{grid-template-columns:1fr}
+  .mso-hp__story-img{aspect-ratio:16/9}
+  .mso-hp__story-body{padding:26px 22px}
+  .mso-hp__promo{grid-template-columns:1fr}
+  .mso-hp__price-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:600px){
+  .mso-hp{font-size:15.5px}
+  .mso-hp__grid,.mso-hp__grid--8{grid-template-columns:repeat(2,1fr)}
+  .mso-hp__brands{grid-template-columns:repeat(3,1fr)}
+  .mso-hp__revs{grid-template-columns:1fr}
+  .mso-hp__trust{grid-template-columns:repeat(2,1fr)}
+  .mso-hp__trust-item{border-right:0;border-bottom:1px solid var(--hp-hair)}
+  .mso-hp__hero{min-height:320px}
+  .mso-hp__hero-in{padding:38px 0}
+  .mso-hp__ctas .mso-hp__btn{width:100%;text-align:center}
+  .mso-hp__announce{font-size:12.5px;gap:2px 14px}
+  .mso-hp__capture{padding:28px 18px}
+  .mso-hp__tabs{gap:16px}
+}
+@media (prefers-reduced-motion:reduce){.mso-hp__prod,.mso-hp__cat,.mso-hp__guide,.mso-hp__band{transition:none}}
