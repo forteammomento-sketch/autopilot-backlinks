@@ -5,10 +5,10 @@ Michigan Sports Outdoor · commerce-first state landing pages, Elementor-ready.
 | File | Where it goes |
 |---|---|
 | `state-pages.css` | **Once**, Elementor → Site Settings → Custom CSS |
-| `california.html` `new-york.html` `ohio.html` `texas.html` `pennsylvania.html` `georgia.html` | HTML widget, one per page |
-| `build_states.py` | Regenerates all six. Add a state to `STATES` and rerun. |
+| Ten state files — `california` `new-york` `ohio` `texas` `pennsylvania` `georgia` `north-carolina` `tennessee` `illinois` `wisconsin` | HTML widget, one per page |
+| `build_states.py` | Regenerates all ten. Add a state to **both** `STATES` and `SIBLINGS`, then rerun. |
 
-URLs: `/knives/{state-slug}/` — california, new-york, ohio, texas, pennsylvania, georgia
+URLs: `/knives/{state-slug}/` — ten states, listed above
 Hub: `/knives/` — build this first, it is what they all link up to.
 
 ## What these are
@@ -35,6 +35,10 @@ notice saying so plainly:
 | Texas | Included | Legal since HB 1862, 1 September 2013 |
 | Pennsylvania | Included | Legal since Act 119 of 2022, 2 January 2023 |
 | Georgia | Included | No switchblade ban in Georgia law |
+| North Carolina | Included, with a caveat | Legal to own and open carry; outside the concealed-carry exception |
+| Tennessee | Included | Legal since the 2014 repeal |
+| **Illinois** | **Filtered out** | Lawful only for FOID cardholders — unverifiable at checkout |
+| Wisconsin | Included | Legal since Act 149, February 2016 |
 
 Telling a California buyer up front that you will not sell them a switchblade
 is worth more than the sale you lose. It prevents a return, it prevents a
@@ -63,7 +67,8 @@ against that state before applying the chip.
 - [ ] Reviews section holds real reviews, **or is deleted entirely**
 - [ ] Season dates verified — every page carries a `[VERIFY]` marker with the
       agency to check (CDFW, NY DEC, Ohio Division of Wildlife, TPWD, PA Game
-      Commission, Georgia DNR)
+      Commission, Georgia DNR, NC Wildlife Resources Commission, TWRA,
+      Illinois DNR, Wisconsin DNR)
 - [ ] Images uploaded: hero 1600×600, tile 400×500, promo 640×400,
       6 categories 320×240, 8 brand logos, product shots 400×400
 - [ ] Every source link clicked once to confirm it resolves
@@ -73,9 +78,12 @@ against that state before applying the chip.
 
 ## Adding more states
 
-Edit `STATES` in `build_states.py` and rerun. Each entry needs a headline, a
-hero line, four legal facts with a pill class, the source links, the season
-copy, and the category list.
+Edit `build_states.py` and rerun. Add the state to **`STATES`** *and* to
+**`SIBLINGS`** — `SIBLINGS` only lists states that actually have a page, so
+forgetting it ships a broken link on every other page.
+
+Each `STATES` entry needs a headline, a hero line, four legal facts with a
+pill class, source links, season copy, and the category list.
 
 **Research the legal facts from the state legislature's own site or AKTI.**
 Use AI to tidy the wording once the verified fact is in hand — never to supply
@@ -91,6 +99,10 @@ it. Four wrong facts in a box that says "at a glance" is worse than no box.
 | Texas | Legal | None for carry; over 5.5″ is location-restricted | **Yes**, Local Gov't Code 229.001 | Penal Code 46.01, HB 1935 |
 | Pennsylvania | Legal | None | No — firearms only | Act 119 of 2022, 18 Pa.C.S. 908 |
 | Georgia | Legal | Over 12″ needs a carry licence | **Yes**, O.C.G.A. 16-11-173 | O.C.G.A. 16-11-125.1 |
+| North Carolina | Own/open carry only | None statutory | Not established — page does not claim either way | N.C.G.S. 14-269 |
+| Tennessee | Legal | None since 2014 | **Yes**, 39-17-1314(f) since 2013 | 2014 Tenn. Acts ch. 870 |
+| Illinois | FOID card only | None statewide; 3″ rule for public buildings | No | 720 ILCS 5/24-1 |
+| Wisconsin | Legal | None | **Yes**, Wis. Stat. 66.0409 | 2015 Act 149 |
 
 Two things worth getting right, because most pages online do not:
 
@@ -103,3 +115,12 @@ Two things worth getting right, because most pages online do not:
   still telling readers Philadelphia bans knife carry are out of date.
 - Georgia raised its weapon threshold from **five inches to twelve** in 2017.
   Older guides still quote five.
+- Illinois automatics are **not flatly illegal** — 720 ILCS 5/24-1(e)(2) exempts
+  FOID cardholders. We still do not ship them, because the card cannot be
+  verified at checkout.
+- Wisconsin's **Act 149 wiped out Milwaukee's three-inch rule** along with the
+  state switchblade ban. Guides still citing Milwaukee are out of date.
+
+**North Carolina preemption is deliberately not claimed either way.** Research
+did not settle it, so the page uses location restrictions as its fourth fact
+instead of asserting something unverified.
