@@ -43,6 +43,19 @@ export interface SiteEvidence {
   robotsTxt: string | null;
   /** The owned page most topically relevant to this prompt, if any exists. */
   candidatePage: PageEvidence | null;
+  /**
+   * Crawlers the site's edge blocks despite robots.txt allowing them, from the
+   * crawler probe. CDNs now block AI bots at the edge by default, so this is a
+   * common cause of invisibility that a robots.txt read alone cannot see.
+   */
+  edgeBlockedCrawlers?: string[];
+  /**
+   * True when the crawl could not reach the site at all. The detector emits no
+   * gaps in that case — a failed crawl is not evidence about the site, and
+   * turning one into `no_page` would tell the customer to write content for a
+   * page we never opened.
+   */
+  siteUnreachable?: boolean;
 }
 
 export interface DetectionResult {

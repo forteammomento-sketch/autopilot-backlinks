@@ -14,14 +14,19 @@ export interface RobotsRule {
 export interface RobotsGroup {
   userAgents: string[];
   rules: RobotsRule[];
+  /** Seconds the site asks this agent to wait between requests. */
+  crawlDelay?: number;
 }
 
 export interface RobotsTxt {
   groups: RobotsGroup[];
+  /** Sitemap directives, which are file-scoped rather than group-scoped. */
+  sitemaps: string[];
 }
 
 export function parseRobots(content: string): RobotsTxt {
   const groups: RobotsGroup[] = [];
+  const sitemaps: string[] = [];
   let current: RobotsGroup | null = null;
   // Consecutive User-agent lines share one rule block; a rule line closes the
   // agent list, so the next User-agent starts a new group.
@@ -37,6 +42,12 @@ export function parseRobots(content: string): RobotsTxt {
     const field = line.slice(0, separator).trim().toLowerCase();
     const value = line.slice(separator + 1).trim();
 
+    // Sitemap is not scoped to a group and may appear anywhere in the file.
+    if (field === 'sitemap') {
+      if (value !== '') sitemaps.push(value);
+      continue;
+    }
+
     if (field === 'user-agent') {
       if (current === null || !acceptingAgents) {
         current = { userAgents: [], rules: [] };
@@ -44,6 +55,14 @@ export function parseRobots(content: string): RobotsTxt {
         acceptingAgents = true;
       }
       if (value !== '') current.userAgents.push(value.toLowerCase());
+      continue;
+    }
+
+    if (field === 'crawl-delay') {
+      if (current === null) continue;
+      acceptingAgents = false;
+      const seconds = Number(value);
+      if (Number.isFinite(seconds) && seconds >= 0) current.crawlDelay = seconds;
       continue;
     }
 
@@ -57,7 +76,12 @@ export function parseRobots(content: string): RobotsTxt {
     current.rules.push({ allow: field === 'allow', path: value });
   }
 
-  return { groups };
+  return { groups, sitemaps };
+}
+
+/** Crawl-delay that applies to `userAgent`, in seconds. */
+export function crawlDelayFor(robots: RobotsTxt, userAgent: string): number | null {
+  return groupFor(robots, userAgent)?.crawlDelay ?? null;
 }
 
 /**

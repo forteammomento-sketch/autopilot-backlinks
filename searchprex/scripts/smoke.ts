@@ -14,7 +14,7 @@ import { PerplexityAdapter } from '../src/engines/perplexity.js';
 import { OpenAIAdapter } from '../src/engines/openai.js';
 import { samplePrompt } from '../src/runner/sample.js';
 import type { EngineAdapter } from '../src/engines/types.js';
-import type { ProjectContext } from '../src/lib/citations.js';
+import { MSO } from './projects.js';
 
 const engine = process.env['ENGINE'] ?? 'perplexity';
 const keyName = engine === 'openai' ? 'OPENAI_API_KEY' : 'PERPLEXITY_API_KEY';
@@ -24,15 +24,7 @@ if (apiKey === undefined || apiKey === '') {
   process.exit(1);
 }
 
-const context: ProjectContext = {
-  domain: 'michigansportsoutdoor.com',
-  brandNames: ['Michigan Sports Outdoor', 'MSO'],
-  competitors: [
-    { domain: 'bladehq.com', brandNames: ['Blade HQ'] },
-    { domain: 'knifecenter.com', brandNames: ['KnifeCenter'] },
-    { domain: 'smkw.com', brandNames: ['Smoky Mountain Knife Works'] },
-  ],
-};
+const context = MSO.context;
 
 const prompt = process.argv[2] ?? 'best budget barlow pocket knife under $40';
 

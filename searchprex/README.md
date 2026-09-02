@@ -3,15 +3,19 @@
 Engine adapters and citation analysis for the **AI Visibility Autopilot** feature.
 Spec: [`../strategy/searchprex-ai-visibility-autopilot.md`](../strategy/searchprex-ai-visibility-autopilot.md).
 
-V0 so far: two engine adapters, citation analysis, and the gap detector that
-turns an uncited prompt into a typed, evidenced finding. Framework-free — no
-Next.js imports — so it drops into `lib/` of the app unchanged.
+V0 so far: two engine adapters, the site crawler that gathers evidence, and the
+gap detector that turns an uncited prompt into a typed, evidenced finding.
+Framework-free — no Next.js imports — so it drops into `lib/` of the app
+unchanged.
+
+The default project is the MSO storefront (`https://www.michigansportsoutdoor.com/`),
+configured in [`scripts/projects.ts`](scripts/projects.ts).
 
 ## Install
 
 ```bash
 npm install
-npm test          # 93 unit tests, no network
+npm test          # 118 unit tests, no network
 npm run typecheck
 ```
 
@@ -40,9 +44,44 @@ src/lib/citations.ts        self / competitor / third_party classification
 src/lib/robots.ts           robots.txt parser + which crawlers each engine needs
 src/lib/html.ts             visible text, JSON-LD, snippet suppression, passages
 src/runner/sample.ts        3x repeat + retry, verdict aggregation
+src/crawl/fetcher.ts        capped, polite HTTP + a concurrency pool
+src/crawl/sitemap.ts        urlset / sitemapindex parsing
+src/crawl/links.ts          internal links, canonical, title, h1
+src/crawl/crawl.ts          discovery, inbound-link counting, crawler probing
+src/crawl/evidence.ts       candidate selection -> SiteEvidence
 src/gaps/detect.ts          gap detection across the four gates
 supabase/migrations/        V0 schema with RLS
 ```
+
+## The crawler
+
+```bash
+npm run crawl -- "" "how long does a pocket knife blade stay sharp"
+PROBE=1 npm run crawl -- "" "..."      # also probe for edge-level blocking
+MAX_PAGES=200 npm run crawl -- smkstore.com "..."
+```
+
+Discovery prefers the sitemaps named in robots.txt and falls back to following
+homepage links. Everything is capped — pages, bytes, timeout, concurrency — and
+a `Crawl-delay` drops concurrency to one: a crawl runs against a customer's
+production store, where a runaway loop is not a slow job but an outage they pay
+for and blame on us.
+
+**The crawler obeys robots.txt for its own agent.** A tool that audits crawler
+access while ignoring robots.txt itself has no standing to report the finding.
+
+### Edge blocking (`PROBE=1`)
+
+robots.txt is only half of gate 1. CDNs now block AI crawlers at the edge by
+default, so a site can have a permissive robots.txt and still return 403 to
+`OAI-SearchBot`. That is invisible to a normal fetch and is one of the most
+common causes of an otherwise healthy page never being cited.
+
+Probing sends another company's user-agent string, which is only defensible
+against a site the customer owns and has asked us to audit — so the probe URL
+is built from the project's own origin and structurally cannot be pointed
+elsewhere. A 403 only counts as a block when the same request from our own
+agent succeeded; a site that is down for everyone is a different problem.
 
 ## The gap detector
 
@@ -105,6 +144,6 @@ the Gemini / AI Overviews / Copilot adapters. Adding an engine means
 implementing `EngineAdapter` — nothing downstream of `analyseResult` is
 engine-specific.
 
-Gap detection consumes a `SiteEvidence` the caller supplies; the crawler that
-fetches robots.txt, the candidate page and its rendered word count is not in
-this package yet.
+`js_only` detection needs a rendered word count, which means a headless
+browser. `buildSiteEvidence` takes an optional `renderer` hook for that; without
+one wired, `js_only` is simply not reported rather than guessed at.

@@ -9,7 +9,7 @@ import {
   visibleText,
   wordCount,
 } from '../lib/html.js';
-import { blockedCrawlersFor, parseRobots } from '../lib/robots.js';
+import { blockedCrawlersFor, ENGINE_CRAWLERS, parseRobots } from '../lib/robots.js';
 import type { DetectionResult, Gap, PageEvidence, SiteEvidence } from './types.js';
 
 /** Below this term overlap the passage is not about the prompt. */
@@ -36,7 +36,8 @@ const DEFAULT_SCHEMA_TYPES = ['Product', 'FAQPage', 'Article'];
  * - `cited` — nothing to fix.
  * - `unknown` — every call failed, so we observed nothing. Emitting gaps here
  *   would invent work from an outage, and because actions cost the customer
- *   real content changes, that is worse than reporting nothing.
+ *   real content changes, that is worse than reporting nothing. The same rule
+ *   applies to `evidence.siteUnreachable`.
  *
  * `contested` does produce gaps: being cited one time in three is a real
  * weakness, not a win.
@@ -47,6 +48,12 @@ export function detectGaps(
   evidence: SiteEvidence,
 ): DetectionResult {
   if (sampled.verdict === 'cited' || sampled.verdict === 'unknown') {
+    return { gaps: [], blocking: null };
+  }
+
+  // Same principle one layer down: a crawl that reached nothing tells us
+  // nothing about the site.
+  if (evidence.siteUnreachable === true) {
     return { gaps: [], blocking: null };
   }
 
@@ -83,9 +90,33 @@ export function detectGaps(
             reason: 'robots.txt disallows a crawler this engine needs',
             userAgents: blocked.map((b) => b.userAgent),
             path,
+            layer: 'robots',
           },
         });
       }
+    }
+
+    // Edge blocking is invisible to robots.txt: a permissive robots.txt and a
+    // CDN returning 403 to OAI-SearchBot look identical until something sends
+    // that user-agent. Reported separately so the fix goes to the right place
+    // -- a WAF rule, not a robots.txt edit.
+    const edgeBlocked = (evidence.edgeBlockedCrawlers ?? []).filter((bot) =>
+      ENGINE_CRAWLERS[sampled.engine]?.required.includes(bot) === true,
+    );
+    if (edgeBlocked.length > 0) {
+      gaps.push({
+        ...base,
+        gapType: 'bot_blocked',
+        blockedAtGate: 1,
+        ourUrl: page.url,
+        rivalUrl: firstRivalUrl(sampled),
+        certainty: 'proven',
+        evidence: {
+          reason: 'the site edge blocks a crawler this engine needs, despite robots.txt',
+          userAgents: edgeBlocked,
+          layer: 'edge',
+        },
+      });
     }
 
     // Snippet suppression is a separate mechanism from robots.txt and only

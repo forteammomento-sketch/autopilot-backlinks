@@ -8,4 +8,5 @@ export * from './lib/citations.js';
 export * from './lib/robots.js';
 export * from './lib/html.js';
 export * from './runner/sample.js';
+export * from './crawl/index.js';
 export * from './gaps/index.js';
