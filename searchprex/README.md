@@ -19,7 +19,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 227 unit tests, no network
+npm test          # 240 unit tests, no network
 npm run typecheck
 ```
 
@@ -142,9 +142,28 @@ filled-in templates.
 **Seeds come from the catalogue and from Search Console, never from the topic
 alone.** A set imagined from "knives and outdoor gear" asks about products the
 site does not stock, and every one of those is a paid measurement of a question
-that can never be won. Search Console queries lead where available: they are
-measured demand on pages that already rank somewhere, which gives a prompt a
-chance at gate 2 that an invented one does not.
+that can never be won.
+
+### Search Console
+
+Set `GSC_SITE_URL` and the three `GOOGLE_*` variables and seeds come from
+measured demand instead of inferred demand. Queries are ranked by **opportunity,
+not impressions**:
+
+| Case | Treatment | Why |
+|---|---|---|
+| Position past 30 | scored **zero** | Gate 2 — an engine will not retrieve a page that far down, so nothing written can win it. Measuring it weekly buys nothing. |
+| Position 1–3, clicks already coming | heavily discounted | Demand the site already converts. A citation adds little. |
+| Everything between | scored by impressions not converted | Visible, not winning. This is where the work pays. |
+
+Branded queries are dropped before the model is called — they are demand the
+site already owns, and the generator would reject the resulting prompts anyway.
+
+Two details this client gets right that are easy to miss: `sc-domain:` property
+names are percent-encoded (unencoded, the colon makes the API read a malformed
+URL and 404), and the default window ends **three days ago**, because Search
+Console data lags and asking for today returns an empty result that reads as
+"this site has no queries".
 
 Four rules the generator enforces on what comes back:
 

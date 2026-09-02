@@ -8,7 +8,9 @@
  * product, so it gets read by a person before it starts being measured weekly.
  */
 import { crawlSite } from '../src/crawl/crawl.js';
-import { mergeSeeds, seedsFromCrawl } from '../src/prompts/seeds.js';
+import { mergeSeeds, seedsFromCrawl, seedsFromSearchConsole } from '../src/prompts/seeds.js';
+import { GoogleTokenSource } from '../src/gsc/auth.js';
+import { SearchConsoleClient } from '../src/gsc/client.js';
 import { generatePrompts, weeklyCost } from '../src/prompts/generate.js';
 import { OpenAIPromptWriter } from '../src/prompts/openai-writer.js';
 import { MSO } from './projects.js';
@@ -23,16 +25,40 @@ const domain = process.argv[2] === undefined || process.argv[2] === '' ? MSO.ori
 const maxPages = Number(process.env['MAX_PAGES'] ?? '60');
 const maxTotal = Number(process.env['MAX_PROMPTS'] ?? '60');
 
+const siteUrl = process.env['GSC_SITE_URL'];
+const clientId = process.env['GOOGLE_CLIENT_ID'];
+const clientSecret = process.env['GOOGLE_CLIENT_SECRET'];
+const refreshToken = process.env['GOOGLE_REFRESH_TOKEN'];
+
+let gscSeeds: Awaited<ReturnType<typeof seedsFromSearchConsole>> = [];
+if (siteUrl && clientId && clientSecret && refreshToken) {
+  console.log(`reading Search Console for ${siteUrl}...`);
+  const client = new SearchConsoleClient({
+    siteUrl,
+    tokens: new GoogleTokenSource({ clientId, clientSecret, refreshToken }),
+  });
+  const rows = await client.queries({ limit: 500 });
+  gscSeeds = seedsFromSearchConsole(rows, 40, {
+    brandAliases: MSO.context.brandNames,
+    minImpressions: 5,
+  });
+  console.log(`${rows.length} queries, ${gscSeeds.length} usable as seeds`);
+} else {
+  console.log('Search Console is not configured — seeding from the catalogue only.');
+  console.log('Set GSC_SITE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and');
+  console.log('GOOGLE_REFRESH_TOKEN to seed from measured demand instead.\n');
+}
+
 console.log(`crawling ${domain} for seeds (max ${maxPages} pages)...`);
 const index = await crawlSite(domain, { maxPages });
 
-if (!index.reachable) {
-  console.error(`could not reach ${domain} — no seeds, so nothing to generate from.`);
+if (!index.reachable && gscSeeds.length === 0) {
+  console.error(`could not reach ${domain} and Search Console gave no seeds.`);
   process.exit(2);
 }
 
-const seeds = mergeSeeds(seedsFromCrawl(index));
-console.log(`${seeds.length} seeds from the catalogue\n`);
+const seeds = mergeSeeds(gscSeeds, index.reachable ? seedsFromCrawl(index) : []);
+console.log(`${seeds.length} seeds (${gscSeeds.length} from Search Console)\n`);
 
 if (seeds.length === 0) {
   console.error('No product or category pages were found. Prompt generation needs real');

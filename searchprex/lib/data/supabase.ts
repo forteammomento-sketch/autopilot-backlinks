@@ -2,7 +2,8 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { crawlSite } from '@/src/crawl/crawl';
 import { generatePrompts as generatePromptSet } from '@/src/prompts/generate';
 import { OpenAIPromptWriter } from '@/src/prompts/openai-writer';
-import { mergeSeeds, seedsFromCrawl } from '@/src/prompts/seeds';
+import { mergeSeeds, seedsFromCrawl, seedsFromSearchConsole } from '@/src/prompts/seeds';
+import { searchConsoleFromEnv } from '@/lib/gsc/from-env';
 import { buildDeployPlan, staticSiteResolver } from '@/src/deploy/plan';
 import { deployViaPullRequest, rollbackViaPullRequest } from '@/src/deploy/github';
 import { RestGitHubClient } from '@/src/deploy/rest-client';
@@ -313,17 +314,34 @@ export function createSupabaseMutations(
           .maybeSingle();
         if (project === null) return { kind: 'error', message: 'project not found' };
 
+        const brandAliases = (project['brand_names'] as string[] | null) ?? [];
+
+        // Search Console first: measured demand on pages that already rank
+        // somewhere, which gives a prompt a chance at gate 2 that an invented
+        // one does not. A project without it still generates, from the
+        // catalogue — that is inferred demand rather than measured, and worth
+        // less, but it is not nothing.
+        const gsc = searchConsoleFromEnv();
+        const gscSeeds =
+          gsc === null
+            ? []
+            : seedsFromSearchConsole(await gsc.queries({ limit: 500 }), 40, {
+                brandAliases,
+                minImpressions: 5,
+              });
+
         const index = await crawlSite(String(project['domain']), { maxPages: 40 });
-        if (!index.reachable) {
+        if (!index.reachable && gscSeeds.length === 0) {
           return {
             kind: 'error',
             message:
-              `Could not reach ${String(project['domain'])}. A failed crawl gives no seeds, ` +
-              'and generating without them would ask about products the site may not stock.',
+              `Could not reach ${String(project['domain'])}, and Search Console is not ` +
+              'connected. With no seeds from either, generating would ask about products ' +
+              'the site may not stock.',
           };
         }
 
-        const seeds = mergeSeeds(seedsFromCrawl(index));
+        const seeds = mergeSeeds(gscSeeds, index.reachable ? seedsFromCrawl(index) : []);
         if (seeds.length === 0) {
           return {
             kind: 'error',
@@ -340,10 +358,7 @@ export function createSupabaseMutations(
 
         const report = await generatePromptSet(
           seeds,
-          {
-            topic: String(project['topic']),
-            brandAliases: (project['brand_names'] as string[] | null) ?? [],
-          },
+          { topic: String(project['topic']), brandAliases },
           new OpenAIPromptWriter({ apiKey }),
           { existing: (existing ?? []).map((row) => String(row['text'])) },
         );

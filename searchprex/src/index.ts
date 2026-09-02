@@ -13,5 +13,6 @@ export * from './gaps/index.js';
 export * from './actions/index.js';
 export * from './deploy/index.js';
 export * from './measure/index.js';
+export * from './gsc/index.js';
 export * from './prompts/index.js';
 export * from './jobs/index.js';

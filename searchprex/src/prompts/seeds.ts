@@ -1,4 +1,6 @@
 import type { SiteIndex } from '../crawl/crawl.js';
+import type { SearchAnalyticsRow } from '../gsc/types.js';
+import { namesBrand } from './intent.js';
 import type { PromptSeed } from './types.js';
 
 /**
@@ -25,26 +27,72 @@ export function seedsFromCrawl(index: SiteIndex, limit = 40): PromptSeed[] {
   return seeds;
 }
 
+export type QueryRow = Pick<SearchAnalyticsRow, 'query' | 'impressions'> &
+  Partial<SearchAnalyticsRow>;
+
+export interface SearchConsoleSeedOptions {
+  /** Brand names, so branded demand is not turned into prompts. */
+  brandAliases?: string[];
+  /** Ignore queries below this many impressions. Default 1. */
+  minImpressions?: number;
+}
+
+/**
+ * Rank a query by how much there is to gain from working on it.
+ *
+ * Raw impressions is the wrong sort. The queries worth building prompts around
+ * are the ones already earning impressions the site is not converting — which
+ * is the whole diagnosis behind this project. Three cases are treated
+ * differently:
+ *
+ * - **Position past 30.** Scored zero. Gate 2 says an engine will not retrieve
+ *   a page that far down, so a prompt built here cannot be won no matter what
+ *   is written. Paying to measure it weekly buys nothing.
+ * - **Position 1-3 with clicks already coming.** Heavily discounted. This is
+ *   demand the site already converts; a citation adds little.
+ * - **Everything between.** Visible, not winning. This is where the work pays,
+ *   and it is scored by the impressions being left on the table.
+ */
+export function opportunityScore(row: QueryRow): number {
+  const position = row.position ?? 15;
+  const ctr = row.ctr ?? 0;
+
+  if (position > 30) return 0;
+
+  const positionWeight = position <= 3 ? 0.3 : position <= 20 ? 1 : 0.5;
+  return row.impressions * (1 - Math.min(1, ctr)) * positionWeight;
+}
+
 /**
  * Seeds from Search Console.
  *
- * These are the strongest seeds available: queries the site already earns
- * impressions for are demand that exists, on pages that already rank somewhere.
- * A prompt built from one of these has a chance at gate 2, which a prompt
- * invented from the topic does not.
+ * The strongest source available: queries the site already earns impressions
+ * for are measured demand on pages that already rank somewhere, so a prompt
+ * built from one has a chance at gate 2 that an invented one does not.
+ *
+ * Branded queries are dropped. They are demand the site already owns, and a
+ * prompt built from one produces a question the shop nearly always wins —
+ * exactly what the generator rejects downstream, so filtering here saves the
+ * model call as well as the measurement.
  */
 export function seedsFromSearchConsole(
-  rows: { query: string; impressions: number }[],
+  rows: QueryRow[],
   limit = 40,
+  options: SearchConsoleSeedOptions = {},
 ): PromptSeed[] {
-  return [...rows]
-    .filter((row) => row.query.trim() !== '' && row.impressions > 0)
-    .sort((a, b) => b.impressions - a.impressions)
+  const { brandAliases = [], minImpressions = 1 } = options;
+
+  return rows
+    .filter((row) => row.query.trim() !== '' && row.impressions >= minImpressions)
+    .filter((row) => !namesBrand(row.query, brandAliases))
+    .map((row) => ({ row, score: opportunityScore(row) }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map((row) => ({
-      text: row.query.trim(),
-      cluster: headTerm(row.query),
-      impressions: row.impressions,
+    .map((entry) => ({
+      text: entry.row.query.trim(),
+      cluster: headTerm(entry.row.query),
+      impressions: entry.row.impressions,
     }));
 }
 
