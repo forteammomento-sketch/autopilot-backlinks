@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate MSO state landing pages. Edit STATES, run, paste output into Elementor."""
 import json
+from pathlib import Path
 
 # Only list states that actually have a page built, or you ship broken links
 # on every other page. Add a row here at the same time you add one to STATES.
@@ -833,8 +834,12 @@ def build_hub():
 
 
 if __name__ == "__main__":
+    # Write beside this file, not into the caller's working directory. Run from
+    # the repo root, this used to scatter thirteen pages there and leave the
+    # real ones untouched.
+    out = Path(__file__).resolve().parent
     for slug, d in STATES.items():
-        open(f"{slug}.html", "w").write(build(slug, d))
+        (out / f"{slug}.html").write_text(build(slug, d))
         print(f"wrote {slug}.html")
-    open("index.html", "w").write(build_hub())
+    (out / "index.html").write_text(build_hub())
     print("wrote index.html  (the /knives/ hub)")
