@@ -4,8 +4,9 @@ Engine adapters and citation analysis for the **AI Visibility Autopilot** featur
 Spec: [`../strategy/searchprex-ai-visibility-autopilot.md`](../strategy/searchprex-ai-visibility-autopilot.md).
 
 V0 so far: two engine adapters, the site crawler that gathers evidence, the gap
-detector that turns an uncited prompt into a typed finding, and the Action
-Engine that turns findings into deployable artifacts.
+detector that turns an uncited prompt into a typed finding, the Action Engine
+that turns findings into artifacts, and the deploy pipeline that ships them as
+a reviewable pull request.
 Framework-free — no Next.js imports — so it drops into `lib/` of the app
 unchanged.
 
@@ -16,7 +17,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 
 ```bash
 npm install
-npm test          # 144 unit tests, no network
+npm test          # 167 unit tests, no network
 npm run typecheck
 ```
 
@@ -55,6 +56,11 @@ src/actions/rank.ts         priority = leverage x certainty x value / effort
 src/actions/artifacts.ts    deterministic builders (robots, schema, links)
 src/actions/answer-block.ts model-backed copy, with validation and refusal
 src/actions/generate.ts     gap -> action orchestration
+src/deploy/markers.ts       fenced, idempotent, removable block markers
+src/deploy/apply.ts         pure HTML/robots patching
+src/deploy/plan.ts          actions -> reviewable file changes
+src/deploy/github.ts        pull request deploy + revert
+src/deploy/rest-client.ts   GitHub REST implementation
 supabase/migrations/        V0 schema with RLS
 ```
 
@@ -209,9 +215,76 @@ never outranks a proven lever. `win_rate` defaults to 0.5 — an explicit "no
 record yet" rather than an optimistic guess — and converges as
 `lift_measurements` fills.
 
+## The deploy pipeline
+
+```ts
+const plan = await buildDeployPlan(approvedActions, { resolver, readFile });
+// review plan.changes — before/after per file — then:
+const record = await deployViaPullRequest(plan, client);
+// and if it goes wrong:
+await rollbackViaPullRequest(record, client);
+```
+
+V0 ships `answer_block`, `schema` and `crawl_fix` through a **draft pull
+request**. Not a direct commit, not the default branch: this writes generated
+copy into someone's production site, and the diff is the only place a human sees
+exactly what changed before it goes live.
+
+### Everything written is fenced and removable
+
+```html
+<!-- searchprex:block:3f2a91c4 -->
+<section class="sp-answer">…</section>
+<!-- /searchprex:block:3f2a91c4 -->
+```
+
+This is what makes a second deploy **replace** a block rather than append a
+second copy — a customer who approves the same action twice would otherwise end
+up with duplicate passages, the precise failure this product exists to prevent.
+It also means the block can be removed by anyone holding the page, not only by
+reverting our commit.
+
+### Where a block lands
+
+Tried in order: an existing marked block, then before `</main>`, then before the
+footer, then before `</body>`. A block appended after the footer is in the DOM
+but outside the region extractors treat as the page body — the action would be
+spent for nothing.
+
+### What the pipeline refuses to do
+
+- **Add a second JSON-LD block of a type the page already has.** Two competing
+  Product blocks is worse than none: engines pick one unpredictably, and the
+  conflict is one we created.
+- **Rewrite a robots.txt group somebody already configured.** That group exists
+  for a reason we cannot see, possibly a legal one. It appends a new allow
+  group, or it reports and stops.
+- **Overwrite a file that changed between planning and deploying.** The deploy
+  compares against the snapshot and throws rather than clobbering whatever
+  landed in between.
+- **Publish unlimited blocks in one push.** `maxBlocksPerRun` defaults to 5.
+  Dozens of generated passages appearing across a domain at once is the shape
+  that trips spam classification, and that damage lands on the whole site rather
+  than the pages we touched. Held-back blocks are named in the PR body.
+
+### Rollback
+
+`before` is captured for every file *before* anything is written, and rollback
+opens a revert PR from those snapshots. Not a force-push or a branch delete: the
+original PR may already be merged, and rewriting history under a team that has
+pulled it does more damage than the change being undone.
+
+### Mapping URLs to files
+
+`staticSiteResolver` handles a site whose URLs mirror its file tree. Any
+framework with its own routing needs its own resolver — the default returns
+`null` rather than guessing, because a wrong guess writes a block into the wrong
+file.
+
 ## Not built yet
 
-Prompt generation, deploys, and the Gemini / AI Overviews / Copilot adapters. Adding an engine means
+Prompt generation, the T+14 re-measure job, the Shopify / WordPress / Webflow
+deploy targets, and the Gemini / AI Overviews / Copilot adapters. Adding an engine means
 implementing `EngineAdapter` — nothing downstream of `analyseResult` is
 engine-specific.
 

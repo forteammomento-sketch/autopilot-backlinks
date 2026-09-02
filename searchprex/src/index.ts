@@ -11,3 +11,4 @@ export * from './runner/sample.js';
 export * from './crawl/index.js';
 export * from './gaps/index.js';
 export * from './actions/index.js';
+export * from './deploy/index.js';
