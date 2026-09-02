@@ -1,0 +1,115 @@
+import type { ActionType, RefusalReason } from '@/src/actions/types';
+import type { Certainty, GapType } from '@/src/gaps/types';
+import type { LiftDirection } from '@/src/measure/types';
+
+/**
+ * The shape the screens read.
+ *
+ * Deliberately a view model rather than the core types: a screen should not have
+ * to walk a `SampledPrompt`'s attempts to render a row, and the Supabase
+ * implementation will assemble these from SQL views rather than by loading the
+ * whole object graph.
+ */
+
+export type Verdict = 'cited' | 'contested' | 'absent' | 'unknown';
+
+export interface ProjectSummary {
+  slug: string;
+  name: string;
+  domain: string;
+  topic: string;
+  lastRunAt: string;
+  /** Citations gained in the last 30 days — the renewal metric. */
+  citationsGained: number;
+  promptCount: number;
+  engines: string[];
+}
+
+export interface EngineVerdict {
+  engine: string;
+  verdict: Verdict;
+  /** Cited in N of the attempts that succeeded. */
+  cited: number;
+  total: number;
+}
+
+export interface PromptRow {
+  id: string;
+  text: string;
+  intent: 'informational' | 'comparison' | 'commercial' | 'brand';
+  cluster: string;
+  engines: EngineVerdict[];
+  /** Competitor domains cited for this prompt. */
+  rivals: string[];
+}
+
+export interface ActionRow {
+  id: string;
+  actionType: ActionType;
+  gapType: GapType;
+  gate: 1 | 2 | 3 | 4;
+  prompt: string;
+  engine: string;
+  targetUrl: string | null;
+  priority: number;
+  certainty: Certainty;
+  rationale: string;
+  status: 'draft' | 'approved' | 'deployed' | 'verified';
+  /** Rendered artifact preview, or null for an advisory. */
+  preview: { label: string; body: string } | null;
+}
+
+export interface RefusalRow {
+  id: string;
+  actionType: ActionType;
+  reason: RefusalReason;
+  prompt: string;
+  engine: string;
+  needed: string;
+}
+
+export interface PlacementRow {
+  domain: string;
+  promptsCovered: number;
+  citationCount: number;
+  /** True when a competitor is already cited on this domain. */
+  rivalPresent: boolean;
+  examplePrompt: string;
+}
+
+export interface ProofRow {
+  id: string;
+  actionType: ActionType;
+  prompt: string;
+  deployedAt: string;
+  measuredAt: string | null;
+  engines: {
+    engine: string;
+    before: { cited: number; total: number };
+    after: { cited: number; total: number } | null;
+    direction: LiftDirection | null;
+    confident: boolean;
+  }[];
+  isControl: boolean;
+  /** Set when the measurement could not be taken. */
+  deferredReason: string | null;
+}
+
+export interface CohortSummary {
+  treatedCount: number;
+  controlCount: number;
+  treatedDelta: number;
+  controlDelta: number;
+  netLift: number;
+  hasControl: boolean;
+}
+
+export interface DataSource {
+  project(slug: string): Promise<ProjectSummary | null>;
+  prompts(slug: string): Promise<PromptRow[]>;
+  actions(slug: string): Promise<ActionRow[]>;
+  refusals(slug: string): Promise<RefusalRow[]>;
+  placements(slug: string): Promise<PlacementRow[]>;
+  proof(slug: string): Promise<ProofRow[]>;
+  cohort(slug: string): Promise<CohortSummary>;
+}

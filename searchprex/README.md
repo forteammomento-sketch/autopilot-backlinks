@@ -14,13 +14,19 @@ unchanged.
 The default project is the MSO storefront (`https://www.michigansportsoutdoor.com/`),
 configured in [`scripts/projects.ts`](scripts/projects.ts).
 
-## Install
+## Run it
 
 ```bash
 npm install
+npm run dev       # dashboard at http://localhost:3000 -> /p/mso
 npm test          # 190 unit tests, no network
 npm run typecheck
 ```
+
+The dashboard runs on fixture data (`lib/data/fixtures.ts`) shaped exactly like
+what the pipeline produces. Every screen reads through the `DataSource`
+interface, so the Supabase implementation slots in at `lib/data/index.ts` and no
+component changes.
 
 ## Live check
 
@@ -68,6 +74,27 @@ src/measure/winrate.ts      lift records -> ranker input
 src/measure/remeasure.ts    the T+14 job
 supabase/migrations/        V0 schema with RLS
 ```
+
+## The screens
+
+| Screen | Route | What it is for |
+|---|---|---|
+| **Actions** | `/p/mso/actions` | The queue. Ranked work, each with its artifact and a reason. |
+| Visibility | `/p/mso` | The scoreboard, sorted by what is fixable today rather than by volume. |
+| Placements | `/p/mso/placements` | Link targets ranked by AI citation frequency, not authority. |
+| Proof | `/p/mso/proof` | Before/after per deploy, against a control group. |
+| Prompts | `/p/mso/prompts` | The prompt universe by cluster and intent. |
+
+Three rules the UI holds to, because the numbers are easy to misrepresent:
+
+- **A citation count always shows its denominator.** `1/3` is drawn as three
+  pips with one filled, never as a tick. A bare "cited" from one lucky sample is
+  the single most misleading thing this product could print.
+- **Status is never colour alone.** Every verdict dot sits beside its word, so
+  meaning survives colourblindness, greyscale print and forced-colors.
+- **Certainty rides on every recommendation.** `proven`, `strong` and
+  `plausible` are visually distinct, because the customer prices the work off
+  that label.
 
 ## The crawler
 
