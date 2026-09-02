@@ -119,6 +119,56 @@ is built and shown, and nothing is pushed. That is what happens when GitHub is
 not configured. Reporting a pull request URL that does not exist would be worse
 than reporting nothing.
 
+## Scheduled jobs
+
+```
+POST /api/jobs/measure     Authorization: Bearer $SEARCHPREX_JOB_SECRET
+POST /api/jobs/remeasure
+```
+
+An HTTP endpoint rather than a binding to one job runner. Vercel Cron, pg_cron,
+GitHub Actions and Inngest can all POST to it, and which one a deployment uses
+is the operator's call. The parts that must not be got wrong live below that
+line, where they are the same whatever triggers them:
+
+**A lease, enforced by the database.** `job_runs` carries a partial unique index
+on `(project_id, job) where status = 'running'`. Cron is not exactly-once
+anywhere — a retry, two regions, or someone pressing Run beside the schedule all
+produce a second call — and a duplicate full run is 900 paid API calls, not a
+warning. Two processes racing is precisely the case application logic gets
+wrong, so the guard is an index. A crashed worker's lease expires and the next
+acquire reclaims it.
+
+**A call budget.** `CallBudget` makes overspending impossible rather than
+unlikely, and the whole repeat set is reserved before a prompt is measured — a
+budget that stopped mid-prompt would record a one-attempt sample, which reads
+like a verdict but is not one.
+
+**Prompt-major ordering.** When the budget runs out the run leaves prompts fully
+measured across every engine, not every prompt measured on one engine. The first
+is a smaller but usable picture; the second cannot be compared against anything.
+
+**Partial work is kept.** Each result is persisted as it lands, and everything
+not reached is returned as a `skipped` row so the remainder can be scheduled
+rather than silently lost.
+
+Suggested cadence is weekly, not daily — see the cost model in the spec. Daily
+quadruples the bill for a number nobody acts on daily.
+
+## Rollback
+
+A deployed action carries a **Roll back** control behind a two-click confirm,
+for the same reason Deploy is a separate button from Approve: both write to a
+production repository, and neither should be one stray tap away.
+
+Rollback opens a **revert pull request** built from the snapshot taken before
+the deploy — never a force-push or a branch delete. The original may already be
+merged, and rewriting history under a team that has pulled it does more damage
+than the change being undone. The deployment row is marked rolled back before
+the action moves, so a failure between the two leaves a record that the revert
+happened rather than an action that looks deployable again with no snapshot
+behind it.
+
 ## The screens
 
 | Screen | Route | What it is for |

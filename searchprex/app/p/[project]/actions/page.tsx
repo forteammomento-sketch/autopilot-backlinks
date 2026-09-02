@@ -4,12 +4,15 @@ import { SubmitButton } from '@/lib/ui/submit-button';
 import {
   approveAction,
   clearLastOutcome,
+  clearLastRollback,
   deployApproved,
   readLastOutcome,
+  readLastRollback,
   rejectAction,
+  rollbackAction,
   unapproveAction,
 } from './server-actions';
-import type { ActionRow, DeployOutcome } from '@/lib/data/types';
+import type { ActionRow, DeployOutcome, RollbackOutcome } from '@/lib/data/types';
 
 const GATE_NAME: Record<number, string> = {
   1: 'retrievable',
@@ -34,10 +37,11 @@ export default async function ActionsPage({
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
-  const [actions, refusals, outcome] = await Promise.all([
+  const [actions, refusals, outcome, rollback] = await Promise.all([
     data.actions(project),
     data.refusals(project),
     readLastOutcome(project),
+    readLastRollback(project),
   ]);
 
   const approved = actions.filter((a) => a.status === 'approved');
@@ -62,6 +66,7 @@ export default async function ActionsPage({
       )}
 
       {outcome === null ? null : <OutcomeBanner outcome={outcome} project={project} />}
+      {rollback === null ? null : <RollbackBanner outcome={rollback} project={project} />}
 
       <DeployBar project={project} approved={approved.length} shippable={shippable.length} />
 
@@ -169,9 +174,20 @@ function RowControls({ project, action }: { project: string; action: ActionRow }
     return (
       <div className="row-actions">
         <span className="gate">
-          Shipped. Roll back from the pull request, or from the deployment record —
-          the pre-deploy snapshot is stored with it.
+          Shipped. Rolling back opens a revert pull request from the snapshot taken
+          before the deploy.
         </span>
+        {/* Two clicks, because this writes to a production repository. */}
+        <details className="confirm">
+          <summary className="btn btn-quiet">Roll back…</summary>
+          <form action={rollbackAction}>
+            <input type="hidden" name="project" value={project} />
+            <input type="hidden" name="id" value={action.id} />
+            <SubmitButton className="btn" pendingLabel="Opening revert…">
+              Confirm rollback
+            </SubmitButton>
+          </form>
+        </details>
       </div>
     );
   }
@@ -306,6 +322,76 @@ function OutcomeBanner({ outcome, project }: { outcome: DeployOutcome; project: 
       ) : null}
 
       <form action={clearLastOutcome} className="banner-close">
+        <input type="hidden" name="project" value={project} />
+        <SubmitButton className="btn btn-quiet" pendingLabel="…">
+          Dismiss
+        </SubmitButton>
+      </form>
+    </div>
+  );
+}
+
+function RollbackBanner({
+  outcome,
+  project,
+}: {
+  outcome: RollbackOutcome;
+  project: string;
+}) {
+  const tone =
+    outcome.kind === 'reverted'
+      ? 'banner-good'
+      : outcome.kind === 'restored'
+        ? 'banner-info'
+        : outcome.kind === 'nothing'
+          ? 'banner-warn'
+          : 'banner-bad';
+
+  return (
+    <div className={`banner ${tone}`}>
+      {outcome.kind === 'reverted' ? (
+        <>
+          <h3>Revert pull request opened</h3>
+          <p>
+            The files are restored in <a href={outcome.prUrl}>#{outcome.prNumber}</a>. Nothing
+            is undone on the live site until it merges.
+          </p>
+          <ul>
+            {outcome.files.map((file) => (
+              <li key={file}>
+                <code>{file}</code>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+
+      {outcome.kind === 'restored' ? (
+        <>
+          <h3>Rolled back</h3>
+          <p>{outcome.why}</p>
+        </>
+      ) : null}
+
+      {outcome.kind === 'nothing' ? (
+        <>
+          <h3>Nothing to roll back</h3>
+          <p>{outcome.why}</p>
+        </>
+      ) : null}
+
+      {outcome.kind === 'error' ? (
+        <>
+          <h3>Rollback failed</h3>
+          <p>{outcome.message}</p>
+          <p>
+            The deployment record still holds the pre-deploy snapshot, so the revert can
+            be retried or applied by hand.
+          </p>
+        </>
+      ) : null}
+
+      <form action={clearLastRollback} className="banner-close">
         <input type="hidden" name="project" value={project} />
         <SubmitButton className="btn btn-quiet" pendingLabel="…">
           Dismiss

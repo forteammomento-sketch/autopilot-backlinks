@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { buildDeployPlan, staticSiteResolver } from '@/src/deploy/plan';
-import { deployViaPullRequest } from '@/src/deploy/github';
+import { deployViaPullRequest, rollbackViaPullRequest } from '@/src/deploy/github';
 import { RestGitHubClient } from '@/src/deploy/rest-client';
 import type { Action, ActionArtifact } from '@/src/actions/types';
 import type { Certainty, GapType } from '@/src/gaps/types';
@@ -16,6 +16,7 @@ import type {
   PromptRow,
   ProofRow,
   RefusalRow,
+  RollbackOutcome,
   Verdict,
 } from '@/lib/data/types';
 
@@ -281,6 +282,66 @@ export function createSupabaseMutations(
         'rejected',
         'This is already deployed — roll it back instead.',
       ),
+
+    rollback: async (_project, actionId): Promise<RollbackOutcome> => {
+      const { data: rows, error } = await client
+        .from('deployments')
+        .select('id, external_ref, before_snapshot, pr_url, pr_number')
+        .eq('action_id', actionId)
+        .is('rolled_back_at', null);
+
+      if (error !== null) return { kind: 'error', message: error.message };
+      if (rows === null || rows.length === 0) {
+        return { kind: 'nothing', why: 'No live deployment is recorded for this action.' };
+      }
+      if (github === null) {
+        return {
+          kind: 'nothing',
+          why: 'GitHub is not configured, so the revert pull request cannot be opened.',
+        };
+      }
+
+      const gh = new RestGitHubClient(github);
+
+      try {
+        const pr = await rollbackViaPullRequest(
+          {
+            method: 'github_pr',
+            branch: `searchprex/${actionId}`,
+            baseBranch: await gh.getDefaultBranch(),
+            files: rows.map((row) => ({
+              path: String(row['external_ref']),
+              before: String(row['before_snapshot']),
+            })),
+            deployedAt: new Date().toISOString(),
+          },
+          gh,
+        );
+
+        // Mark the deployment rolled back before the action moves, so a failure
+        // between the two leaves a record that the revert happened rather than
+        // an action that looks deployable again with no snapshot behind it.
+        await client
+          .from('deployments')
+          .update({ rolled_back_at: new Date().toISOString() })
+          .in('id', rows.map((row) => String(row['id'])));
+
+        await client
+          .from('actions')
+          .update({ status: 'draft' })
+          .eq('id', actionId)
+          .eq('project_id', projectId);
+
+        return {
+          kind: 'reverted',
+          prUrl: pr.url,
+          prNumber: pr.number,
+          files: rows.map((row) => String(row['external_ref'])),
+        };
+      } catch (cause) {
+        return { kind: 'error', message: String(cause) };
+      }
+    },
 
     deployApproved: async (): Promise<DeployOutcome> => {
       const { data, error } = await client

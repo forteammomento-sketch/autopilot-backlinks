@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { mutations } from '@/lib/data/index';
-import type { DeployOutcome } from '@/lib/data/types';
+import type { DeployOutcome, RollbackOutcome } from '@/lib/data/types';
 
 /**
  * Approving and deploying are two steps on purpose.
@@ -39,6 +39,32 @@ export async function deployApproved(formData: FormData): Promise<void> {
   lastOutcome.set(project, outcome);
   revalidatePath(`/p/${project}/actions`);
 }
+
+/**
+ * Rolling back opens a revert pull request. It is behind a two-click confirm in
+ * the UI for the same reason deploying is a separate button from approving:
+ * both write to a production repository, and neither should be one stray tap
+ * away.
+ */
+export async function rollbackAction(formData: FormData): Promise<void> {
+  const project = String(formData.get('project'));
+  const id = String(formData.get('id'));
+  const outcome = await mutations.rollback(project, id);
+  lastRollback.set(project, outcome);
+  revalidatePath(`/p/${project}/actions`);
+}
+
+export async function readLastRollback(project: string): Promise<RollbackOutcome | null> {
+  return lastRollback.get(project) ?? null;
+}
+
+export async function clearLastRollback(formData: FormData): Promise<void> {
+  const project = String(formData.get('project'));
+  lastRollback.delete(project);
+  revalidatePath(`/p/${project}/actions`);
+}
+
+const lastRollback = new Map<string, RollbackOutcome>();
 
 /**
  * The most recent deploy result, so the page can report what happened.

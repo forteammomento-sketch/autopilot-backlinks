@@ -2,7 +2,13 @@ import { buildDeployPlan, staticSiteResolver } from '@/src/deploy/plan';
 import type { Action } from '@/src/actions/types';
 import { fixtureActions, fixtureRepo } from '@/lib/data/fixtures';
 import { getFixtureStatus, setFixtureStatus } from '@/lib/data/fixture-state';
-import type { DeployOutcome, MutationResult, MutationSource, PlannedFile } from '@/lib/data/types';
+import type {
+  DeployOutcome,
+  MutationResult,
+  MutationSource,
+  PlannedFile,
+  RollbackOutcome,
+} from '@/lib/data/types';
 
 /**
  * In-memory mutations for the fixture environment.
@@ -40,6 +46,21 @@ export const fixtureMutations: MutationSource = {
     }
     setFixtureStatus(actionId, 'rejected');
     return { ok: true };
+  },
+
+  rollback: async (_project, actionId): Promise<RollbackOutcome> => {
+    if (currentStatus(actionId) !== 'deployed') {
+      return { kind: 'nothing', why: 'This action has not been deployed.' };
+    }
+    setFixtureStatus(actionId, 'draft');
+    return {
+      kind: 'restored',
+      files: [],
+      why:
+        'Fixture environment — the action is back to draft and nothing was pushed. ' +
+        'Against a real project this opens a revert pull request from the stored ' +
+        'pre-deploy snapshot.',
+    };
   },
 
   deployApproved: async () => {
@@ -101,4 +122,4 @@ function toCoreAction(row: (typeof fixtureActions)[number]): Action {
   };
 }
 
-export type { MutationResult, DeployOutcome };
+export type { MutationResult, DeployOutcome, RollbackOutcome };

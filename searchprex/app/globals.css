@@ -278,3 +278,10 @@ pre.preview {
 .banner-close { margin-top: 8px; }
 
 .envnote { font-size: 12px; color: var(--ink-muted); margin: 0 0 16px; }
+
+/* Two-click confirm for anything that writes to a production repository. */
+.confirm { display: inline-block; }
+.confirm > summary { list-style: none; display: inline-block; }
+.confirm > summary::-webkit-details-marker { display: none; }
+.confirm[open] > summary { opacity: 0.6; }
+.confirm form { display: inline; margin-left: 6px; }

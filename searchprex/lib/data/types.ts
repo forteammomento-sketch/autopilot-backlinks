@@ -138,6 +138,12 @@ export type DeployOutcome =
   | { kind: 'nothing'; why: string }
   | { kind: 'error'; message: string };
 
+export type RollbackOutcome =
+  | { kind: 'reverted'; prUrl: string; prNumber: number; files: string[] }
+  | { kind: 'restored'; files: string[]; why: string }
+  | { kind: 'nothing'; why: string }
+  | { kind: 'error'; message: string };
+
 export interface MutationSource {
   /** Draft → approved. Records intent; deploys nothing. */
   approve(project: string, actionId: string): Promise<MutationResult>;
@@ -147,4 +153,12 @@ export interface MutationSource {
   unapprove(project: string, actionId: string): Promise<MutationResult>;
   /** Builds a plan from every approved action and, if configured, pushes it. */
   deployApproved(project: string): Promise<DeployOutcome>;
+  /**
+   * Restore the files an action touched to their pre-deploy content.
+   *
+   * A revert pull request, never a force-push or a branch delete: the original
+   * may already be merged, and rewriting history under a team that has pulled
+   * it does more damage than the change being undone.
+   */
+  rollback(project: string, actionId: string): Promise<RollbackOutcome>;
 }
