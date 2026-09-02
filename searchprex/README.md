@@ -5,8 +5,9 @@ Spec: [`../strategy/searchprex-ai-visibility-autopilot.md`](../strategy/searchpr
 
 V0 so far: two engine adapters, the site crawler that gathers evidence, the gap
 detector that turns an uncited prompt into a typed finding, the Action Engine
-that turns findings into artifacts, and the deploy pipeline that ships them as
-a reviewable pull request.
+that turns findings into artifacts, the deploy pipeline that ships them as a
+reviewable pull request, and the re-measure job that says whether any of it
+worked.
 Framework-free — no Next.js imports — so it drops into `lib/` of the app
 unchanged.
 
@@ -17,7 +18,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 
 ```bash
 npm install
-npm test          # 167 unit tests, no network
+npm test          # 190 unit tests, no network
 npm run typecheck
 ```
 
@@ -61,6 +62,10 @@ src/deploy/apply.ts         pure HTML/robots patching
 src/deploy/plan.ts          actions -> reviewable file changes
 src/deploy/github.ts        pull request deploy + revert
 src/deploy/rest-client.ts   GitHub REST implementation
+src/measure/verify.ts       is the deploy actually live?
+src/measure/lift.ts         direction, confidence, control-adjusted lift
+src/measure/winrate.ts      lift records -> ranker input
+src/measure/remeasure.ts    the T+14 job
 supabase/migrations/        V0 schema with RLS
 ```
 
@@ -281,10 +286,69 @@ framework with its own routing needs its own resolver — the default returns
 `null` rather than guessing, because a wrong guess writes a block into the wrong
 file.
 
+## The re-measure job
+
+```ts
+const outcomes = await runRemeasure(pendingRows, { adapters, context, fetchPage });
+const records = outcomes.flatMap((o) => (o.kind === 'measured' ? [o.record] : []));
+const lift = cohortLift(records);
+const rates = winRates(records);        // feeds back into priorityFor()
+```
+
+Fourteen days after a deploy, the same prompts run against the same engines and
+the result is compared to the baseline. Three guards run first, and each exists
+because skipping it writes a wrong number into the evidence base that trains the
+ranker:
+
+| Guard | Without it |
+|---|---|
+| **Due?** | Credits or blames a change the index has not seen yet |
+| **Live?** | Records a loss for a draft PR nobody merged |
+| **Answered?** | Records a loss for an engine outage |
+
+None of the three produce a record. They reschedule — the only honest thing to
+do with a measurement that did not happen. The live check works because every
+deployed block carries its `searchprex:block` marker, so the crawler can see
+whether the change actually shipped.
+
+### Nothing here is significant on its own
+
+With three attempts a side, **no single prompt comparison is statistically
+significant.** A move from 0/3 to 2/3 has a Fisher exact p of roughly 0.4 —
+indistinguishable from the engine answering differently on the day. Even 0/3 to
+3/3 only reaches about 0.1.
+
+So `confident` is set only for a complete flip, where the raw numbers are at
+least unambiguous about direction, and everything else is directional evidence
+that belongs in an aggregate. Any tool showing you a per-prompt "we won this
+one" from three samples is showing you noise.
+
+### Control prompts are what make the number mean anything
+
+Between a baseline and a follow-up two weeks later the engines retrain and
+reindex, competitors publish, and the site changes for unrelated reasons. A raw
+before/after cannot separate our work from any of that.
+
+Prompts with no action deployed are marked `isControl` and ride the same drift.
+`cohortLift` reports `treatedDelta - controlDelta`, and sets `hasControl: false`
+when there is no control group — in which case the UI must say "changed", never
+"we caused".
+
+### Win rates gate themselves
+
+`winRates` returns nothing for an action type with fewer than 20 records, and
+the ranker reads a missing rate as 0.5. Three lucky deploys reporting 1.0 would
+otherwise push that action type to the top of every customer's queue on evidence
+indistinguishable from chance.
+
 ## Not built yet
 
-Prompt generation, the T+14 re-measure job, the Shopify / WordPress / Webflow
-deploy targets, and the Gemini / AI Overviews / Copilot adapters. Adding an engine means
+Prompt generation, the Shopify / WordPress / Webflow deploy targets, and the
+Gemini / AI Overviews / Copilot adapters.
+
+The re-measure job is a pure function over pending rows — scheduling it (cron,
+Inngest, pg_cron) and persisting `LiftRecord`s is the app's job, not this
+package's. Adding an engine means
 implementing `EngineAdapter` — nothing downstream of `analyseResult` is
 engine-specific.
 
