@@ -1,0 +1,33 @@
+slug,title,group,filter_rule,attributes_needed,build_priority,notes
+hunting-knives,Hunting Knives,core,Existing category,none,1,Already exists
+field-dressing-knives,Field Dressing Knives,core,"Gut hooks, skinners, caping blades",none,1,May already exist
+edc-folding-knives,EDC Folding Knives,core,blade_type = folding,blade_type,1,May already exist
+fixed-blade-knives,Fixed Blade Knives,core,blade_type = fixed,blade_type,1,May already exist
+automatic-knives,Automatic Knives,core,opening = automatic OR OTF,opening,1,"Do NOT link from CA, NY or IL pages"
+camping-knives,Camping & Survival,core,Existing category,none,2,
+fillet-knives,Fillet & Bait Knives,core,Existing category,none,2,
+michigan-legal-knives,Michigan-Legal Knives,state,"edge_count = single AND blade_shape NOT dagger/stiletto/dirk",edge_count + blade_shape,1,Automatics fine — MI restricts by blade shape
+florida-legal-knives,Florida-Legal Knives,state,All knives (exclude ballistic),none,1,Nothing to filter — 790.225 ballistic knives not stocked
+california-legal-knives,California-Legal Knives,state,"opening = manual/assisted AND blade_type = folding",opening + blade_type,1,Excludes automatics 2in+ (PC 21510) and fixed blades
+new-york-legal-knives,New York-Legal Knives,state,opening = manual/assisted,opening,1,Excludes switchblades (Penal Law 265.01)
+ohio-legal-knives,Ohio-Legal Knives,state,All knives,none,2,No filter needed
+texas-legal-knives,Texas-Legal Knives,state,All knives,none,2,No filter needed — over 5.5in is a location rule
+pennsylvania-legal-knives,Pennsylvania-Legal Knives,state,All knives,none,2,No filter needed
+georgia-legal-knives,Georgia-Legal Knives,state,blade_length <= 12,blade_length,2,Effectively everything in catalogue
+north-carolina-legal-knives,North Carolina-Legal Knives,state,"opening = manual/assisted AND blade_type = folding",opening + blade_type,1,Concealed-carry-safe set under the ordinary pocket knife exception
+tennessee-legal-knives,Tennessee-Legal Knives,state,All knives,none,2,No filter needed
+illinois-legal-knives,Illinois-Legal Knives,state,opening = manual/assisted,opening,1,Excludes automatics/OTF — FOID card unverifiable at checkout
+wisconsin-legal-knives,Wisconsin-Legal Knives,state,All knives,none,2,No filter needed
+edc-knives-under-5-5-inch,Under 5.5in EDC Knives,filtered,blade_length < 5.5,blade_length,2,Texas tile — clears the location-restricted category
+michigan-deer-season-gear,Michigan Deer Season Gear,seasonal,Curated,none,1,Archery opens 1 Oct
+ohio-deer-season-gear,Ohio Deer Season Gear,seasonal,Curated,none,3,Archery from 26 Sep
+pennsylvania-deer-season-gear,Pennsylvania Deer Season Gear,seasonal,Curated,none,3,Archery 3 Oct
+tennessee-deer-season-gear,Tennessee Deer Season Gear,seasonal,Curated,none,3,Archery 26 Sep
+texas-deer-season-gear,Texas Deer Season Gear,seasonal,Curated,none,3,Archery 3 Oct
+california-hunting-knives,California Hunting & Hog Knives,seasonal,Curated,none,3,"Lead on wild pig — year-round, no bag limit"
+new-york-hunting-knives,New York Hunting Knives,seasonal,Curated,none,3,Northern bow 27 Sep
+north-carolina-hunting-knives,North Carolina Hunting Knives,seasonal,Curated,none,3,Archery 12 Sep
+florida-hunting-fishing-knives,Florida Hunting & Fishing Knives,seasonal,Curated,none,3,"Lead on wild hog — year-round on private land"
+georgia-hunting-fishing-knives,Georgia Hunting & Fishing Knives,seasonal,Curated,none,3,Archery 12 Sep
+illinois-hunting-fishing-knives,Illinois Hunting & Fishing Knives,seasonal,Curated,none,3,Archery 1 Oct
+wisconsin-hunting-fishing-knives,Wisconsin Hunting & Fishing Knives,seasonal,Curated,none,3,Nine-day gun hunt 21-29 Nov

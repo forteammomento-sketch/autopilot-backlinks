@@ -1,0 +1,261 @@
+<!-- =========================================================================
+     Michigan Sports Outdoor — OCTOBER SEASON POPUP
+     Self-contained: CSS + HTML + JS in one block. Paste it ONCE, site-wide.
+
+     WHERE TO PASTE
+       Elementor Pro : Templates → Custom Code → new snippet → Location
+                       "Body - End", Display Conditions "Entire Site"
+       Otherwise     : your child theme's footer.php, before </body>,
+                       or a "footer scripts" box in your theme options
+
+     Paste it site-wide, not just on the home page — a visitor who lands on a
+     product page from Google is exactly who this is for.
+
+     ---------------------------------------------------------------------
+     WHY DESKTOP AND MOBILE BEHAVE DIFFERENTLY
+
+     Google treats a popup that covers the main content on MOBILE, shortly
+     after arrival from search, as an intrusive interstitial. It is a
+     ranking negative and it is not worth the signups.
+
+     So: desktop gets a centred modal. Mobile gets a slide-up bar along the
+     bottom — same offer, same form, takes a reasonable slice of the screen,
+     and stays clear of the penalty. That is handled automatically below.
+     ---------------------------------------------------------------------
+
+     CONFIG — the six values you are likely to change are at the top of the
+     script, in one block. Nothing else needs editing.
+     ========================================================================= -->
+
+<style>
+.mso-pop{
+  --pp-accent:#EDA53B; --pp-accent-dk:#D18F2A; --pp-accent-ink:#1B2B39;
+  --pp-header:#20303F; --pp-heading:#1B2B39; --pp-body:#5A6673;
+  --pp-border:#E3E6E9; --pp-ok:#2F7D32;
+  position:fixed; inset:0; z-index:99990;
+  display:flex; align-items:center; justify-content:center;
+  font-family:inherit; padding:20px;
+}
+.mso-pop[hidden]{display:none}
+.mso-pop__veil{
+  position:absolute; inset:0; background:rgba(20,26,32,.62);
+  opacity:0; transition:opacity .22s ease;
+}
+.mso-pop.is-on .mso-pop__veil{opacity:1}
+
+.mso-pop__box{
+  position:relative; width:100%; max-width:820px; background:#fff;
+  display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1fr);
+  box-shadow:0 18px 60px rgba(20,26,32,.34);
+  transform:translateY(14px) scale(.985); opacity:0;
+  transition:transform .26s ease, opacity .26s ease;
+  max-height:92vh; overflow:auto;
+}
+.mso-pop.is-on .mso-pop__box{transform:none; opacity:1}
+
+.mso-pop__art{
+  position:relative; background:var(--pp-header); overflow:hidden;
+  min-height:300px; display:flex; align-items:flex-end;
+}
+.mso-pop__art img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.5}
+.mso-pop__art-in{position:relative; z-index:1; padding:24px; color:#fff}
+.mso-pop__art-in b{display:block; font-size:30px; font-weight:800; line-height:1; color:var(--pp-accent); font-variant-numeric:tabular-nums}
+.mso-pop__art-in span{display:block; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:rgba(255,255,255,.7); margin-top:6px}
+
+.mso-pop__body{padding:34px 36px; display:flex; flex-direction:column; gap:13px}
+.mso-pop__kicker{
+  align-self:flex-start; background:var(--pp-accent); color:var(--pp-accent-ink);
+  font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; padding:5px 11px;
+}
+.mso-pop__box h2{
+  margin:0; font-size:26px; font-weight:800; line-height:1.15;
+  letter-spacing:-.022em; color:var(--pp-heading);
+}
+.mso-pop__box p{margin:0; font-size:15px; line-height:1.55; color:var(--pp-body)}
+.mso-pop__pts{list-style:none; margin:2px 0 0; padding:0; display:flex; flex-direction:column; gap:8px}
+.mso-pop__pts li{position:relative; padding-left:22px; font-size:14px; line-height:1.5; color:var(--pp-body)}
+.mso-pop__pts li::before{
+  content:""; position:absolute; left:0; top:.34em; width:13px; height:7px;
+  border-left:2px solid var(--pp-ok); border-bottom:2px solid var(--pp-ok); transform:rotate(-45deg);
+}
+.mso-pop__pts strong{color:var(--pp-heading); font-weight:700}
+
+.mso-pop__form{display:flex; flex-wrap:wrap; gap:9px; margin-top:6px}
+.mso-pop__form input[type="email"]{
+  flex:1 1 200px; padding:13px 15px; border:2px solid var(--pp-border);
+  font-size:15px; font-family:inherit; color:var(--pp-heading); background:#fff; min-width:0;
+}
+.mso-pop__form input[type="email"]:focus{outline:none; border-color:var(--pp-accent)}
+.mso-pop__btn{
+  padding:13px 24px; border:2px solid var(--pp-accent); background:var(--pp-accent);
+  color:var(--pp-accent-ink); font-family:inherit; font-size:14.5px; font-weight:800;
+  cursor:pointer; line-height:1.2;
+}
+.mso-pop__btn:hover{background:var(--pp-accent-dk); border-color:var(--pp-accent-dk); color:#fff}
+.mso-pop__fine{font-size:11.5px; color:#8B95A0; margin-top:2px}
+
+.mso-pop__x{
+  position:absolute; top:10px; right:10px; z-index:3;
+  width:36px; height:36px; border:0; background:rgba(255,255,255,.9);
+  color:var(--pp-heading); font-size:22px; line-height:1; cursor:pointer; font-family:inherit;
+}
+.mso-pop__x:hover{background:#fff}
+.mso-pop__x:focus-visible,.mso-pop__btn:focus-visible,.mso-pop__no:focus-visible{
+  outline:2px solid var(--pp-accent); outline-offset:2px;
+}
+.mso-pop__no{
+  align-self:flex-start; background:none; border:0; padding:0; margin-top:2px;
+  font-family:inherit; font-size:12.5px; color:#8B95A0; text-decoration:underline; cursor:pointer;
+}
+.mso-pop__no:hover{color:var(--pp-heading)}
+
+/* ---- MOBILE: bottom bar, never a full-screen overlay ---- */
+@media (max-width:768px){
+  .mso-pop{align-items:flex-end; padding:0}
+  .mso-pop__veil{display:none}                 /* no dimming, no content block */
+  .mso-pop__box{
+    max-width:none; grid-template-columns:1fr; box-shadow:0 -6px 26px rgba(20,26,32,.26);
+    transform:translateY(100%); max-height:none; border-top:3px solid var(--pp-accent);
+  }
+  .mso-pop.is-on .mso-pop__box{transform:translateY(0)}
+  .mso-pop__art{display:none}                  /* keeps the bar short */
+  .mso-pop__body{padding:18px 18px 20px; gap:9px}
+  .mso-pop__box h2{font-size:19px}
+  .mso-pop__box p{font-size:14px}
+  .mso-pop__pts{display:none}
+  .mso-pop__x{top:6px; right:6px; width:32px; height:32px; background:transparent}
+}
+@media (prefers-reduced-motion:reduce){
+  .mso-pop__veil,.mso-pop__box{transition:none}
+}
+</style>
+
+<div class="mso-pop" id="msoPop" hidden role="dialog" aria-modal="true" aria-labelledby="msoPopTitle">
+  <div class="mso-pop__veil" data-pop-close></div>
+  <div class="mso-pop__box">
+    <button class="mso-pop__x" type="button" data-pop-close aria-label="Close">&times;</button>
+
+    <div class="mso-pop__art">
+      <img src="/wp-content/uploads/popup-october.jpg" alt="" loading="lazy" width="500" height="600">
+      <span class="mso-pop__art-in">
+        <b id="msoPopDays">--</b>
+        <span>days to the opener</span>
+      </span>
+    </div>
+
+    <div class="mso-pop__body">
+      <span class="mso-pop__kicker">October &middot; Michigan season</span>
+      <h2 id="msoPopTitle">Be field-ready before 1 October</h2>
+      <p>Join MSO Insiders free and get <strong>10% off your first order</strong> &mdash; code emailed straight away.</p>
+      <ul class="mso-pop__pts">
+        <li><strong>Order by 24 September</strong> to have it before the opener</li>
+        <li><strong>Free returns</strong> &mdash; 30 days, prepaid label, no tier needed</li>
+        <li><strong>Season alerts</strong> before every opener and shipping cutoff</li>
+      </ul>
+      <form class="mso-pop__form" action="[YOUR FORM ENDPOINT]" method="post">
+        <label for="msoPopEmail" style="position:absolute;left:-9999px">Email address</label>
+        <input type="email" id="msoPopEmail" name="email" placeholder="your@email.com" required>
+        <button class="mso-pop__btn" type="submit">Get 10% Off</button>
+      </form>
+      <p class="mso-pop__fine">One email when it matters. Unsubscribe any time.</p>
+      <button class="mso-pop__no" type="button" data-pop-close>No thanks, I&rsquo;m just browsing</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  /* ================= CONFIG — the only part to edit ================= */
+  var DELAY_MS      = 5000;                       // wait before showing
+  var OPENER        = '2026-10-01T00:00:00-04:00';// hides itself after this
+  var SNOOZE_DAYS   = 7;                          // after "close"
+  var SIGNED_DAYS   = 180;                        // after a signup
+  var MIN_SCROLL    = 0;                          // 0 = time only. Try 15 (%) to
+                                                  // require a little engagement.
+  var SKIP_PATHS    = ['/cart', '/checkout', '/my-account'];
+  /* ================================================================= */
+
+  var pop = document.getElementById('msoPop');
+  if (!pop) return;
+
+  var path = window.location.pathname;
+  for (var i = 0; i < SKIP_PATHS.length; i++) {
+    if (path.indexOf(SKIP_PATHS[i]) === 0) return;    // never interrupt a purchase
+  }
+  if (new Date(OPENER) - new Date() <= 0) return;     // season has passed
+
+  /* storage may be blocked in private mode — then just do not show it */
+  var store = null;
+  try { store = window.localStorage; } catch (e) { return; }
+  if (!store) return;
+
+  var until = parseInt(store.getItem('mso_pop_until') || '0', 10);
+  if (until && Date.now() < until) return;
+
+  function snooze(days) {
+    try { store.setItem('mso_pop_until', String(Date.now() + days * 86400000)); } catch (e) {}
+  }
+
+  /* days remaining, for the number on the artwork */
+  var days = Math.ceil((new Date(OPENER) - new Date()) / 86400000);
+  var dEl = document.getElementById('msoPopDays');
+  if (dEl) dEl.textContent = days;
+
+  var lastFocus = null;
+
+  function open() {
+    if (!pop.hidden) return;
+    lastFocus = document.activeElement;
+    pop.hidden = false;
+    requestAnimationFrame(function () { pop.classList.add('is-on'); });
+    var email = document.getElementById('msoPopEmail');
+    if (email && window.innerWidth > 768) email.focus();
+    document.addEventListener('keydown', onKey);
+  }
+
+  function close(days) {
+    pop.classList.remove('is-on');
+    snooze(days);
+    document.removeEventListener('keydown', onKey);
+    setTimeout(function () {
+      pop.hidden = true;
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }, 240);
+  }
+
+  /* Esc closes; Tab stays inside the dialog while it is open */
+  function onKey(e) {
+    if (e.key === 'Escape') { close(SNOOZE_DAYS); return; }
+    if (e.key !== 'Tab') return;
+    var f = pop.querySelectorAll('button, [href], input, select, textarea');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  pop.querySelectorAll('[data-pop-close]').forEach(function (el) {
+    el.addEventListener('click', function () { close(SNOOZE_DAYS); });
+  });
+
+  /* a signup suppresses it for much longer than a dismissal */
+  var form = pop.querySelector('.mso-pop__form');
+  if (form) form.addEventListener('submit', function () { snooze(SIGNED_DAYS); });
+
+  if (MIN_SCROLL > 0) {
+    var fired = false, t0 = Date.now();
+    window.addEventListener('scroll', function onScroll() {
+      if (fired) return;
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = h > 0 ? (window.scrollY / h) * 100 : 100;
+      if (pct >= MIN_SCROLL && Date.now() - t0 >= DELAY_MS) {
+        fired = true;
+        window.removeEventListener('scroll', onScroll);
+        open();
+      }
+    }, { passive: true });
+  } else {
+    setTimeout(open, DELAY_MS);
+  }
+})();
+</script>
