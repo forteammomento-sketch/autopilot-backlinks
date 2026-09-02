@@ -3,8 +3,9 @@
 Engine adapters and citation analysis for the **AI Visibility Autopilot** feature.
 Spec: [`../strategy/searchprex-ai-visibility-autopilot.md`](../strategy/searchprex-ai-visibility-autopilot.md).
 
-V0 so far: two engine adapters, the site crawler that gathers evidence, and the
-gap detector that turns an uncited prompt into a typed, evidenced finding.
+V0 so far: two engine adapters, the site crawler that gathers evidence, the gap
+detector that turns an uncited prompt into a typed finding, and the Action
+Engine that turns findings into deployable artifacts.
 Framework-free — no Next.js imports — so it drops into `lib/` of the app
 unchanged.
 
@@ -15,7 +16,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 
 ```bash
 npm install
-npm test          # 118 unit tests, no network
+npm test          # 144 unit tests, no network
 npm run typecheck
 ```
 
@@ -50,6 +51,10 @@ src/crawl/links.ts          internal links, canonical, title, h1
 src/crawl/crawl.ts          discovery, inbound-link counting, crawler probing
 src/crawl/evidence.ts       candidate selection -> SiteEvidence
 src/gaps/detect.ts          gap detection across the four gates
+src/actions/rank.ts         priority = leverage x certainty x value / effort
+src/actions/artifacts.ts    deterministic builders (robots, schema, links)
+src/actions/answer-block.ts model-backed copy, with validation and refusal
+src/actions/generate.ts     gap -> action orchestration
 supabase/migrations/        V0 schema with RLS
 ```
 
@@ -137,10 +142,76 @@ fire, and collapsing that into "not cited" would manufacture gaps that were
 never observed. The types enforce the split now so the AI Overviews adapter
 cannot quietly lose it later.
 
+## The Action Engine
+
+```ts
+const outcomes = await generateActions(detections, {
+  brandName: 'Michigan Sports Outdoor',
+  facts,          // the first-party fact sheet
+  writer,         // your LLM, behind the AnswerBlockWriter interface
+});
+```
+
+Each outcome is either an `action` carrying a deployable artifact, or a
+`refusal` naming what would unblock it. Both go in the queue — a refusal is
+information the customer needs, not an error to swallow.
+
+### Most of it needs no model
+
+| Action | Built by |
+|---|---|
+| `crawl_fix` | code — a robots.txt allow group, or a WAF instruction |
+| `schema` | code — JSON-LD from the page and the fact sheet |
+| `internal_link` | code — anchors from the prompt, sources from the crawl |
+| `placement` | code — targets from the citation graph; pitch optional |
+| `rank_first` | nothing — advisory, deliberately has no artifact |
+| `answer_block` | your model, behind `AnswerBlockWriter` |
+
+Generating a robots.txt line with an LLM would add cost, latency and a
+fabrication risk to work that has exactly one correct answer.
+
+**Schema omits rather than invents.** A price reaches `offers` only when a price
+fact was supplied: Product markup carrying a price the page does not show is a
+structured-data violation and a manual-action risk.
+
+### Refusal is a first-class output
+
+`answer_block` is the only generated action, and it refuses in four cases:
+
+- **`no_first_party_facts`** — nothing of our own to say about this prompt. Any
+  block would restate the competitor page that is already cited, adding a
+  near-duplicate passage to a site that likely already has a duplication
+  problem. The writer is never even called.
+- **`validation_failed`** — the draft came back outside the 40-90 word band, or
+  used none of the supplied facts. One retry, then refuse.
+- **`duplicate_of_existing`** — the draft reproduces the rival passage or a
+  block already deployed here.
+- **`not_retrievable`** — the blocking gap is at gate 1 or 2, so no copy will
+  get the page retrieved. `no_page` is exempt: it sits at gate 1, but writing
+  the page is its remedy.
+
+The duplicate check uses shingle **containment**, not Jaccard. Jaccard divides
+by the union, so a block that reproduces the rival passage verbatim and pads it
+with one extra sentence scores around 0.5 and passes — which is exactly the
+failure the check exists to catch. Containment divides by the shorter side, so
+full reuse scores 1 however much filler wraps it. Pass a pgvector cosine through
+`options.similarity` once embeddings are wired; containment cannot see a
+paraphrase that shares no wording.
+
+### The ranker
+
+```
+priority = leverage x certainty x prompt_value x engine_weight x win_rate / effort
+```
+
+`certainty` is where `strong` and `plausible` get discounted, so a hypothesis
+never outranks a proven lever. `win_rate` defaults to 0.5 — an explicit "no
+record yet" rather than an optimistic guess — and converges as
+`lift_measurements` fills.
+
 ## Not built yet
 
-Prompt generation, the Action Engine (gap → generated artifact), deploys, and
-the Gemini / AI Overviews / Copilot adapters. Adding an engine means
+Prompt generation, deploys, and the Gemini / AI Overviews / Copilot adapters. Adding an engine means
 implementing `EngineAdapter` — nothing downstream of `analyseResult` is
 engine-specific.
 

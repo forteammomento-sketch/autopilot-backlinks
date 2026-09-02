@@ -10,3 +10,4 @@ export * from './lib/html.js';
 export * from './runner/sample.js';
 export * from './crawl/index.js';
 export * from './gaps/index.js';
+export * from './actions/index.js';
