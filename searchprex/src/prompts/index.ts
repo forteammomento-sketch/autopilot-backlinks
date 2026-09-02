@@ -4,3 +4,4 @@ export * from './dedupe.js';
 export * from './seeds.js';
 export * from './generate.js';
 export { OpenAIPromptWriter, type OpenAIWriterConfig } from './openai-writer.js';
+export { TemplatePromptWriter } from './template-writer.js';

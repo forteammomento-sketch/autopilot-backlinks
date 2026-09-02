@@ -1,9 +1,12 @@
 import { buildDeployPlan, staticSiteResolver } from '@/src/deploy/plan';
 import type { Action } from '@/src/actions/types';
-import { fixtureActions, fixtureRepo } from '@/lib/data/fixtures';
+import { fixtureActions, fixturePrompts, fixtureRepo, fixtureSeeds } from '@/lib/data/fixtures';
+import { generatePrompts } from '@/src/prompts/generate';
+import { TemplatePromptWriter } from '@/src/prompts/template-writer';
 import { getFixtureStatus, setFixtureStatus } from '@/lib/data/fixture-state';
 import type {
   DeployOutcome,
+  PromptGenerationOutcome,
   MutationResult,
   MutationSource,
   PlannedFile,
@@ -46,6 +49,33 @@ export const fixtureMutations: MutationSource = {
     }
     setFixtureStatus(actionId, 'rejected');
     return { ok: true };
+  },
+
+  generatePrompts: async (): Promise<PromptGenerationOutcome> => {
+    // The template writer, not a model: this demonstrates the validation,
+    // deduplication, caps and cost report without an API key. Everything it
+    // produces is obviously templated, which is what keeps it from being
+    // mistaken for a real prompt set.
+    const report = await generatePrompts(
+      fixtureSeeds,
+      {
+        topic: 'knives and outdoor gear',
+        brandAliases: ['Michigan Sports Outdoor', 'MSO'],
+      },
+      new TemplatePromptWriter(),
+      { existing: fixturePrompts.map((p) => p.text), maxTotal: 12, maxPerCluster: 3 },
+    );
+
+    return {
+      kind: 'preview',
+      prompts: report.prompts.map((p) => ({ text: p.text, intent: p.intent, cluster: p.cluster })),
+      rejected: report.rejected.length,
+      weeklyCalls: report.weeklyCallsPerEngine,
+      why:
+        'Fixture environment — written from templates rather than a model, and saved ' +
+        'nowhere. With Supabase and OPENAI_API_KEY set, this crawls the site for seeds, ' +
+        'writes the set and stores it.',
+    };
   },
 
   rollback: async (_project, actionId): Promise<RollbackOutcome> => {

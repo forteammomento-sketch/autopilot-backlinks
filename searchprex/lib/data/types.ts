@@ -144,6 +144,30 @@ export type RollbackOutcome =
   | { kind: 'nothing'; why: string }
   | { kind: 'error'; message: string };
 
+export interface GeneratedPromptRow {
+  text: string;
+  intent: PromptRow['intent'];
+  cluster: string;
+}
+
+/**
+ * `preview` is a first-class outcome, like `planned` is for a deploy: the set
+ * was generated and shown, and nothing was saved. That happens when there is no
+ * database to save into, and reporting it as a success would leave someone
+ * believing a prompt set exists that does not.
+ */
+export type PromptGenerationOutcome =
+  | { kind: 'generated'; prompts: GeneratedPromptRow[]; rejected: number; weeklyCalls: number }
+  | {
+      kind: 'preview';
+      prompts: GeneratedPromptRow[];
+      rejected: number;
+      weeklyCalls: number;
+      why: string;
+    }
+  | { kind: 'unconfigured'; why: string }
+  | { kind: 'error'; message: string };
+
 export interface MutationSource {
   /** Draft → approved. Records intent; deploys nothing. */
   approve(project: string, actionId: string): Promise<MutationResult>;
@@ -161,4 +185,6 @@ export interface MutationSource {
    * it does more damage than the change being undone.
    */
   rollback(project: string, actionId: string): Promise<RollbackOutcome>;
+  /** Crawls for seeds, generates a prompt set, and saves it where it can. */
+  generatePrompts(project: string): Promise<PromptGenerationOutcome>;
 }

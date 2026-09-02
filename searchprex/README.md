@@ -19,7 +19,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 224 unit tests, no network
+npm test          # 227 unit tests, no network
 npm run typecheck
 ```
 
@@ -129,6 +129,15 @@ OPENAI_API_KEY=sk-... npm run prompts
 Crawls the site for seeds, generates a set, and prints it for a person to read.
 Nothing is written anywhere — the prompt set is the largest recurring cost in
 the product, so it gets reviewed before it starts being measured every week.
+
+The **Prompts** screen has the same thing as a button. It crawls, generates,
+saves to Supabase, and reports what the new prompts add to every run in calls —
+that last number is what the size of the set actually decides. Without
+`OPENAI_API_KEY` it says so and generates nothing; on fixtures it runs the real
+validation, deduplication and caps through a **template writer** so the machinery
+can be reviewed offline. That writer is never a fallback for the real one: a
+caller that quietly used it when a key was missing would hand a customer a set of
+filled-in templates.
 
 **Seeds come from the catalogue and from Search Console, never from the topic
 alone.** A set imagined from "knives and outdoor gear" asks about products the

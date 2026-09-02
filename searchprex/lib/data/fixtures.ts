@@ -313,6 +313,20 @@ export const fixtureRepo: Record<string, string> = {
 
 export const fixtureActions = ACTIONS;
 
+/**
+ * Catalogue seeds for the fixture environment, standing in for what a crawl
+ * would return. Real generation seeds from the customer's own product and
+ * category pages — never from the topic — so the stand-in is shaped the same.
+ */
+export const fixtureSeeds = [
+  { text: 'Rough Rider Barlow', cluster: 'pocket knives' },
+  { text: 'Buck 119 Special', cluster: 'hunting knives' },
+  { text: 'Cold Steel Recon 1', cluster: 'tactical knives' },
+  { text: 'Mag-Lite ML300L', cluster: 'flashlights' },
+];
+
+export const fixturePrompts = PROMPTS;
+
 const REFUSALS: RefusalRow[] = [
   {
     id: 'r1',

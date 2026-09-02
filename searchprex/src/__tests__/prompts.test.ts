@@ -6,6 +6,7 @@ import { generatePrompts, weeklyCost } from '../prompts/generate.js';
 import type { PromptSeed, PromptWriter } from '../prompts/types.js';
 import type { SiteIndex } from '../crawl/crawl.js';
 import { OpenAIPromptWriter } from '../prompts/openai-writer.js';
+import { TemplatePromptWriter } from '../prompts/template-writer.js';
 import { EngineError } from '../engines/errors.js';
 
 const BRAND = ['Michigan Sports Outdoor', 'MSO'];
@@ -267,5 +268,47 @@ describe('OpenAIPromptWriter', () => {
 
   it('refuses to construct without a key', () => {
     expect(() => new OpenAIPromptWriter({ apiKey: '  ' })).toThrow(EngineError);
+  });
+});
+
+describe('TemplatePromptWriter', () => {
+  const writer = new TemplatePromptWriter();
+
+  it('produces a mix rather than variations of one question', async () => {
+    const out = await writer.write({
+      seed: { text: 'Rough Rider Barlow', cluster: 'c' },
+      topic: 't',
+      intents: ['commercial', 'comparison', 'informational'],
+      count: 3,
+    });
+    expect(out.map((p) => classifyIntent(p))).toEqual([
+      'commercial',
+      'comparison',
+      'informational',
+    ]);
+  });
+
+  it('writes output the generator accepts', async () => {
+    // The point of the template writer is exercising the real pipeline, so
+    // what it emits has to survive the same validation a model's output does.
+    const report = await generatePrompts(
+      [{ text: 'Rough Rider Barlow', cluster: 'pocket knives' }],
+      context,
+      writer,
+      { perSeed: 3 },
+    );
+    expect(report.prompts).toHaveLength(3);
+    expect(report.rejected).toEqual([]);
+  });
+
+  it('stops when the templates run out rather than repeating', async () => {
+    const out = await writer.write({
+      seed: { text: 'Barlow', cluster: 'c' },
+      topic: 't',
+      intents: ['comparison'],
+      count: 10,
+    });
+    expect(out).toHaveLength(2);
+    expect(new Set(out).size).toBe(out.length);
   });
 });

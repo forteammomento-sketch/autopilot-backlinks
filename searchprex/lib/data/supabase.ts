@@ -1,4 +1,8 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { crawlSite } from '@/src/crawl/crawl';
+import { generatePrompts as generatePromptSet } from '@/src/prompts/generate';
+import { OpenAIPromptWriter } from '@/src/prompts/openai-writer';
+import { mergeSeeds, seedsFromCrawl } from '@/src/prompts/seeds';
 import { buildDeployPlan, staticSiteResolver } from '@/src/deploy/plan';
 import { deployViaPullRequest, rollbackViaPullRequest } from '@/src/deploy/github';
 import { RestGitHubClient } from '@/src/deploy/rest-client';
@@ -16,6 +20,7 @@ import type {
   PromptRow,
   ProofRow,
   RefusalRow,
+  PromptGenerationOutcome,
   RollbackOutcome,
   Verdict,
 } from '@/lib/data/types';
@@ -282,6 +287,94 @@ export function createSupabaseMutations(
         'rejected',
         'This is already deployed — roll it back instead.',
       ),
+
+    /**
+     * Crawl for seeds, generate, save.
+     *
+     * The crawl runs inline. This is a setup action taken once, not something
+     * on a request path, and seeding from a live crawl is what keeps the set
+     * about products the site actually stocks — the alternative, generating
+     * from the topic alone, produces questions that can never be won.
+     */
+    generatePrompts: async (): Promise<PromptGenerationOutcome> => {
+      const apiKey = process.env['OPENAI_API_KEY'];
+      if (apiKey === undefined || apiKey === '') {
+        return {
+          kind: 'unconfigured',
+          why: 'Prompt generation needs OPENAI_API_KEY. Nothing was generated.',
+        };
+      }
+
+      try {
+        const { data: project } = await client
+          .from('projects')
+          .select('domain, topic, brand_names')
+          .eq('id', projectId)
+          .maybeSingle();
+        if (project === null) return { kind: 'error', message: 'project not found' };
+
+        const index = await crawlSite(String(project['domain']), { maxPages: 40 });
+        if (!index.reachable) {
+          return {
+            kind: 'error',
+            message:
+              `Could not reach ${String(project['domain'])}. A failed crawl gives no seeds, ` +
+              'and generating without them would ask about products the site may not stock.',
+          };
+        }
+
+        const seeds = mergeSeeds(seedsFromCrawl(index));
+        if (seeds.length === 0) {
+          return {
+            kind: 'error',
+            message:
+              'No product or category pages were found to seed from. Prompt generation ' +
+              'needs real inventory to work from.',
+          };
+        }
+
+        const { data: existing } = await client
+          .from('prompts')
+          .select('text')
+          .eq('project_id', projectId);
+
+        const report = await generatePromptSet(
+          seeds,
+          {
+            topic: String(project['topic']),
+            brandAliases: (project['brand_names'] as string[] | null) ?? [],
+          },
+          new OpenAIPromptWriter({ apiKey }),
+          { existing: (existing ?? []).map((row) => String(row['text'])) },
+        );
+
+        if (report.prompts.length > 0) {
+          const { error } = await client.from('prompts').insert(
+            report.prompts.map((p) => ({
+              project_id: projectId,
+              text: p.text,
+              intent: p.intent,
+              cluster: p.cluster,
+              source: 'generated',
+            })),
+          );
+          if (error !== null) return { kind: 'error', message: error.message };
+        }
+
+        return {
+          kind: 'generated',
+          prompts: report.prompts.map((p) => ({
+            text: p.text,
+            intent: p.intent,
+            cluster: p.cluster,
+          })),
+          rejected: report.rejected.length,
+          weeklyCalls: report.weeklyCallsPerEngine,
+        };
+      } catch (cause) {
+        return { kind: 'error', message: String(cause) };
+      }
+    },
 
     rollback: async (_project, actionId): Promise<RollbackOutcome> => {
       const { data: rows, error } = await client
