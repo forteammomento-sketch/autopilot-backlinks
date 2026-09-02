@@ -14,9 +14,24 @@ import type { DetectionResult, Gap, PageEvidence, SiteEvidence } from './types.j
 
 /** Below this term overlap the passage is not about the prompt. */
 const PASSAGE_MIN_OVERLAP = 0.4;
-/** Raw HTML below this, rendered DOM above it: the page is JS-only. */
+/** Raw HTML below this and the crawler is seeing almost nothing. */
 const JS_ONLY_RAW_WORDS = 200;
-const JS_ONLY_RENDERED_WORDS = 800;
+/**
+ * Rendered words needed before "there is real content here" is a fair claim:
+ * four times the answer band's minimum, so the page holds an extractable
+ * passage and some context around it.
+ */
+const JS_ONLY_RENDERED_WORDS = ANSWER_MIN_WORDS * 4;
+/**
+ * How many times bigger the rendered text must be than the raw.
+ *
+ * The ratio is the signal, not an absolute size. An earlier fixed floor of 800
+ * rendered words only caught large JavaScript pages and silently missed
+ * ordinary product pages, which is most of them — a page whose raw HTML holds
+ * twenty words and whose rendered DOM holds three hundred is exactly as
+ * invisible to a crawler as one holding three thousand.
+ */
+const JS_ONLY_RATIO = 5;
 /** Fewer inbound internal links than this and the page is effectively orphaned. */
 const ORPHAN_LINK_THRESHOLD = 3;
 /** Past this classic position, no on-page work will get the page retrieved. */
@@ -141,7 +156,8 @@ export function detectGaps(
     if (
       page.renderedWords !== undefined &&
       rawWords < JS_ONLY_RAW_WORDS &&
-      page.renderedWords > JS_ONLY_RENDERED_WORDS
+      page.renderedWords >= JS_ONLY_RENDERED_WORDS &&
+      page.renderedWords >= rawWords * JS_ONLY_RATIO
     ) {
       gaps.push({
         ...base,
@@ -154,6 +170,7 @@ export function detectGaps(
           reason: 'content exists only after JavaScript runs',
           rawWords,
           renderedWords: page.renderedWords,
+          ratio: Number((page.renderedWords / Math.max(1, rawWords)).toFixed(1)),
         },
       });
     }

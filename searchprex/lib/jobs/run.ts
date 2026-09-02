@@ -2,6 +2,8 @@ import { CallBudget } from '@/src/jobs/budget';
 import { estimateCalls, runMeasurement } from '@/src/jobs/measure';
 import { PerplexityAdapter } from '@/src/engines/perplexity';
 import { OpenAIAdapter } from '@/src/engines/openai';
+import { GeminiAdapter } from '@/src/engines/gemini';
+import { SerpApiAdapter } from '@/src/engines/serp';
 import { runRemeasure } from '@/src/measure/remeasure';
 import type { EngineAdapter } from '@/src/engines/types';
 import type { JobPrompt } from '@/src/jobs/types';
@@ -220,6 +222,22 @@ function buildAdapters(): Record<string, EngineAdapter> {
   const openai = process.env['OPENAI_API_KEY'];
   if (openai !== undefined && openai !== '') {
     adapters['openai'] = new OpenAIAdapter({ apiKey: openai });
+  }
+
+  const gemini = process.env['GEMINI_API_KEY'];
+  if (gemini !== undefined && gemini !== '') {
+    adapters['gemini'] = new GeminiAdapter({ apiKey: gemini });
+  }
+
+  // AI Overviews and Bing's answer box have no official API, so both come
+  // through a SERP vendor and both are billed per query on top of the engine
+  // cost. They are opt-in for that reason, not because they matter less.
+  const serp = process.env['SERPAPI_API_KEY'];
+  if (serp !== undefined && serp !== '') {
+    adapters['aio'] = new SerpApiAdapter({ apiKey: serp, surface: 'aio' });
+    if (process.env['SEARCHPREX_ENABLE_BING'] === '1') {
+      adapters['copilot'] = new SerpApiAdapter({ apiKey: serp, surface: 'copilot' });
+    }
   }
 
   return adapters;

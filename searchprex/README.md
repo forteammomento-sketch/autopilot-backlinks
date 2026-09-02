@@ -19,7 +19,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 240 unit tests, no network
+npm test          # 260 unit tests, no network
 npm run typecheck
 ```
 
@@ -52,6 +52,8 @@ src/engines/types.ts        EngineAdapter contract — one call per query()
 src/engines/errors.ts       EngineError + retryable/non-retryable split, backoff
 src/engines/perplexity.ts   Sonar adapter
 src/engines/openai.ts       ChatGPT search, via Responses API + web_search tool
+src/engines/gemini.ts       Gemini, with Google Search grounding
+src/engines/serp.ts         AI Overviews and Bing's answer box, via a SERP vendor
 src/lib/domain.ts           eTLD+1 normalisation for citation matching
 src/lib/brand.ts            brand mention detection in answer text
 src/lib/citations.ts        self / competitor / third_party classification
@@ -252,6 +254,60 @@ Three rules the UI holds to, because the numbers are easy to misrepresent:
 - **Certainty rides on every recommendation.** `proven`, `strong` and
   `plausible` are visually distinct, because the customer prices the work off
   that label.
+
+## The other three surfaces
+
+**Gemini** runs through the Generative Language API with search grounding. One
+detail decides whether it works at all: `groundingChunks[].web.uri` is *not the
+page's URL* — it is a link into `vertexaisearch.cloud.google.com`, and those
+redirects expire. Used directly, every citation resolves to one Google domain:
+the customer's own pages never match, competitor checks always fail, and the
+placement graph collapses to a single entry. The whole run reads as "nobody is
+ever cited". `web.title` carries the real source, usually the bare domain, and
+is preferred whenever it parses as a hostname.
+
+**AI Overviews** has no official API, so it comes through a SERP vendor — a
+vendor dependency and a per-query cost, not an SLA. This is where `answered:
+false` finally earns its place in the type system: **AI Overviews does not fire
+on most queries.** Every other adapter can ignore that distinction because their
+surfaces always answer. Here it is the common case, and collapsing it into "not
+cited" manufactures gaps for prompts where no answer box existed for anyone to
+be cited in.
+
+**Copilot has no public API** and Microsoft retired the Bing Search API. What is
+reachable is the AI answer box on the Bing results page, which shares retrieval
+with Copilot but is not the same product. It is implemented, labelled **"Bing AI
+answers"** everywhere a person sees it, and off unless `SEARCHPREX_ENABLE_BING=1`.
+Reporting it as Copilot would be claiming a measurement that was never taken.
+
+## Headless rendering
+
+`js_only` needs a rendered word count, which needs a browser. Wire
+`createPlaywrightRenderer` into `buildSiteEvidence({ renderHtml })`; without it
+the gap is not reported rather than guessed at.
+
+The renderer blocks images, fonts, media and stylesheets — only text matters and
+they are most of the bytes — and waits for `domcontentloaded` plus a short
+settle rather than `networkidle`, which a storefront with analytics and chat
+widgets may never reach.
+
+Two things had to change before this could work at all, both found by running it
+against a real JavaScript-rendered page:
+
+- **Candidate selection ran on raw HTML.** A JS-rendered site scores near zero
+  on every page, so every prompt came back `no_page` — "you have no page about
+  this" — and `js_only` could never fire. When nothing clears the floor and a
+  renderer is wired, the thinnest candidates are now rendered and re-scored.
+- **The scoring could only clear the floor if the title restated the question.**
+  Real product titles are product names. Scoring is now per-term coverage
+  weighted by prominence — title, heading, URL, body — so a page whose body
+  answers the question qualifies on that alone.
+
+`js_only` is also judged on the **ratio** now, not an absolute size. The old
+floor of 800 rendered words caught only large pages and silently missed ordinary
+product ones: a page whose raw HTML holds twenty words and whose rendered DOM
+holds three hundred is exactly as invisible to a crawler as one holding three
+thousand.
 
 ## The crawler
 

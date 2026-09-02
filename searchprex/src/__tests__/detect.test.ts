@@ -124,6 +124,44 @@ describe('detectGaps — gate 1', () => {
     expect(gap.evidence['renderedWords']).toBe(1200);
   });
 
+  it('catches an ordinary JS-rendered page, not only a huge one', () => {
+    // The ratio is the signal. A page whose raw HTML holds twenty words and
+    // whose rendered DOM holds three hundred is exactly as invisible to a
+    // crawler as one holding three thousand.
+    const result = detectGaps(
+      sampled(),
+      context,
+      evidence({
+        candidatePage: {
+          url: 'https://smkstore.com/products/barlow',
+          httpStatus: 200,
+          html: '<html><body><main><div id="root"></div></main></body></html>',
+          renderedWords: 300,
+        },
+      }),
+    );
+    const gap = result.gaps.find((g) => g.gapType === 'js_only')!;
+    expect(gap.evidence['ratio']).toBeGreaterThan(5);
+  });
+
+  it('does not call a merely short page JS-only', () => {
+    // Raw 40 words, rendered 60: the crawler can see nearly everything there
+    // is. That is a thin page, which is a different gap.
+    const result = detectGaps(
+      sampled(),
+      context,
+      evidence({
+        candidatePage: {
+          url: 'https://smkstore.com/p',
+          httpStatus: 200,
+          html: `<p>${'word '.repeat(40)}</p>`,
+          renderedWords: 60,
+        },
+      }),
+    );
+    expect(result.gaps.some((g) => g.gapType === 'js_only')).toBe(false);
+  });
+
   it('treats nosnippet as an AI Overviews block but not a Perplexity one', () => {
     const html = `<meta name="robots" content="nosnippet">${GOOD_PAGE_HTML}`;
     const page = { url: 'https://smkstore.com/p', httpStatus: 200, html };

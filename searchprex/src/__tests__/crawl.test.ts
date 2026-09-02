@@ -320,12 +320,69 @@ describe('buildSiteEvidence', () => {
     const index = await crawlSite('smkstore.com', { fetchImpl: site.impl, minDelayMs: 0 });
 
     const evidence = await buildSiteEvidence(index, PROMPT, {
-      renderer: async () => {
+      renderHtml: async () => {
         throw new Error('browser crashed');
       },
     });
     // A missing signal, not evidence the page is fine.
     expect(evidence.candidatePage!.renderedWords).toBeUndefined();
+  });
+
+  it('finds a candidate that only exists after JavaScript runs', async () => {
+    // Without this, a JavaScript-rendered site reports `no_page` for every
+    // prompt — "you have no page about this" — and the gap type that exists
+    // for exactly this case can never fire.
+    const jsOnly = `<html><head><title>Rough Rider Barlow</title></head>
+      <body><main><div id="root"></div></main></body></html>`;
+    const rendered = `<html><head><title>Rough Rider Barlow</title></head>
+      <body><main><h1>Rough Rider Barlow</h1>
+      <p>A barlow knife blade in 1095 carbon steel stays sharp for roughly two weeks of
+         daily cutting before it needs a strop, and about six weeks before a full sharpen.</p>
+      </main></body></html>`;
+
+    const site = fakeSite({
+      'https://smkstore.com/robots.txt': [200, 'text/plain', 'User-agent: *\nAllow: /\n'],
+      'https://smkstore.com/sitemap.xml': [
+        200,
+        'application/xml',
+        '<urlset><url><loc>https://smkstore.com/products/barlow</loc></url></urlset>',
+      ],
+      'https://smkstore.com/products/barlow': [200, HTML, jsOnly],
+    });
+    const index = await crawlSite('smkstore.com', { fetchImpl: site.impl, minDelayMs: 0 });
+
+    const withoutRenderer = await buildSiteEvidence(index, PROMPT);
+    expect(withoutRenderer.candidatePage).toBeNull();
+
+    const withRenderer = await buildSiteEvidence(index, PROMPT, {
+      renderHtml: async () => rendered,
+    });
+    expect(withRenderer.candidatePage!.url).toBe('https://smkstore.com/products/barlow');
+    // The raw markup is kept: that is the side the detector compares against.
+    expect(withRenderer.candidatePage!.html).toContain('id="root"');
+    expect(withRenderer.candidatePage!.renderedWords).toBeGreaterThan(30);
+  });
+
+  it('scores a realistic product title that does not restate the question', async () => {
+    // A catalogue title is the product name, never the buyer's question. The
+    // scoring has to clear the floor on term coverage across the page, or every
+    // real product page is rejected as `no_page`.
+    const site = fakeSite(routes);
+    const index = await crawlSite('smkstore.com', { fetchImpl: site.impl, minDelayMs: 0 });
+    const ranked = rankCandidates(index, PROMPT);
+    expect(ranked[0]!.score).toBeGreaterThan(0.3);
+  });
+
+  it('counts rendered words with the same function as the raw side', async () => {
+    // Raw and rendered have to be measured the same way or the js_only
+    // threshold compares two different things.
+    const site = fakeSite(routes);
+    const index = await crawlSite('smkstore.com', { fetchImpl: site.impl, minDelayMs: 0 });
+
+    const evidence = await buildSiteEvidence(index, PROMPT, {
+      renderHtml: async () => '<html><body><main><p>one two three four five</p></main></body></html>',
+    });
+    expect(evidence.candidatePage!.renderedWords).toBe(5);
   });
 
   it('feeds a clean crawl into the detector with no gate-1 gaps', async () => {
