@@ -2,7 +2,7 @@
   "name": "@searchprex/core",
   "version": "0.0.1",
   "private": true,
-  "description": "Searchprex AI Visibility Autopilot — engine adapters and citation analysis",
+  "description": "Searchprex AI Visibility Autopilot \u2014 engine adapters and citation analysis",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "smoke": "tsx scripts/smoke.ts",
-    "crawl": "tsx scripts/crawl.ts"
+    "crawl": "tsx scripts/crawl.ts",
+    "prompts": "tsx scripts/prompts.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

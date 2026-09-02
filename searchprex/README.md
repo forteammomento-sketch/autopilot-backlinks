@@ -19,7 +19,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 190 unit tests, no network
+npm test          # 224 unit tests, no network
 npm run typecheck
 ```
 
@@ -40,6 +40,7 @@ accepts our request body. After any change to the request shape:
 ```bash
 PERPLEXITY_API_KEY=pplx-... npm run smoke "best budget barlow pocket knife under $40"
 ENGINE=openai OPENAI_API_KEY=sk-... npm run smoke "best budget barlow pocket knife"
+OPENAI_API_KEY=sk-... npm run prompts        # generate a prompt set for review
 ```
 
 Spends 3 API calls and prints the citation breakdown per attempt.
@@ -118,6 +119,40 @@ Deploy has four outcomes, and **`planned` is a success, not a failure**: the pla
 is built and shown, and nothing is pushed. That is what happens when GitHub is
 not configured. Reporting a pull request URL that does not exist would be worse
 than reporting nothing.
+
+## Prompt generation
+
+```bash
+OPENAI_API_KEY=sk-... npm run prompts
+```
+
+Crawls the site for seeds, generates a set, and prints it for a person to read.
+Nothing is written anywhere — the prompt set is the largest recurring cost in
+the product, so it gets reviewed before it starts being measured every week.
+
+**Seeds come from the catalogue and from Search Console, never from the topic
+alone.** A set imagined from "knives and outdoor gear" asks about products the
+site does not stock, and every one of those is a paid measurement of a question
+that can never be won. Search Console queries lead where available: they are
+measured demand on pages that already rank somewhere, which gives a prompt a
+chance at gate 2 that an invented one does not.
+
+Four rules the generator enforces on what comes back:
+
+| Rejected | Why |
+|---|---|
+| **Names the brand** | A question naming the shop is one the shop nearly always wins. It measures brand recall, not discovery, and the number only ever goes up. Opt in with `allowBrandPrompts` if you want a few. |
+| **Under 4 or over 15 words** | Below that it is a keyword; above it, nobody types it. |
+| **No question signal** | A bare noun phrase is keyword research, not a prompt. |
+| **Duplicate** | "best budget barlow under $40" and "cheapest barlow knife under 40 dollars" are one question. Both would be measured on every engine, three times, every week, forever. |
+
+Intent is classified deterministically — "best", "vs" and "where to buy" are
+unambiguous, and a model call would add cost and drift to a decision regex gets
+right. When the total cap bites, commercial and comparison prompts are kept over
+informational ones: an informational win is a citation nobody buys after.
+
+The report ends with what the set will cost per week, because that is the number
+the size of the set actually decides.
 
 ## Scheduled jobs
 
