@@ -1,7 +1,11 @@
 export * from './engines/types.js';
 export * from './engines/errors.js';
 export { PerplexityAdapter, type PerplexityConfig } from './engines/perplexity.js';
+export { OpenAIAdapter, type OpenAIConfig } from './engines/openai.js';
 export * from './lib/domain.js';
 export * from './lib/brand.js';
 export * from './lib/citations.js';
+export * from './lib/robots.js';
+export * from './lib/html.js';
 export * from './runner/sample.js';
+export * from './gaps/index.js';
