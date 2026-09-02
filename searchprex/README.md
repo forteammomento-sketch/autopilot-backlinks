@@ -23,10 +23,14 @@ npm test          # 190 unit tests, no network
 npm run typecheck
 ```
 
-The dashboard runs on fixture data (`lib/data/fixtures.ts`) shaped exactly like
-what the pipeline produces. Every screen reads through the `DataSource`
-interface, so the Supabase implementation slots in at `lib/data/index.ts` and no
-component changes.
+With no environment set, the dashboard runs on fixture data
+(`lib/data/fixtures.ts`) shaped exactly like what the pipeline produces. Set
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` and it reads live data instead —
+see `.env.example`.
+
+The fallback is deliberate. A fresh clone should show a working dashboard, and a
+half-configured environment should degrade to obviously-fake data rather than to
+an empty screen a reader might mistake for "no gaps found".
 
 ## Live check
 
@@ -74,6 +78,46 @@ src/measure/winrate.ts      lift records -> ranker input
 src/measure/remeasure.ts    the T+14 job
 supabase/migrations/        V0 schema with RLS
 ```
+
+## Supabase
+
+Screens read **views**, not tables — migration `0003_dashboard.sql`. A component
+should not have to know that a prompt's text lives two joins from the action
+addressing it, and keeping the joins in SQL means the query plan is tuned once.
+
+That migration also fills two holes the original schema had: `actions` gained a
+`rationale` column, and **refusals had nowhere to live at all**. That was a real
+omission — a refusal naming the missing first-party fact is often the most
+actionable row in the queue, and storing it nowhere meant the customer never saw
+why nothing was generated.
+
+Queries run with the service-role key, so RLS is bypassed and every query
+filters by `project_id` explicitly. Losing that filter would leak one customer's
+queue into another's dashboard.
+
+## Approve and deploy
+
+Two steps, on purpose:
+
+- **Approve** records that a person read the artifact and wants it. It deploys
+  nothing.
+- **Deploy** builds a plan from every approved action and opens one draft pull
+  request.
+
+Collapsing them into one click would mean a stray tap ships generated copy into
+a production site — and the whole argument for a draft PR is that a human sees
+the diff first.
+
+Status transitions are guarded in the `where` clause rather than read-then-write
+(`update … where status in ('draft')`), so a double-submitted form resolves to
+one update and one no-op instead of two conflicting writes. Buttons show a
+pending label, because the gap between click and commit is exactly when someone
+clicks again.
+
+Deploy has four outcomes, and **`planned` is a success, not a failure**: the plan
+is built and shown, and nothing is pushed. That is what happens when GitHub is
+not configured. Reporting a pull request URL that does not exist would be worse
+than reporting nothing.
 
 ## The screens
 

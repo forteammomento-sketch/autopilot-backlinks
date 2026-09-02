@@ -2,7 +2,7 @@
   "name": "@searchprex/core",
   "version": "0.0.1",
   "private": true,
-  "description": "Searchprex AI Visibility Autopilot \u2014 engine adapters and citation analysis",
+  "description": "Searchprex AI Visibility Autopilot — engine adapters and citation analysis",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
@@ -24,6 +24,7 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.114.0",
     "next": "^15.5.25",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

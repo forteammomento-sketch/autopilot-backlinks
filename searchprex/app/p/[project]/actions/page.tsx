@@ -1,5 +1,15 @@
-import { data } from '@/lib/data/index';
+import { data, isLive, mutations } from '@/lib/data/index';
 import { CertaintyBadge, engineLabel } from '@/lib/ui/bits';
+import { SubmitButton } from '@/lib/ui/submit-button';
+import {
+  approveAction,
+  clearLastOutcome,
+  deployApproved,
+  readLastOutcome,
+  rejectAction,
+  unapproveAction,
+} from './server-actions';
+import type { ActionRow, DeployOutcome } from '@/lib/data/types';
 
 const GATE_NAME: Record<number, string> = {
   1: 'retrievable',
@@ -15,13 +25,23 @@ const REFUSAL_TITLE: Record<string, string> = {
   validation_failed: 'Draft failed validation',
 };
 
+/** Action types the deploy pipeline can ship in V0. */
+const DEPLOYABLE = new Set(['answer_block', 'schema', 'crawl_fix']);
+
 export default async function ActionsPage({
   params,
 }: {
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
-  const [actions, refusals] = await Promise.all([data.actions(project), data.refusals(project)]);
+  const [actions, refusals, outcome] = await Promise.all([
+    data.actions(project),
+    data.refusals(project),
+    readLastOutcome(project),
+  ]);
+
+  const approved = actions.filter((a) => a.status === 'approved');
+  const shippable = approved.filter((a) => DEPLOYABLE.has(a.actionType));
 
   return (
     <>
@@ -33,6 +53,17 @@ export default async function ActionsPage({
           gate.
         </p>
       </div>
+
+      {isLive ? null : (
+        <p className="envnote">
+          Fixture data — Supabase is not configured, so nothing here is real and no
+          deploy will reach a repository.
+        </p>
+      )}
+
+      {outcome === null ? null : <OutcomeBanner outcome={outcome} project={project} />}
+
+      <DeployBar project={project} approved={approved.length} shippable={shippable.length} />
 
       {actions.map((action, index) => (
         <details key={action.id} className="action" open={action.priority > 2.5}>
@@ -46,6 +77,7 @@ export default async function ActionsPage({
             </span>
             <span className="action-prompt">{action.prompt}</span>
             <span className="action-meta">
+              <StatusPill status={action.status} />
               {action.preview === null ? (
                 <span className="badge badge-advisory">advisory</span>
               ) : null}
@@ -80,6 +112,8 @@ export default async function ActionsPage({
                 <pre className="preview">{action.preview.body}</pre>
               </>
             )}
+
+            <RowControls project={project} action={action} />
           </div>
         </details>
       ))}
@@ -108,6 +142,202 @@ export default async function ActionsPage({
           <p className="refusal-needed">{refusal.needed}</p>
         </div>
       ))}
+    </>
+  );
+}
+
+function StatusPill({ status }: { status: ActionRow['status'] }) {
+  if (status === 'draft') return null;
+  return <span className={`pill pill-${status}`}>{status}</span>;
+}
+
+/**
+ * Approve and Deploy are separate buttons on purpose. Approving records that a
+ * person read the artifact; deploying opens a pull request against a production
+ * site. One click doing both would mean a stray tap ships generated copy.
+ */
+function RowControls({ project, action }: { project: string; action: ActionRow }) {
+  if (action.preview === null) {
+    return (
+      <div className="row-actions">
+        <span className="gate">Advisory — nothing to approve.</span>
+      </div>
+    );
+  }
+
+  if (action.status === 'deployed' || action.status === 'verified') {
+    return (
+      <div className="row-actions">
+        <span className="gate">
+          Shipped. Roll back from the pull request, or from the deployment record —
+          the pre-deploy snapshot is stored with it.
+        </span>
+      </div>
+    );
+  }
+
+  const deployable = DEPLOYABLE.has(action.actionType);
+
+  return (
+    <div className="row-actions">
+      {action.status === 'approved' ? (
+        <>
+          <form action={unapproveAction}>
+            <input type="hidden" name="project" value={project} />
+            <input type="hidden" name="id" value={action.id} />
+            <SubmitButton className="btn" pendingLabel="Taking back…">
+              Take approval back
+            </SubmitButton>
+          </form>
+          <span className="gate">
+            {deployable
+              ? 'Queued for the next deploy.'
+              : 'Approved, but V0 has no automated deploy for this type — do it by hand.'}
+          </span>
+        </>
+      ) : (
+        <>
+          <form action={approveAction}>
+            <input type="hidden" name="project" value={project} />
+            <input type="hidden" name="id" value={action.id} />
+            <SubmitButton className="btn btn-primary" pendingLabel="Approving…">
+              Approve
+            </SubmitButton>
+          </form>
+          <form action={rejectAction}>
+            <input type="hidden" name="project" value={project} />
+            <input type="hidden" name="id" value={action.id} />
+            <SubmitButton className="btn btn-quiet" pendingLabel="Rejecting…">
+              Reject
+            </SubmitButton>
+          </form>
+        </>
+      )}
+    </div>
+  );
+}
+
+function DeployBar({
+  project,
+  approved,
+  shippable,
+}: {
+  project: string;
+  approved: number;
+  shippable: number;
+}) {
+  return (
+    <div className="deploybar">
+      <div className="deploybar-text">
+        {approved === 0 ? (
+          <>Nothing approved yet. Approve the artifacts you want before deploying.</>
+        ) : (
+          <>
+            <strong>
+              {shippable} of {approved} approved
+            </strong>{' '}
+            {shippable === 1 ? 'action can' : 'actions can'} be shipped as one draft pull
+            request. Placement and internal-link work is done by hand.
+          </>
+        )}
+      </div>
+      <form action={deployApproved}>
+        <input type="hidden" name="project" value={project} />
+        <SubmitButton
+          className="btn btn-primary"
+          pendingLabel="Opening pull request…"
+          disabled={shippable === 0}
+        >
+          Open draft pull request
+        </SubmitButton>
+      </form>
+    </div>
+  );
+}
+
+function OutcomeBanner({ outcome, project }: { outcome: DeployOutcome; project: string }) {
+  const tone =
+    outcome.kind === 'opened'
+      ? 'banner-good'
+      : outcome.kind === 'planned'
+        ? 'banner-info'
+        : outcome.kind === 'nothing'
+          ? 'banner-warn'
+          : 'banner-bad';
+
+  return (
+    <div className={`banner ${tone}`}>
+      {outcome.kind === 'opened' ? (
+        <>
+          <h3>Draft pull request opened</h3>
+          <p>
+            Nothing is live until someone merges it.{' '}
+            <a href={outcome.prUrl}>#{outcome.prNumber}</a>
+          </p>
+          <FileList files={outcome.files} capped={outcome.capped} />
+        </>
+      ) : null}
+
+      {outcome.kind === 'planned' ? (
+        <>
+          <h3>Plan built — nothing was pushed</h3>
+          <p>{outcome.why}</p>
+          <FileList files={outcome.files} capped={outcome.capped} />
+        </>
+      ) : null}
+
+      {outcome.kind === 'nothing' ? (
+        <>
+          <h3>Nothing to deploy</h3>
+          <p>{outcome.why}</p>
+        </>
+      ) : null}
+
+      {outcome.kind === 'error' ? (
+        <>
+          <h3>Deploy failed</h3>
+          <p>{outcome.message}</p>
+          <p>
+            Nothing was left half-applied: the deploy compares each file against the
+            snapshot it planned from and stops rather than overwriting a change that
+            landed in between.
+          </p>
+        </>
+      ) : null}
+
+      <form action={clearLastOutcome} className="banner-close">
+        <input type="hidden" name="project" value={project} />
+        <SubmitButton className="btn btn-quiet" pendingLabel="…">
+          Dismiss
+        </SubmitButton>
+      </form>
+    </div>
+  );
+}
+
+function FileList({
+  files,
+  capped,
+}: {
+  files: { path: string; applied: string[] }[];
+  capped: number;
+}) {
+  return (
+    <>
+      <ul>
+        {files.map((file) => (
+          <li key={file.path}>
+            <code>{file.path}</code> — {file.applied.join(', ')}
+          </li>
+        ))}
+      </ul>
+      {capped > 0 ? (
+        <p style={{ marginTop: 8 }}>
+          {capped} further block{capped === 1 ? '' : 's'} held back by the per-run cap.
+          Publishing many generated passages at once is the pattern that trips spam
+          classification, so they follow in a later run.
+        </p>
+      ) : null}
     </>
   );
 }

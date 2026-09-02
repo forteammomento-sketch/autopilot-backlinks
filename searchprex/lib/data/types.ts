@@ -54,7 +54,8 @@ export interface ActionRow {
   priority: number;
   certainty: Certainty;
   rationale: string;
-  status: 'draft' | 'approved' | 'deployed' | 'verified';
+  /** Mirrors the `actions.status` check constraint. */
+  status: 'draft' | 'approved' | 'deployed' | 'verified' | 'failed' | 'rejected';
   /** Rendered artifact preview, or null for an advisory. */
   preview: { label: string; body: string } | null;
 }
@@ -112,4 +113,38 @@ export interface DataSource {
   placements(slug: string): Promise<PlacementRow[]>;
   proof(slug: string): Promise<ProofRow[]>;
   cohort(slug: string): Promise<CohortSummary>;
+}
+
+/* ── mutations ───────────────────────────────────────────────────────────── */
+
+export type MutationResult = { ok: true } | { ok: false; message: string };
+
+export interface PlannedFile {
+  path: string;
+  applied: string[];
+}
+
+/**
+ * What a deploy did.
+ *
+ * `planned` is a first-class outcome, not a failure: the plan is built and
+ * shown, and nothing is pushed. That is what happens when GitHub is not
+ * configured, and it is also the honest state for a demo — reporting a pull
+ * request URL that does not exist would be worse than reporting nothing.
+ */
+export type DeployOutcome =
+  | { kind: 'opened'; prUrl: string; prNumber: number; files: PlannedFile[]; capped: number }
+  | { kind: 'planned'; files: PlannedFile[]; capped: number; why: string }
+  | { kind: 'nothing'; why: string }
+  | { kind: 'error'; message: string };
+
+export interface MutationSource {
+  /** Draft → approved. Records intent; deploys nothing. */
+  approve(project: string, actionId: string): Promise<MutationResult>;
+  /** Draft or approved → rejected. */
+  reject(project: string, actionId: string): Promise<MutationResult>;
+  /** Approved → draft, so an approval can be taken back before it ships. */
+  unapprove(project: string, actionId: string): Promise<MutationResult>;
+  /** Builds a plan from every approved action and, if configured, pushes it. */
+  deployApproved(project: string): Promise<DeployOutcome>;
 }

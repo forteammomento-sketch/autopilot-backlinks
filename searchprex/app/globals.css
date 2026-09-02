@@ -230,3 +230,51 @@ pre.preview {
   .main { padding: 20px 16px 48px; }
   .action > summary { grid-template-columns: 1fr; }
 }
+
+/* ── controls ─────────────────────────────────────────────────────────── */
+
+.btn {
+  font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 7px;
+  border: 1px solid var(--ring); background: var(--surface-1); color: var(--ink-1);
+  cursor: pointer;
+}
+.btn:hover { background: var(--wash); }
+.btn-primary { background: var(--series-1); border-color: transparent; color: #fff; }
+.btn-primary:hover { filter: brightness(1.08); background: var(--series-1); }
+.btn-quiet { color: var(--ink-2); border-color: transparent; }
+.btn-quiet:hover { color: var(--ink-1); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.row-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--hairline); }
+.row-actions form { display: inline; }
+
+.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11px;
+  border: 1px solid var(--ring); color: var(--ink-2); white-space: nowrap; }
+.pill-approved { border-color: color-mix(in srgb, var(--series-1) 55%, transparent);
+  color: var(--series-1); }
+.pill-deployed { border-color: color-mix(in srgb, var(--good) 55%, transparent);
+  color: var(--success-text); }
+
+/* ── deploy bar ───────────────────────────────────────────────────────── */
+
+.deploybar {
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+  border: 1px solid var(--hairline); border-radius: 10px; background: var(--surface-1);
+  padding: 13px 16px; margin-bottom: 18px;
+}
+.deploybar-text { flex: 1 1 260px; color: var(--ink-2); font-size: 13px; }
+.deploybar-text strong { color: var(--ink-1); }
+
+.banner { border: 1px solid var(--hairline); border-left-width: 3px; border-radius: 10px;
+  background: var(--surface-1); padding: 13px 16px; margin-bottom: 18px; }
+.banner-good { border-left-color: var(--good); }
+.banner-info { border-left-color: var(--series-1); }
+.banner-warn { border-left-color: var(--warning); }
+.banner-bad { border-left-color: var(--critical); }
+.banner h3 { margin: 0 0 5px; font-size: 13px; }
+.banner p { margin: 0 0 6px; color: var(--ink-2); font-size: 13px; max-width: 74ch; }
+.banner ul { margin: 6px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 13px; }
+.banner-close { margin-top: 8px; }
+
+.envnote { font-size: 12px; color: var(--ink-muted); margin: 0 0 16px; }

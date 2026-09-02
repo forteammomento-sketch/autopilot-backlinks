@@ -1,3 +1,5 @@
+import type { ActionArtifact } from '@/src/actions/types';
+import { getFixtureStatus } from '@/lib/data/fixture-state';
 import type {
   ActionRow,
   CohortSummary,
@@ -154,7 +156,9 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /`;
 
-const ACTIONS: ActionRow[] = [
+type FixtureAction = ActionRow & { coreArtifact: ActionArtifact | null };
+
+const ACTIONS: FixtureAction[] = [
   {
     id: 'a1',
     actionType: 'crawl_fix',
@@ -170,6 +174,12 @@ const ACTIONS: ActionRow[] = [
       'CDN rule, not a robots.txt problem — no content change can work around it.',
     status: 'draft',
     preview: { label: 'robots.txt addition', body: PREVIEW_ROBOTS },
+    coreArtifact: {
+      kind: 'crawl_fix',
+      layer: 'robots',
+      robotsAdditions: ['User-agent: OAI-SearchBot', 'Allow: /', '', 'User-agent: ChatGPT-User', 'Allow: /', ''],
+      note: 'robots.txt disallows crawlers this engine needs.',
+    },
   },
   {
     id: 'a2',
@@ -189,6 +199,8 @@ const ACTIONS: ActionRow[] = [
       label: 'Placement targets',
       body: 'reddit.com/r/knifeclub · bladeforums.com · everydaycarry.com\nyoutube.com · knifeinformer.com · thetruthaboutknives.com',
     },
+    // Placement is an outreach task, not a file change: no deploy artifact.
+    coreArtifact: null,
   },
   {
     id: 'a3',
@@ -205,6 +217,18 @@ const ACTIONS: ActionRow[] = [
       'from first-party facts, in the 40–90 word shape retrievers extract.',
     status: 'approved',
     preview: { label: 'Generated block', body: PREVIEW_BLOCK },
+    coreArtifact: {
+      kind: 'answer_block',
+      question: 'How long does a 1095 carbon steel blade stay sharp?',
+      answer:
+        'A 1095 carbon steel blade holds a working edge for roughly two weeks of daily ' +
+        'cutting before it needs a strop, and about six weeks before a full sharpen. We ' +
+        'test every blade on manila rope in store before it ships, so the edge you ' +
+        'receive is the one we measured on that batch.',
+      supporting: ['Blade steel: 1095 carbon, 56–58 HRC', 'Tested in store before dispatch'],
+      factsUsed: ['blade steel', 'edge retention'],
+      html: PREVIEW_BLOCK,
+    },
   },
   {
     id: 'a4',
@@ -219,6 +243,12 @@ const ACTIONS: ActionRow[] = [
     rationale: 'Page carries none of the expected schema types.',
     status: 'draft',
     preview: { label: 'JSON-LD', body: PREVIEW_SCHEMA },
+    coreArtifact: {
+      kind: 'schema',
+      types: ['Product'],
+      jsonLd: JSON.parse(PREVIEW_SCHEMA) as Record<string, unknown>,
+      html: `<script type="application/ld+json">${PREVIEW_SCHEMA}</script>`,
+    },
   },
   {
     id: 'a5',
@@ -239,6 +269,8 @@ const ACTIONS: ActionRow[] = [
         'From /collections/buck-knives → anchor "Buck 119 Special"\n' +
         'From /blog/deer-season-gear → anchor "fixed blade for field dressing"',
     },
+    // Internal linking edits other pages; V0 deploys only the three types below.
+    coreArtifact: null,
   },
   {
     id: 'a6',
@@ -255,8 +287,31 @@ const ACTIONS: ActionRow[] = [
       'copy will change that — fix the classic ranking first.',
     status: 'draft',
     preview: null,
+    coreArtifact: null,
   },
 ];
+
+/**
+ * A miniature repository, so the deploy planner has real files to diff against
+ * in the fixture environment. Paths match `staticSiteResolver`.
+ */
+export const fixtureRepo: Record<string, string> = {
+  'robots.txt': 'User-agent: *\nAllow: /\nSitemap: https://michigansportsoutdoor.com/sitemap.xml\n',
+  'products/rough-rider-barlow.html': `<html>
+  <head>
+    <title>Rough Rider Barlow | Michigan Sports Outdoor</title>
+  </head>
+  <body>
+    <main>
+      <h1>Rough Rider Barlow</h1>
+      <p>Classic two-blade barlow pattern with jigged bone scales.</p>
+    </main>
+    <footer>© Michigan Sports Outdoor</footer>
+  </body>
+</html>`,
+};
+
+export const fixtureActions = ACTIONS;
 
 const REFUSALS: RefusalRow[] = [
   {
@@ -392,7 +447,13 @@ const COHORT: CohortSummary = {
 export const fixtureDataSource: DataSource = {
   project: async (slug) => (slug === PROJECT.slug ? PROJECT : null),
   prompts: async () => PROMPTS,
-  actions: async () => [...ACTIONS].sort((a, b) => b.priority - a.priority),
+  actions: async () =>
+    ACTIONS.map((action) => ({
+      ...action,
+      status: getFixtureStatus(action.id, action.status as 'draft' | 'approved' | 'deployed' | 'rejected'),
+    }))
+      .filter((action) => action.status !== 'rejected')
+      .sort((a, b) => b.priority - a.priority),
   refusals: async () => REFUSALS,
   placements: async () => PLACEMENTS,
   proof: async () => PROOF,
