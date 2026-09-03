@@ -1,5 +1,6 @@
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { data } from '@/lib/data/index';
+import { projectContext } from '@/lib/auth/project';
 import { EngineCell, Tile, engineLabel, shortDate } from '@/lib/ui/bits';
 
 export default async function VisibilityPage({
@@ -8,10 +9,13 @@ export default async function VisibilityPage({
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
+  const ctx = await projectContext(project);
+  if (ctx === null) notFound();
+
   const [summary, prompts, actions] = await Promise.all([
-    data.project(project),
-    data.prompts(project),
-    data.actions(project),
+    ctx.data.project(),
+    ctx.data.prompts(),
+    ctx.data.actions(),
   ]);
   if (summary === null) return null;
 

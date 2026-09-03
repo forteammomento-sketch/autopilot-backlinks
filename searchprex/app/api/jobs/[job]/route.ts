@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { NextResponse } from 'next/server';
-import { runJob, type JobName } from '@/lib/jobs/run';
+import { runJobs, type JobName } from '@/lib/jobs/run';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -32,12 +32,24 @@ export async function POST(
     return NextResponse.json({ error: `unknown job "${job}"` }, { status: 404 });
   }
 
-  const outcome = await runJob(job as JobName);
+  // Without `?project=` this runs every project, which is what a single cron
+  // entry for a multi-tenant deployment needs. With one, it runs just that one.
+  const projectRef = new URL(request.url).searchParams.get('project') ?? undefined;
+  const outcomes = await runJobs(job as JobName, projectRef);
 
-  const status =
-    outcome.kind === 'ran' ? 200 : outcome.kind === 'busy' ? 409 : outcome.kind === 'unconfigured' ? 503 : 500;
+  // One tenant failing must not report the whole sweep as failed, so the status
+  // reflects the worst outcome only when nothing succeeded.
+  const ran = outcomes.some((o) => o.kind === 'ran');
+  const worst = outcomes[0];
+  const status = ran
+    ? 200
+    : worst?.kind === 'busy'
+      ? 409
+      : worst?.kind === 'unconfigured'
+        ? 503
+        : 500;
 
-  return NextResponse.json(outcome, { status });
+  return NextResponse.json({ outcomes }, { status });
 }
 
 function authorised(request: Request): boolean {

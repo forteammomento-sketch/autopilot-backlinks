@@ -1,4 +1,5 @@
-import { data } from '@/lib/data/index';
+import { notFound } from 'next/navigation';
+import { projectContext } from '@/lib/auth/project';
 
 export default async function PlacementsPage({
   params,
@@ -6,7 +7,10 @@ export default async function PlacementsPage({
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
-  const placements = await data.placements(project);
+  const ctx = await projectContext(project);
+  if (ctx === null) notFound();
+
+  const placements = await ctx.data.placements();
   const max = Math.max(...placements.map((p) => p.citationCount), 1);
 
   return (

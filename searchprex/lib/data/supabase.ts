@@ -306,13 +306,13 @@ export function createSupabaseMutations(
   };
 
   return {
-    approve: (_project, actionId) =>
+    approve: (actionId) =>
       transition(actionId, ['draft'], 'approved', 'Only a draft action can be approved.'),
 
-    unapprove: (_project, actionId) =>
+    unapprove: (actionId) =>
       transition(actionId, ['approved'], 'draft', 'Only an approved action can be taken back.'),
 
-    reject: (_project, actionId) =>
+    reject: (actionId) =>
       transition(
         actionId,
         ['draft', 'approved'],
@@ -328,7 +328,7 @@ export function createSupabaseMutations(
      * about products the site actually stocks — the alternative, generating
      * from the topic alone, produces questions that can never be won.
      */
-    chooseProperty: async (_project, siteUrl): Promise<MutationResult> => {
+    chooseProperty: async (siteUrl): Promise<MutationResult> => {
       await setConnectionSite(client, projectId, siteUrl);
       return { ok: true };
     },
@@ -434,7 +434,7 @@ export function createSupabaseMutations(
       }
     },
 
-    rollback: async (_project, actionId): Promise<RollbackOutcome> => {
+    rollback: async (actionId): Promise<RollbackOutcome> => {
       const { data: rows, error } = await client
         .from('deployments')
         .select('id, external_ref, before_snapshot, pr_url, pr_number')

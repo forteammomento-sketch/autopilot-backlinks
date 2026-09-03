@@ -19,7 +19,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 351 tests, no network — including the migrations and the
+npm test          # 353 tests, no network — including the migrations and the
                   # RLS policies, against real Postgres compiled to WebAssembly
 npm run typecheck
 ```
@@ -110,9 +110,32 @@ omission — a refusal naming the missing first-party fact is often the most
 actionable row in the queue, and storing it nowhere meant the customer never saw
 why nothing was generated.
 
-Queries run with the service-role key, so RLS is bypassed and every query
-filters by `project_id` explicitly. Losing that filter would leak one customer's
-queue into another's dashboard.
+### Multi-tenancy
+
+Routes are `/p/<slug>`, and `projectContext()` in `lib/auth/project.ts` turns
+that slug into a project — or into nothing.
+
+**The access check is a query, not an `if`.** The lookup runs through a client
+carrying the *user's* JWT, so row-level security decides whether the row exists
+for them: the database answers "may you see this project" rather than the
+application deciding and hoping its filter was right. A project someone may not
+have is indistinguishable from one that does not exist, which is also the right
+answer — confirming that a slug exists but belongs to someone else leaks who
+your customers are.
+
+Reads then run under that same user-scoped client, so a filter this code forgets
+is caught by the database rather than by nobody. Writes use the service role,
+because several tables carry only a select policy — a job rather than a browser
+is what normally writes them — and they are safe because the project id was
+verified through RLS first.
+
+Server actions resolve the project the same way. The slug arrives in the form
+body, which the browser controls; an action that trusted it would let anyone
+reaching the endpoint approve and deploy content into a project that is not
+theirs.
+
+`SessionSource` in `lib/auth/types.ts` is the seam to replace when porting this
+into a product that already has sign-in.
 
 ### Row-level security
 
@@ -264,9 +287,16 @@ token nobody intends to use is still a working key.
 ## Scheduled jobs
 
 ```
-POST /api/jobs/measure     Authorization: Bearer $SEARCHPREX_JOB_SECRET
+POST /api/jobs/measure                 Authorization: Bearer $SEARCHPREX_JOB_SECRET
+POST /api/jobs/measure?project=<slug>
 POST /api/jobs/remeasure
 ```
+
+Without `?project=` this runs every project, which is what one cron entry for a
+multi-tenant deployment needs. Projects are walked one at a time, each taking
+its own lease and its own call budget: one tenant's runaway prompt set must not
+spend another's budget, and one tenant's stuck run must not block everyone
+else's schedule. One tenant failing does not report the whole sweep as failed.
 
 An HTTP endpoint rather than a binding to one job runner. Vercel Cron, pg_cron,
 GitHub Actions and Inngest can all POST to it, and which one a deployment uses

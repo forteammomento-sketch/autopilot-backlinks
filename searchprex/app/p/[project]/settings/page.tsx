@@ -1,4 +1,5 @@
-import { data, isLive } from '@/lib/data/index';
+import { notFound } from 'next/navigation';
+import { projectContext } from '@/lib/auth/project';
 import { SubmitButton } from '@/lib/ui/submit-button';
 import { shortDate } from '@/lib/ui/bits';
 import { chooseProperty, disconnectGoogle } from './server-actions';
@@ -55,13 +56,16 @@ export default async function SettingsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { project } = await params;
+  const ctx = await projectContext(project);
+  if (ctx === null) notFound();
+
   const query = await searchParams;
   const outcome = typeof query['oauth'] === 'string' ? query['oauth'] : null;
 
   const [summary, connection, properties] = await Promise.all([
-    data.project(project),
-    data.connection(project),
-    data.connection(project).then((c) => (c === null ? [] : data.properties(project))),
+    ctx.data.project(),
+    ctx.data.connection(),
+    ctx.data.connection().then((c) => (c === null ? [] : ctx.data.properties())),
   ]);
   if (summary === null) return null;
 
@@ -77,7 +81,7 @@ export default async function SettingsPage({
         </p>
       </div>
 
-      {isLive ? null : (
+      {ctx.isLive ? null : (
         <p className="envnote">
           Fixture data — Supabase is not configured, so no connection can be stored.
         </p>

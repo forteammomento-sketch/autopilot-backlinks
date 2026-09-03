@@ -15,23 +15,94 @@ import { acquireLease } from '@/lib/jobs/lease';
 export type JobName = 'measure' | 'remeasure';
 
 export type JobOutcome =
-  | { kind: 'ran'; job: JobName; status: string; callsSpent: number; measured: number; skipped: number }
-  | { kind: 'busy'; job: JobName; why: string }
+  | {
+      kind: 'ran';
+      job: JobName;
+      project: string;
+      status: string;
+      callsSpent: number;
+      measured: number;
+      skipped: number;
+    }
+  | { kind: 'busy'; job: JobName; project: string; why: string }
   | { kind: 'unconfigured'; why: string }
-  | { kind: 'failed'; job: JobName; error: string };
+  | { kind: 'failed'; job: JobName; project: string; error: string };
 
 /** Ceiling per run. Sized so a 60-prompt, 2-engine, 3-repeat run fits with room. */
 const DEFAULT_BUDGET = Number(process.env['SEARCHPREX_CALL_BUDGET'] ?? '600');
 const LEASE_TTL_SECONDS = 900;
 
-export async function runJob(job: JobName): Promise<JobOutcome> {
+/**
+ * Run a job for every project, or for one.
+ *
+ * A scheduler has no session, so this authenticates with a shared secret and
+ * runs as the service role. That is why the caller cannot simply be trusted
+ * with a project id: `resolveProject` below turns a slug or id into a project
+ * that exists, and anything else is refused rather than run against nothing.
+ *
+ * Projects are walked one at a time. Each takes its own lease and its own call
+ * budget, because both are per-customer: one tenant's runaway prompt set must
+ * not spend another tenant's budget, and one tenant's stuck run must not block
+ * everyone else's schedule.
+ */
+export async function runJobs(job: JobName, projectRef?: string): Promise<JobOutcome[]> {
   const client = createSupabaseClient();
-  const projectId = process.env['SEARCHPREX_PROJECT_ID'] ?? '';
+  if (client === null) {
+    return [
+      {
+        kind: 'unconfigured',
+        why: 'Jobs need SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.',
+      },
+    ];
+  }
+
+  const projects = await resolveProjects(client, projectRef);
+  if (projects.length === 0) {
+    return [
+      {
+        kind: 'unconfigured',
+        why:
+          projectRef === undefined
+            ? 'No projects to run.'
+            : `No project matching "${projectRef}".`,
+      },
+    ];
+  }
+
+  const outcomes: JobOutcome[] = [];
+  for (const projectId of projects) {
+    outcomes.push(await runJob(job, projectId));
+  }
+  return outcomes;
+}
+
+async function resolveProjects(
+  client: ReturnType<typeof createSupabaseClient> & object,
+  projectRef: string | undefined,
+): Promise<string[]> {
+  if (projectRef === undefined || projectRef === '') {
+    const { data } = await client.from('projects').select('id');
+    return (data ?? []).map((row) => String(row['id']));
+  }
+
+  // A slug or a uuid: schedules are configured by hand and both get typed.
+  const { data } = await client
+    .from('projects')
+    .select('id')
+    .or(`slug.eq.${projectRef},id.eq.${projectRef}`)
+    .limit(1);
+
+  const row = (data ?? [])[0];
+  return row === undefined ? [] : [String(row['id'])];
+}
+
+export async function runJob(job: JobName, projectId: string): Promise<JobOutcome> {
+  const client = createSupabaseClient();
 
   if (client === null || projectId === '') {
     return {
       kind: 'unconfigured',
-      why: 'Jobs need SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and SEARCHPREX_PROJECT_ID.',
+      why: 'Jobs need SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.',
     };
   }
 
@@ -42,7 +113,12 @@ export async function runJob(job: JobName): Promise<JobOutcome> {
 
   const lease = await acquireLease(client, projectId, job, LEASE_TTL_SECONDS);
   if (lease === null) {
-    return { kind: 'busy', job, why: 'Another run of this job is already in flight.' };
+    return {
+      kind: 'busy',
+      job,
+      project: projectId,
+      why: 'Another run of this job is already in flight.',
+    };
   }
 
   const budget = new CallBudget(DEFAULT_BUDGET);
@@ -57,14 +133,14 @@ export async function runJob(job: JobName): Promise<JobOutcome> {
         : await remeasure(client, projectId, context, adapters);
 
     await lease.release(outcome.status, budget.spent, null);
-    return { kind: 'ran', job, ...outcome, callsSpent: budget.spent };
+    return { kind: 'ran', job, project: projectId, ...outcome, callsSpent: budget.spent };
   } catch (cause) {
     const message = String(cause);
     // The lease is released on the failure path too. A crashed run that keeps
     // its lease blocks the job until the TTL expires, which for a daily
     // schedule means a whole day of no measurement.
     await lease.release('failed', budget.spent, message.slice(0, 500));
-    return { kind: 'failed', job, error: message };
+    return { kind: 'failed', job, project: projectId, error: message };
   }
 }
 

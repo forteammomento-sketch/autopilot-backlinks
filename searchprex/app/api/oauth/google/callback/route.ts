@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { exchangeCode } from '@/src/oauth/google';
 import { createSupabaseClient } from '@/lib/data/supabase';
 import { googleClientFromEnv, saveConnection } from '@/lib/gsc/connection';
+import { projectContext } from '@/lib/auth/project';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,7 +39,13 @@ export async function GET(request: Request): Promise<NextResponse> {
   const client = createSupabaseClient();
   if (client === null) return finish(settings, 'no_database');
 
-  const saved = await saveConnection(client, process.env['SEARCHPREX_PROJECT_ID'] ?? '', {
+  // Re-resolved rather than trusted from the cookie: between starting the flow
+  // and returning from Google the session can have changed, and the credential
+  // must land on a project this request may still write to.
+  const ctx = await projectContext(project);
+  if (ctx === null) return finish(settings, 'unconfigured');
+
+  const saved = await saveConnection(client, ctx.projectId, {
     refreshToken: result.tokens.refreshToken,
     scope: result.tokens.scope,
   });

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { startAuthorization } from '@/src/oauth/google';
 import { googleClientFromEnv } from '@/lib/gsc/connection';
+import { projectContext } from '@/lib/auth/project';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,6 +30,16 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   const project = new URL(request.url).searchParams.get('project') ?? '';
+
+  // The project comes from a query string. Verifying it here means a consent
+  // flow cannot be started against someone else's project — the credential
+  // this ends in is written to whatever the cookie says, so the check belongs
+  // before the cookie is set rather than after Google redirects back.
+  const ctx = await projectContext(project);
+  if (ctx === null) {
+    return NextResponse.json({ error: 'unknown project' }, { status: 404 });
+  }
+
   const { url, state, codeVerifier } = startAuthorization(google);
 
   const response = NextResponse.redirect(url);

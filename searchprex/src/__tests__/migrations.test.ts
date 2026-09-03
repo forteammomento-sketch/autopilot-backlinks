@@ -49,8 +49,9 @@ beforeAll(async () => {
   const org = (await one<{ id: string }>(`insert into orgs (name) values ('MSO') returning id`)).id;
   project = (
     await one<{ id: string }>(
-      `insert into projects (org_id, domain, brand_names, topic, cms_kind)
-       values ($1, 'michigansportsoutdoor.com', '{"MSO"}', 'knives', 'shopify') returning id`,
+      `insert into projects (org_id, domain, slug, brand_names, topic, cms_kind)
+       values ($1, 'michigansportsoutdoor.com', 'mso', '{"MSO"}', 'knives', 'shopify')
+       returning id`,
       [org],
     )
   ).id;
@@ -242,6 +243,35 @@ describe('view contract', () => {
       expect(columns.filter((c) => !present.has(c))).toEqual([]);
     });
   }
+});
+
+describe('project slugs', () => {
+  it('are unique across every org', async () => {
+    // The slug appears in a URL with no org segment in front of it. Two orgs
+    // holding the same one makes /p/<slug> ambiguous, and resolving an
+    // ambiguous route by guessing is how a tenant lands on another's dashboard.
+    const other = await one<{ id: string }>(
+      `insert into orgs (name) values ('Other') returning id`,
+    );
+    await expect(
+      db.query(
+        `insert into projects (org_id, domain, slug, topic)
+         values ($1, 'other.com', 'mso', 'knives')`,
+        [other.id],
+      ),
+    ).rejects.toThrow();
+  });
+
+  it('are required, so a project cannot exist without a route', async () => {
+    const other = await one<{ id: string }>(
+      `insert into orgs (name) values ('Nameless') returning id`,
+    );
+    await expect(
+      db.query(`insert into projects (org_id, domain, topic) values ($1,'x.com','knives')`, [
+        other.id,
+      ]),
+    ).rejects.toThrow();
+  });
 });
 
 describe('constraints', () => {

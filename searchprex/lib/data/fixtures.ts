@@ -460,7 +460,7 @@ const COHORT: CohortSummary = {
 };
 
 export const fixtureDataSource: DataSource = {
-  project: async (slug) => (slug === PROJECT.slug ? PROJECT : null),
+  project: async () => PROJECT,
   prompts: async () => PROMPTS,
   actions: async () =>
     ACTIONS.map((action) => ({

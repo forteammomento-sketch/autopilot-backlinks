@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { mutations } from '@/lib/data/index';
+import { projectContext } from '@/lib/auth/project';
 import type { PromptGenerationOutcome } from '@/lib/data/types';
 
 /**
@@ -12,7 +12,12 @@ import type { PromptGenerationOutcome } from '@/lib/data/types';
  */
 export async function generatePromptsAction(formData: FormData): Promise<void> {
   const project = String(formData.get('project'));
-  lastGeneration.set(project, await mutations.generatePrompts(project));
+  // The slug comes from the browser; resolving it is what turns it into a
+  // project this user actually has.
+  const ctx = await projectContext(project);
+  if (ctx === null) return;
+
+  lastGeneration.set(project, await ctx.mutations.generatePrompts());
   revalidatePath(`/p/${project}/prompts`);
 }
 

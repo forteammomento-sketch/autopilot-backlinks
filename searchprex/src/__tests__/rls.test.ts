@@ -99,9 +99,9 @@ async function seedTenant(name: string, domain: string): Promise<Tenant> {
   ]);
   const project = (
     await one<{ id: string }>(
-      `insert into projects (org_id, domain, topic, cms_kind)
-       values ($1,$2,'knives','shopify') returning id`,
-      [org, domain],
+      `insert into projects (org_id, domain, slug, topic, cms_kind)
+       values ($1,$2,$3,'knives','shopify') returning id`,
+      [org, domain, name.toLowerCase()],
     )
   ).id;
 
@@ -263,7 +263,8 @@ describe('a user who belongs to no org', () => {
     await expect(
       asUser(
         stranger,
-        `insert into projects (org_id, domain, topic) values ($1,'stolen.com','x')`,
+        `insert into projects (org_id, domain, slug, topic)
+         values ($1,'stolen.com','stolen','x')`,
         [alpha.org],
       ),
     ).rejects.toThrow();

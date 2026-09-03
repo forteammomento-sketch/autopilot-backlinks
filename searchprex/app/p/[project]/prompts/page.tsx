@@ -1,4 +1,5 @@
-import { data, isLive } from '@/lib/data/index';
+import { notFound } from 'next/navigation';
+import { projectContext } from '@/lib/auth/project';
 import { SubmitButton } from '@/lib/ui/submit-button';
 import {
   clearLastGeneration,
@@ -20,9 +21,12 @@ export default async function PromptsPage({
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
+  const ctx = await projectContext(project);
+  if (ctx === null) notFound();
+
   const [summary, prompts, generation] = await Promise.all([
-    data.project(project),
-    data.prompts(project),
+    ctx.data.project(),
+    ctx.data.prompts(),
     readLastGeneration(project),
   ]);
   if (summary === null) return null;
@@ -41,7 +45,7 @@ export default async function PromptsPage({
         </p>
       </div>
 
-      {isLive ? null : (
+      {ctx.isLive ? null : (
         <p className="envnote">
           Fixture data — Supabase is not configured, so generated prompts are shown but
           saved nowhere.

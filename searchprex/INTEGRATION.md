@@ -11,22 +11,32 @@ product that already exists.
 
 ## 1. The one thing you must change
 
-**The code assumes one project per deployment.** `SEARCHPREX_PROJECT_ID` is read
-from the environment in three places:
+**Sign-in.** Everything else is multi-tenant already; this app just has no auth
+of its own.
 
-- `lib/data/index.ts` — which project the dashboard reads
-- `lib/jobs/run.ts` — which project a scheduled job measures
-- `app/api/oauth/google/callback/route.ts` — which project a connection is saved to
+`SessionSource` in `lib/auth/types.ts` is the seam. The bundled implementation
+reads a Supabase auth JWT from the `Authorization` header or the `sb-*-auth-token`
+cookie and **verifies it with Supabase** rather than decoding it — a JWT read
+without checking its signature is a claim anybody can write. Your product
+already knows who is signed in; implement that interface against your own
+session and change nothing else.
 
-Your SaaS is multi-tenant, so that has to come from the signed-in session
-instead. Replace `projectId()` in `lib/data/index.ts` with your own lookup and
-thread it through; the data and mutation sources already take `projectId` as a
-constructor argument, so nothing below that line changes.
+Everything downstream is done:
 
-**Do this before anything else.** Every query in `lib/data/supabase.ts` filters
-by `project_id` explicitly because it runs with the service-role key, which
-bypasses row-level security. If the project id comes from the wrong place, that
-filter points at the wrong tenant and the RLS underneath will not save you.
+- Routes are `/p/<slug>`, resolved by `projectContext()` in `lib/auth/project.ts`.
+- The access check is a query through the **user's own JWT**, so RLS decides
+  whether the project exists for them. Application logic never gets to be the
+  thing that is wrong.
+- Reads run under that user-scoped client. Writes use the service role, after
+  the project has been verified.
+- Server actions resolve the project the same way, because the slug arrives in
+  a form body the browser controls.
+- `/api/jobs/*` runs every project, or one with `?project=<slug>`, each with its
+  own lease and budget.
+
+`SEARCHPREX_DEV_USER_ID` skips sign-in entirely and treats every request as one
+user. It is for a local or single-tenant deployment. **Leave it unset in
+production**: with it set, anyone who reaches the app is that user.
 
 ---
 

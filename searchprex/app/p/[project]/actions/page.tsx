@@ -1,4 +1,5 @@
-import { data, isLive, mutations } from '@/lib/data/index';
+import { notFound } from 'next/navigation';
+import { projectContext } from '@/lib/auth/project';
 import { CertaintyBadge, engineLabel } from '@/lib/ui/bits';
 import { SubmitButton } from '@/lib/ui/submit-button';
 import {
@@ -37,10 +38,13 @@ export default async function ActionsPage({
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
+  const ctx = await projectContext(project);
+  if (ctx === null) notFound();
+
   const [summary, actions, refusals, outcome, rollback] = await Promise.all([
-    data.project(project),
-    data.actions(project),
-    data.refusals(project),
+    ctx.data.project(),
+    ctx.data.actions(),
+    ctx.data.refusals(),
     readLastOutcome(project),
     readLastRollback(project),
   ]);
@@ -60,7 +64,7 @@ export default async function ActionsPage({
         </p>
       </div>
 
-      {isLive ? null : (
+      {ctx.isLive ? null : (
         <p className="envnote">
           Fixture data — Supabase is not configured, so nothing here is real and no
           deploy will reach a repository.

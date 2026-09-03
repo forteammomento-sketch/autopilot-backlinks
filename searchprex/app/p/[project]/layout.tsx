@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
-import { data } from '@/lib/data/index';
+import { projectContext } from '@/lib/auth/project';
 import { NavLink } from '@/lib/ui/nav-link';
 
 export default async function ProjectLayout({
@@ -11,13 +11,19 @@ export default async function ProjectLayout({
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
-  const summary = await data.project(project);
+  // Resolves the slug and verifies access in one query, through the user's own
+  // rights. A project they may not have is indistinguishable from one that does
+  // not exist, which is the right answer to both.
+  const ctx = await projectContext(project);
+  if (ctx === null) notFound();
+
+  const summary = await ctx.data.project();
   if (summary === null) notFound();
 
   const [actions, refusals, placements] = await Promise.all([
-    data.actions(project),
-    data.refusals(project),
-    data.placements(project),
+    ctx.data.actions(),
+    ctx.data.refusals(),
+    ctx.data.placements(),
   ]);
 
   const base = `/p/${project}`;

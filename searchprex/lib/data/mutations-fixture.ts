@@ -27,7 +27,7 @@ function currentStatus(id: string): string {
 }
 
 export const fixtureMutations: MutationSource = {
-  approve: async (_project, actionId) => {
+  approve: async (actionId) => {
     if (currentStatus(actionId) !== 'draft') {
       return { ok: false, message: 'Only a draft action can be approved.' };
     }
@@ -35,7 +35,7 @@ export const fixtureMutations: MutationSource = {
     return { ok: true };
   },
 
-  unapprove: async (_project, actionId) => {
+  unapprove: async (actionId) => {
     if (currentStatus(actionId) !== 'approved') {
       return { ok: false, message: 'Only an approved action can be taken back.' };
     }
@@ -43,7 +43,7 @@ export const fixtureMutations: MutationSource = {
     return { ok: true };
   },
 
-  reject: async (_project, actionId) => {
+  reject: async (actionId) => {
     if (currentStatus(actionId) === 'deployed') {
       return { ok: false, message: 'This is already deployed — roll it back instead.' };
     }
@@ -88,7 +88,7 @@ export const fixtureMutations: MutationSource = {
     };
   },
 
-  rollback: async (_project, actionId): Promise<RollbackOutcome> => {
+  rollback: async (actionId): Promise<RollbackOutcome> => {
     if (currentStatus(actionId) !== 'deployed') {
       return { kind: 'nothing', why: 'This action has not been deployed.' };
     }

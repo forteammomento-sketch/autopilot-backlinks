@@ -1,8 +1,24 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { mutations } from '@/lib/data/index';
+import { projectContext } from '@/lib/auth/project';
 import type { DeployOutcome, RollbackOutcome } from '@/lib/data/types';
+
+/**
+ * Every action resolves the project through `projectContext` before touching
+ * anything.
+ *
+ * The project slug arrives in the form body, which the browser controls. A
+ * server action that trusted it would let anyone who can reach this endpoint
+ * approve and deploy content into a project that is not theirs. Resolving it
+ * turns that string into a project the *signed-in user* can see, or into
+ * nothing.
+ */
+async function bind(formData: FormData) {
+  const project = String(formData.get('project'));
+  const ctx = await projectContext(project);
+  return ctx === null ? null : { ctx, project };
+}
 
 /**
  * Approving and deploying are two steps on purpose.
@@ -13,31 +29,31 @@ import type { DeployOutcome, RollbackOutcome } from '@/lib/data/types';
  * for a draft PR is that a person sees the diff first.
  */
 export async function approveAction(formData: FormData): Promise<void> {
-  const project = String(formData.get('project'));
-  const id = String(formData.get('id'));
-  await mutations.approve(project, id);
-  revalidatePath(`/p/${project}/actions`);
+  const bound = await bind(formData);
+  if (bound === null) return;
+  await bound.ctx.mutations.approve(String(formData.get('id')));
+  revalidatePath(`/p/${bound.project}/actions`);
 }
 
 export async function unapproveAction(formData: FormData): Promise<void> {
-  const project = String(formData.get('project'));
-  const id = String(formData.get('id'));
-  await mutations.unapprove(project, id);
-  revalidatePath(`/p/${project}/actions`);
+  const bound = await bind(formData);
+  if (bound === null) return;
+  await bound.ctx.mutations.unapprove(String(formData.get('id')));
+  revalidatePath(`/p/${bound.project}/actions`);
 }
 
 export async function rejectAction(formData: FormData): Promise<void> {
-  const project = String(formData.get('project'));
-  const id = String(formData.get('id'));
-  await mutations.reject(project, id);
-  revalidatePath(`/p/${project}/actions`);
+  const bound = await bind(formData);
+  if (bound === null) return;
+  await bound.ctx.mutations.reject(String(formData.get('id')));
+  revalidatePath(`/p/${bound.project}/actions`);
 }
 
 export async function deployApproved(formData: FormData): Promise<void> {
-  const project = String(formData.get('project'));
-  const outcome = await mutations.deployApproved(project);
-  lastOutcome.set(project, outcome);
-  revalidatePath(`/p/${project}/actions`);
+  const bound = await bind(formData);
+  if (bound === null) return;
+  lastOutcome.set(bound.project, await bound.ctx.mutations.deployApproved());
+  revalidatePath(`/p/${bound.project}/actions`);
 }
 
 /**
@@ -47,11 +63,11 @@ export async function deployApproved(formData: FormData): Promise<void> {
  * away.
  */
 export async function rollbackAction(formData: FormData): Promise<void> {
-  const project = String(formData.get('project'));
-  const id = String(formData.get('id'));
-  const outcome = await mutations.rollback(project, id);
-  lastRollback.set(project, outcome);
-  revalidatePath(`/p/${project}/actions`);
+  const bound = await bind(formData);
+  if (bound === null) return;
+  const outcome = await bound.ctx.mutations.rollback(String(formData.get('id')));
+  lastRollback.set(bound.project, outcome);
+  revalidatePath(`/p/${bound.project}/actions`);
 }
 
 export async function readLastRollback(project: string): Promise<RollbackOutcome | null> {

@@ -122,18 +122,26 @@ export interface GscProperty {
   permissionLevel: string;
 }
 
+/**
+ * Reads for one project.
+ *
+ * Every method is bound to the project the source was built for. There is
+ * deliberately no project argument: one that looked like it selected the tenant
+ * but did not would eventually be passed the wrong value by someone who
+ * believed it worked.
+ */
 export interface DataSource {
-  project(slug: string): Promise<ProjectSummary | null>;
-  prompts(slug: string): Promise<PromptRow[]>;
-  actions(slug: string): Promise<ActionRow[]>;
-  refusals(slug: string): Promise<RefusalRow[]>;
-  placements(slug: string): Promise<PlacementRow[]>;
-  proof(slug: string): Promise<ProofRow[]>;
-  cohort(slug: string): Promise<CohortSummary>;
+  project(): Promise<ProjectSummary | null>;
+  prompts(): Promise<PromptRow[]>;
+  actions(): Promise<ActionRow[]>;
+  refusals(): Promise<RefusalRow[]>;
+  placements(): Promise<PlacementRow[]>;
+  proof(): Promise<ProofRow[]>;
+  cohort(): Promise<CohortSummary>;
   /** The stored Search Console connection, or null when there is none. */
-  connection(slug: string): Promise<GscConnection | null>;
+  connection(): Promise<GscConnection | null>;
   /** Properties the connected account can read, for the picker. */
-  properties(slug: string): Promise<GscProperty[]>;
+  properties(): Promise<GscProperty[]>;
 }
 
 /* ── mutations ───────────────────────────────────────────────────────────── */
@@ -196,15 +204,16 @@ export type PromptGenerationOutcome =
   | { kind: 'unconfigured'; why: string }
   | { kind: 'error'; message: string };
 
+/** Writes for one project, bound the same way as `DataSource`. */
 export interface MutationSource {
   /** Draft → approved. Records intent; deploys nothing. */
-  approve(project: string, actionId: string): Promise<MutationResult>;
+  approve(actionId: string): Promise<MutationResult>;
   /** Draft or approved → rejected. */
-  reject(project: string, actionId: string): Promise<MutationResult>;
+  reject(actionId: string): Promise<MutationResult>;
   /** Approved → draft, so an approval can be taken back before it ships. */
-  unapprove(project: string, actionId: string): Promise<MutationResult>;
+  unapprove(actionId: string): Promise<MutationResult>;
   /** Builds a plan from every approved action and, if configured, pushes it. */
-  deployApproved(project: string): Promise<DeployOutcome>;
+  deployApproved(): Promise<DeployOutcome>;
   /**
    * Restore the files an action touched to their pre-deploy content.
    *
@@ -212,11 +221,11 @@ export interface MutationSource {
    * may already be merged, and rewriting history under a team that has pulled
    * it does more damage than the change being undone.
    */
-  rollback(project: string, actionId: string): Promise<RollbackOutcome>;
+  rollback(actionId: string): Promise<RollbackOutcome>;
   /** Crawls for seeds, generates a prompt set, and saves it where it can. */
-  generatePrompts(project: string): Promise<PromptGenerationOutcome>;
+  generatePrompts(): Promise<PromptGenerationOutcome>;
   /** Choose which Search Console property this project reads. */
-  chooseProperty(project: string, siteUrl: string): Promise<MutationResult>;
+  chooseProperty(siteUrl: string): Promise<MutationResult>;
   /** Forget the stored credential. */
-  disconnectGoogle(project: string): Promise<MutationResult>;
+  disconnectGoogle(): Promise<MutationResult>;
 }

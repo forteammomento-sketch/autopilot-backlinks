@@ -1,4 +1,6 @@
-import { data } from '@/lib/data/index';
+import { notFound } from 'next/navigation';
+import { projectContext } from '@/lib/auth/project';
+import type { ProofRow } from '@/lib/data/types';
 import { CitationMeter, Tile, engineLabel, pct, shortDate } from '@/lib/ui/bits';
 
 const DIRECTION_LABEL: Record<string, string> = {
@@ -15,7 +17,10 @@ export default async function ProofPage({
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
-  const [rows, cohort] = await Promise.all([data.proof(project), data.cohort(project)]);
+  const ctx = await projectContext(project);
+  if (ctx === null) notFound();
+
+  const [rows, cohort] = await Promise.all([ctx.data.proof(), ctx.data.cohort()]);
 
   const treated = rows.filter((r) => !r.isControl);
   const control = rows.filter((r) => r.isControl);
@@ -67,7 +72,7 @@ export default async function ProofPage({
   );
 }
 
-function ProofTable({ rows }: { rows: Awaited<ReturnType<typeof data.proof>> }) {
+function ProofTable({ rows }: { rows: ProofRow[] }) {
   return (
     <div className="table-wrap">
       <table>
