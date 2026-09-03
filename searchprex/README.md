@@ -19,7 +19,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 280 unit tests, no network
+npm test          # 298 unit tests, no network
 npm run typecheck
 ```
 
@@ -150,8 +150,9 @@ that can never be won.
 
 ### Search Console
 
-Set `GSC_SITE_URL` and the three `GOOGLE_*` variables and seeds come from
-measured demand instead of inferred demand. Queries are ranked by **opportunity,
+Connect from the **Settings** screen, or set the environment variables directly
+for a single-project deployment. Either way, seeds then come from measured
+demand instead of inferred demand. Queries are ranked by **opportunity,
 not impressions**:
 
 | Case | Treatment | Why |
@@ -185,6 +186,43 @@ informational ones: an informational win is a citation nobody buys after.
 
 The report ends with what the set will cost per week, because that is the number
 the size of the set actually decides.
+
+## Connecting Google
+
+`Settings → Connect Google Search Console` runs a standard authorization-code
+flow with PKCE. Four decisions in it are worth knowing, because each is a
+common way this integration ships broken or unsafe:
+
+- **`prompt=consent` is forced.** Without it Google returns a refresh token only
+  on a user's *first* grant. A second connection gets an access token and no
+  refresh token, everything looks fine, and the integration dies an hour later
+  when that token expires. This is the single most common Google OAuth bug.
+- **`state` is checked in constant time, and the callback refuses without it.**
+  Otherwise the callback accepts any code anyone can make it load, which lets an
+  attacker walk a signed-in admin through a consent screen for the *attacker's*
+  Google account and quietly connect the project to it. The tool would then read
+  the wrong Search Console and nobody would know why the data looked odd.
+- **Read-only scope.** Search Console offers read-write; this product only ever
+  reads. Asking for more access than a feature needs is how a breach turns from
+  an information leak into someone editing a customer's property.
+- **The refresh token is encrypted before storage** (AES-256-GCM, key from the
+  environment). A refresh token is a permanent key to someone's Search Console:
+  in plaintext, every backup, read replica and stray `select *` holds it. With
+  no `SEARCHPREX_ENCRYPTION_KEY` set the connection is **refused**, not stored
+  in the clear.
+
+State and PKCE verifier live in short-lived httpOnly cookies with
+`sameSite: 'lax'` — `strict` would drop them on the redirect back from Google
+and reject every legitimate return as a mismatch. They are cleared on every
+path, success or failure, so a used state cannot be replayed.
+
+After connecting, the screen lists the account's properties and asks which one
+to read. A domain property and a URL-prefix property for the same site hold
+different data, and the wrong choice returns an empty result that reads as
+"this site has no queries".
+
+Disconnecting deletes the credential rather than marking it inactive. A refresh
+token nobody intends to use is still a working key.
 
 ## Scheduled jobs
 

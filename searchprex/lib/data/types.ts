@@ -111,6 +111,17 @@ export interface CohortSummary {
   hasControl: boolean;
 }
 
+export interface GscConnection {
+  siteUrl: string | null;
+  accountEmail: string | null;
+  connectedAt: string;
+}
+
+export interface GscProperty {
+  siteUrl: string;
+  permissionLevel: string;
+}
+
 export interface DataSource {
   project(slug: string): Promise<ProjectSummary | null>;
   prompts(slug: string): Promise<PromptRow[]>;
@@ -119,6 +130,10 @@ export interface DataSource {
   placements(slug: string): Promise<PlacementRow[]>;
   proof(slug: string): Promise<ProofRow[]>;
   cohort(slug: string): Promise<CohortSummary>;
+  /** The stored Search Console connection, or null when there is none. */
+  connection(slug: string): Promise<GscConnection | null>;
+  /** Properties the connected account can read, for the picker. */
+  properties(slug: string): Promise<GscProperty[]>;
 }
 
 /* ── mutations ───────────────────────────────────────────────────────────── */
@@ -200,4 +215,8 @@ export interface MutationSource {
   rollback(project: string, actionId: string): Promise<RollbackOutcome>;
   /** Crawls for seeds, generates a prompt set, and saves it where it can. */
   generatePrompts(project: string): Promise<PromptGenerationOutcome>;
+  /** Choose which Search Console property this project reads. */
+  chooseProperty(project: string, siteUrl: string): Promise<MutationResult>;
+  /** Forget the stored credential. */
+  disconnectGoogle(project: string): Promise<MutationResult>;
 }

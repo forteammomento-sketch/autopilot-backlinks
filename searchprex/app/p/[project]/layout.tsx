@@ -35,6 +35,7 @@ export default async function ProjectLayout({
           <NavLink href={`${base}/placements`} label="Placements" count={placements.length} />
           <NavLink href={`${base}/proof`} label="Proof" />
           <NavLink href={`${base}/prompts`} label="Prompts" count={summary.promptCount} />
+          <NavLink href={`${base}/settings`} label="Settings" />
         </div>
       </nav>
       <main className="main">{children}</main>

@@ -41,6 +41,45 @@ export class SearchConsoleClient {
     this.#sleep = config.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
   }
 
+  /**
+   * Properties this credential can read.
+   *
+   * Shown after connecting so the customer picks one. A Google account often
+   * holds several, and a domain property and a URL-prefix property for the same
+   * site are different properties with different data — guessing returns 403 or,
+   * worse, an empty result that reads as "no queries".
+   */
+  async sites(): Promise<{ siteUrl: string; permissionLevel: string }[]> {
+    const response = await this.#fetch(`${this.#base}/sites`, {
+      headers: { Authorization: `Bearer ${await this.#tokens.accessToken()}` },
+    });
+
+    if (!response.ok) {
+      throw new EngineError(
+        kindForStatus(response.status),
+        'gsc',
+        `listing properties failed with HTTP ${String(response.status)}`,
+        { status: response.status },
+      );
+    }
+
+    const body = (await response.json()) as { siteEntry?: unknown };
+    if (!Array.isArray(body.siteEntry)) return [];
+
+    return body.siteEntry.flatMap((entry) => {
+      if (typeof entry !== 'object' || entry === null) return [];
+      const record = entry as Record<string, unknown>;
+      const siteUrl = record['siteUrl'];
+      if (typeof siteUrl !== 'string') return [];
+      return [
+        {
+          siteUrl,
+          permissionLevel: String(record['permissionLevel'] ?? 'unknown'),
+        },
+      ];
+    });
+  }
+
   /** Top queries for the property, most impressions first. */
   async queries(options: SearchAnalyticsOptions = {}): Promise<SearchAnalyticsRow[]> {
     const endDate = options.endDate ?? isoDaysAgo(LAG_DAYS);

@@ -473,4 +473,8 @@ export const fixtureDataSource: DataSource = {
   placements: async () => PLACEMENTS,
   proof: async () => PROOF,
   cohort: async () => COHORT,
+  // Nothing is connected in the fixture environment, and saying so is more
+  // useful than inventing a connection that cannot be used.
+  connection: async () => null,
+  properties: async () => [],
 };

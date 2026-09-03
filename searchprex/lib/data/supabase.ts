@@ -4,6 +4,13 @@ import { generatePrompts as generatePromptSet } from '@/src/prompts/generate';
 import { OpenAIPromptWriter } from '@/src/prompts/openai-writer';
 import { mergeSeeds, seedsFromCrawl, seedsFromSearchConsole } from '@/src/prompts/seeds';
 import { searchConsoleFromEnv } from '@/lib/gsc/from-env';
+import {
+  deleteConnection,
+  listProperties,
+  readConnection,
+  searchConsoleForProject,
+  setConnectionSite,
+} from '@/lib/gsc/connection';
 import { buildDeployPlan, staticSiteResolver } from '@/src/deploy/plan';
 import { deployViaPullRequest, rollbackViaPullRequest } from '@/src/deploy/github';
 import { RestGitHubClient } from '@/src/deploy/rest-client';
@@ -23,6 +30,8 @@ import type {
   PromptRow,
   ProofRow,
   RefusalRow,
+  GscConnection,
+  GscProperty,
   PromptGenerationOutcome,
   RollbackOutcome,
   Verdict,
@@ -192,6 +201,19 @@ export function createSupabaseData(client: SupabaseClient, projectId: string): D
         hasControl: control.length > 0,
       };
     },
+
+    connection: async (): Promise<GscConnection | null> =>
+      readConnection(client, projectId),
+
+    properties: async (): Promise<GscProperty[]> => {
+      try {
+        return await listProperties(client, projectId);
+      } catch {
+        // A revoked or expired grant should read as "reconnect", not as a
+        // crash on the settings page.
+        return [];
+      }
+    },
   };
 }
 
@@ -306,6 +328,16 @@ export function createSupabaseMutations(
      * about products the site actually stocks — the alternative, generating
      * from the topic alone, produces questions that can never be won.
      */
+    chooseProperty: async (_project, siteUrl): Promise<MutationResult> => {
+      await setConnectionSite(client, projectId, siteUrl);
+      return { ok: true };
+    },
+
+    disconnectGoogle: async (): Promise<MutationResult> => {
+      await deleteConnection(client, projectId);
+      return { ok: true };
+    },
+
     generatePrompts: async (): Promise<PromptGenerationOutcome> => {
       const apiKey = process.env['OPENAI_API_KEY'];
       if (apiKey === undefined || apiKey === '') {
@@ -330,7 +362,9 @@ export function createSupabaseMutations(
         // one does not. A project without it still generates, from the
         // catalogue — that is inferred demand rather than measured, and worth
         // less, but it is not nothing.
-        const gsc = searchConsoleFromEnv();
+        // A connection made through the consent flow wins over environment
+        // variables: it is the one the customer can see and revoke.
+        const gsc = (await searchConsoleForProject(client, projectId)) ?? searchConsoleFromEnv();
         const gscSeeds =
           gsc === null
             ? []

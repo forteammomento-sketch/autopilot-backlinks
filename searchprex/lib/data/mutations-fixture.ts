@@ -51,6 +51,16 @@ export const fixtureMutations: MutationSource = {
     return { ok: true };
   },
 
+  chooseProperty: async () => ({
+    ok: false,
+    message: 'Fixture environment — there is no connection to configure.',
+  }),
+
+  disconnectGoogle: async () => ({
+    ok: false,
+    message: 'Fixture environment — nothing is connected.',
+  }),
+
   generatePrompts: async (): Promise<PromptGenerationOutcome> => {
     // The template writer, not a model: this demonstrates the validation,
     // deduplication, caps and cost report without an API key. Everything it
