@@ -19,8 +19,8 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 323 tests, no network — including the migrations, applied
-                  # to real Postgres compiled to WebAssembly
+npm test          # 351 tests, no network — including the migrations and the
+                  # RLS policies, against real Postgres compiled to WebAssembly
 npm run typecheck
 ```
 
@@ -113,6 +113,29 @@ why nothing was generated.
 Queries run with the service-role key, so RLS is bypassed and every query
 filters by `project_id` explicitly. Losing that filter would leak one customer's
 queue into another's dashboard.
+
+### Row-level security
+
+Tested as a **non-superuser**, because a superuser bypasses RLS entirely — a
+test that queries as one passes against a database with no policies at all. Two
+tenants are seeded with a full set of rows each and the assertion is that they
+partition every table and view exactly: any leak makes the halves overlap and
+their sum exceed the whole.
+
+That test found a real one, and it was not in the policies. **Every view was
+leaking.** A Postgres view executes as the role that *owns* it, not the role
+querying it, so row-level security on the underlying tables is never applied.
+The tables were all locked down correctly and all eight views handed the data
+straight back out: one customer could read another's prompts, visibility, action
+queue and connections, and a user belonging to no organisation at all could read
+everything. `security_invoker` is off by default for backwards compatibility,
+which is exactly why this is easy to ship without noticing. Migration 0007
+turns it on.
+
+`placement_targets` is a **materialized** view, and those carry no policies and
+cannot carry `security_invoker` — they are stored rows with no policy support.
+The tenant filter is therefore written into `v_placements`, and direct access to
+the materialized view is revoked.
 
 ## Approve and deploy
 
