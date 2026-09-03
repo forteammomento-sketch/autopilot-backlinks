@@ -26,6 +26,44 @@ export interface RendererOptions {
 
 const BLOCKED = new Set(['image', 'font', 'media', 'stylesheet']);
 
+/**
+ * The slice of Playwright's surface this file uses.
+ *
+ * Declared locally, and the module specifier below is a variable, so
+ * TypeScript never tries to resolve `playwright` at build time. Playwright is
+ * genuinely optional — a deployment that does not want `js_only` detection
+ * should not have to install a browser to typecheck, and adding it as a
+ * dependency purely to satisfy the compiler would make the optional thing
+ * mandatory.
+ */
+interface RouteLike {
+  request(): { resourceType(): string };
+  abort(): Promise<void>;
+  continue(): Promise<void>;
+}
+
+interface PageLike {
+  goto(url: string, options: { waitUntil: string; timeout: number }): Promise<{ ok(): boolean } | null>;
+  waitForTimeout(ms: number): Promise<void>;
+  content(): Promise<string>;
+  close(): Promise<void>;
+}
+
+interface ContextLike {
+  route(pattern: string, handler: (route: RouteLike) => void): Promise<void>;
+  newPage(): Promise<PageLike>;
+  close(): Promise<void>;
+}
+
+interface BrowserLike {
+  newContext(options: { userAgent?: string }): Promise<ContextLike>;
+  close(): Promise<void>;
+}
+
+interface ChromiumLike {
+  launch(options: { executablePath?: string }): Promise<BrowserLike>;
+}
+
 export interface PageRenderer {
   render(url: string): Promise<string | null>;
   close(): Promise<void>;
@@ -39,9 +77,10 @@ export async function createPlaywrightRenderer(
   // Lazily resolved: a deployment without Playwright installed should fail
   // here, with a message saying what to install, rather than at import time
   // taking the whole app down.
-  let chromium: typeof import('playwright').chromium;
+  const specifier = 'playwright';
+  let chromium: ChromiumLike;
   try {
-    ({ chromium } = await import('playwright'));
+    ({ chromium } = (await import(specifier)) as { chromium: ChromiumLike });
   } catch {
     throw new Error(
       'js_only detection needs Playwright. Install it (`npm i -D playwright`) or leave ' +
@@ -59,7 +98,7 @@ export async function createPlaywrightRenderer(
     ...(options.userAgent === undefined ? {} : { userAgent: options.userAgent }),
   });
 
-  await context.route('**/*', (route) => {
+  await context.route('**/*', (route: RouteLike) => {
     if (BLOCKED.has(route.request().resourceType())) {
       void route.abort();
       return;

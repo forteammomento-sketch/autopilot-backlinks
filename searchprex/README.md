@@ -19,7 +19,8 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 298 unit tests, no network
+npm test          # 323 tests, no network — including the migrations, applied
+                  # to real Postgres compiled to WebAssembly
 npm run typecheck
 ```
 
@@ -85,6 +86,19 @@ supabase/migrations/        V0 schema with RLS
 ```
 
 ## Supabase
+
+`npm test` applies every migration to a real Postgres (PGlite — Postgres in
+WebAssembly) and then exercises it: views are planned and queried, constraints
+are enforced, the lease functions run, and the cascades are checked. Migrations
+are the one part of this system nothing else can verify. SQL that reads
+correctly can still reference a column that does not exist, and the first time
+anyone finds out is on a real database.
+
+It has already earned itself. `v_project_summary` did not expose `cms_kind`, so
+every project read as a git target — a Shopify store would have been offered
+*Open draft pull request* for a write that goes straight to the live storefront,
+exactly what the Shopify target exists to stop the UI saying. A view-contract
+test now asserts every column the dashboard selects.
 
 Screens read **views**, not tables — migration `0003_dashboard.sql`. A component
 should not have to know that a prompt's text lives two joins from the action

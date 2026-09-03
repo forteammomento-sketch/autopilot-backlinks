@@ -2,7 +2,7 @@
   "name": "@searchprex/core",
   "version": "0.0.1",
   "private": true,
-  "description": "Searchprex AI Visibility Autopilot \u2014 engine adapters and citation analysis",
+  "description": "Searchprex AI Visibility Autopilot — engine adapters and citation analysis",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
@@ -17,6 +17,7 @@
     "prompts": "tsx scripts/prompts.ts"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
