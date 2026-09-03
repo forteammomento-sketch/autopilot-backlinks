@@ -23,6 +23,12 @@ export interface ProjectSummary {
   citationsGained: number;
   promptCount: number;
   engines: string[];
+  /**
+   * Where deploys go. It changes what the UI may promise: a git target opens a
+   * draft pull request a person reads first, and a Shopify target writes to the
+   * live storefront with no equivalent step.
+   */
+  cmsKind: 'github' | 'shopify' | 'wordpress' | 'webflow' | 'snippet' | null;
 }
 
 export interface EngineVerdict {
@@ -134,6 +140,13 @@ export interface PlannedFile {
  */
 export type DeployOutcome =
   | { kind: 'opened'; prUrl: string; prNumber: number; files: PlannedFile[]; capped: number }
+  /**
+   * Written straight to a live storefront. Distinct from `opened` because
+   * nothing reviews it afterwards — reporting a Shopify write as if a pull
+   * request were waiting would tell someone their change is still pending when
+   * it is already on the shop.
+   */
+  | { kind: 'applied'; target: string; files: PlannedFile[]; capped: number }
   | { kind: 'planned'; files: PlannedFile[]; capped: number; why: string }
   | { kind: 'nothing'; why: string }
   | { kind: 'error'; message: string };

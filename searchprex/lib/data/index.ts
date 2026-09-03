@@ -5,6 +5,7 @@ import {
   createSupabaseData,
   createSupabaseMutations,
   githubConfigFromEnv,
+  shopifyConfigFromEnv,
 } from '@/lib/data/supabase';
 import type { DataSource, MutationSource } from '@/lib/data/types';
 
@@ -26,7 +27,12 @@ export const data: DataSource =
 export const mutations: MutationSource =
   client === null
     ? fixtureMutations
-    : createSupabaseMutations(client, projectId(), githubConfigFromEnv());
+    : createSupabaseMutations(
+        client,
+        projectId(),
+        githubConfigFromEnv(),
+        shopifyConfigFromEnv(),
+      );
 
 function projectId(): string {
   return process.env['SEARCHPREX_PROJECT_ID'] ?? '';

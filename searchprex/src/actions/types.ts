@@ -70,6 +70,11 @@ export type ActionArtifact =
   | PlacementArtifact;
 
 export interface Action {
+  /**
+   * The stored action's id, when it came from a database. Deploy records point
+   * back at it so a rollback knows which action to reopen.
+   */
+  id?: string;
   actionType: ActionType;
   gap: Gap;
   targetUrl: string | null;

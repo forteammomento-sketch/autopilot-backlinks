@@ -7,6 +7,8 @@ import { searchConsoleFromEnv } from '@/lib/gsc/from-env';
 import { buildDeployPlan, staticSiteResolver } from '@/src/deploy/plan';
 import { deployViaPullRequest, rollbackViaPullRequest } from '@/src/deploy/github';
 import { RestGitHubClient } from '@/src/deploy/rest-client';
+import { applyShopifyPlan, buildShopifyPlan, rollbackShopifyDeploy } from '@/src/deploy/shopify';
+import { RestShopifyClient } from '@/src/deploy/shopify-client';
 import type { Action, ActionArtifact } from '@/src/actions/types';
 import type { Certainty, GapType } from '@/src/gaps/types';
 import type {
@@ -56,6 +58,7 @@ export function createSupabaseData(client: SupabaseClient, projectId: string): D
         citationsGained: Number(data['citations_gained'] ?? 0),
         promptCount: Number(data['prompt_count'] ?? 0),
         engines: (data['engines'] as string[] | null) ?? [],
+        cmsKind: (data['cms_kind'] as ProjectSummary['cmsKind']) ?? null,
       };
     },
 
@@ -244,10 +247,16 @@ export interface GitHubConfig {
   token: string;
 }
 
+export interface ShopifyConfig {
+  shop: string;
+  accessToken: string;
+}
+
 export function createSupabaseMutations(
   client: SupabaseClient,
   projectId: string,
   github: GitHubConfig | null,
+  shopify: ShopifyConfig | null = null,
 ): MutationSource {
   /**
    * Every transition is guarded by the current status in the `where` clause
@@ -402,6 +411,57 @@ export function createSupabaseMutations(
       if (rows === null || rows.length === 0) {
         return { kind: 'nothing', why: 'No live deployment is recorded for this action.' };
       }
+      const { data: project } = await client
+        .from('projects')
+        .select('cms_kind')
+        .eq('id', projectId)
+        .maybeSingle();
+
+      if (project?.['cms_kind'] === 'shopify') {
+        if (shopify === null) {
+          return { kind: 'nothing', why: 'Shopify is not configured, so nothing can be restored.' };
+        }
+        try {
+          await rollbackShopifyDeploy(
+            {
+              method: 'shopify',
+              deployedAt: new Date().toISOString(),
+              changes: rows.map((row) => {
+                const ref = String(row['external_ref']);
+                const [kind, ...rest] = ref.split(':');
+                return {
+                  kind: kind === 'asset' ? ('asset' as const) : ('product' as const),
+                  ref: rest.join(':'),
+                  before: String(row['before_snapshot']),
+                  actionIds: [actionId],
+                };
+              }),
+            },
+            new RestShopifyClient(shopify),
+          );
+
+          await client
+            .from('deployments')
+            .update({ rolled_back_at: new Date().toISOString() })
+            .in('id', rows.map((row) => String(row['id'])));
+          await client
+            .from('actions')
+            .update({ status: 'draft' })
+            .eq('id', actionId)
+            .eq('project_id', projectId);
+
+          return {
+            kind: 'restored',
+            files: rows.map((row) => String(row['external_ref'])),
+            why:
+              'The storefront is back to its content from before the deploy. There is no ' +
+              'pull request to merge — the restore is already live.',
+          };
+        } catch (cause) {
+          return { kind: 'error', message: String(cause) };
+        }
+      }
+
       if (github === null) {
         return {
           kind: 'nothing',
@@ -462,6 +522,16 @@ export function createSupabaseMutations(
       if (error !== null) return { kind: 'error', message: error.message };
       const approved = data ?? [];
       if (approved.length === 0) return { kind: 'nothing', why: 'Nothing is approved yet.' };
+
+      const { data: project } = await client
+        .from('projects')
+        .select('cms_kind')
+        .eq('id', projectId)
+        .maybeSingle();
+
+      if (project?.['cms_kind'] === 'shopify') {
+        return deployToShopify(client, projectId, approved.map(toCoreAction), shopify);
+      }
 
       if (github === null) {
         return {
@@ -533,9 +603,82 @@ export function createSupabaseMutations(
   };
 }
 
+/**
+ * Deploy to a live Shopify storefront.
+ *
+ * The deployment row carrying the rollback snapshot is written *before* the
+ * action is marked deployed, and the plan's `before` content is what goes in
+ * it. On a git target a bad deploy sits in an unmerged pull request; here it is
+ * already on the shop, so the snapshot is the only way back and it has to exist
+ * first.
+ */
+async function deployToShopify(
+  client: SupabaseClient,
+  projectId: string,
+  actions: Action[],
+  shopify: ShopifyConfig | null,
+): Promise<DeployOutcome> {
+  if (shopify === null) {
+    return {
+      kind: 'nothing',
+      why:
+        'Shopify is not configured for this project. Set SHOPIFY_SHOP and ' +
+        'SHOPIFY_ACCESS_TOKEN to apply approved changes to the storefront.',
+    };
+  }
+
+  try {
+    const store = new RestShopifyClient(shopify);
+    const plan = await buildShopifyPlan(actions, store);
+
+    if (plan.changes.length === 0) {
+      return {
+        kind: 'nothing',
+        why:
+          plan.skipped[0]?.reason ??
+          'The approved actions produced no changes — they may already be live.',
+      };
+    }
+
+    const record = await applyShopifyPlan(plan, store);
+
+    for (const change of record.changes) {
+      // One row per changed product or asset, each pointing at the action that
+      // put the content there, so a rollback can reopen exactly that action.
+      for (const actionId of change.actionIds) {
+        await client.from('deployments').insert({
+          action_id: actionId,
+          method: 'shopify',
+          before_snapshot: change.before,
+          external_ref: `${change.kind}:${change.ref}`,
+        });
+      }
+    }
+
+    await client
+      .from('actions')
+      .update({ status: 'deployed' })
+      .eq('project_id', projectId)
+      .eq('status', 'approved');
+
+    return {
+      kind: 'applied',
+      target: shopify.shop,
+      files: plan.changes.map((c) => ({
+        path: c.kind === 'product' ? `product/${c.handle}` : c.key,
+        applied: c.applied.map((a) => a.actionType),
+      })),
+      capped: plan.cappedCount,
+    };
+  } catch (cause) {
+    return { kind: 'error', message: String(cause) };
+  }
+}
+
 function toCoreAction(row: Record<string, unknown>): Action {
   const view = toActionRow(row);
   return {
+    id: view.id,
     actionType: view.actionType,
     gap: {
       prompt: view.prompt,
@@ -560,6 +703,13 @@ export function createSupabaseClient(): SupabaseClient | null {
   const key = process.env['SUPABASE_SERVICE_ROLE_KEY'];
   if (url === undefined || key === undefined || url === '' || key === '') return null;
   return createClient(url, key, { auth: { persistSession: false } });
+}
+
+export function shopifyConfigFromEnv(): ShopifyConfig | null {
+  const shop = process.env['SHOPIFY_SHOP'];
+  const accessToken = process.env['SHOPIFY_ACCESS_TOKEN'];
+  if (!shop || !accessToken) return null;
+  return { shop, accessToken };
 }
 
 export function githubConfigFromEnv(): GitHubConfig | null {

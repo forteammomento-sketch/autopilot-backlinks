@@ -19,7 +19,7 @@ configured in [`scripts/projects.ts`](scripts/projects.ts).
 ```bash
 npm install
 npm run dev       # dashboard at http://localhost:3000 -> /p/mso
-npm test          # 260 unit tests, no network
+npm test          # 280 unit tests, no network
 npm run typecheck
 ```
 
@@ -75,6 +75,8 @@ src/deploy/apply.ts         pure HTML/robots patching
 src/deploy/plan.ts          actions -> reviewable file changes
 src/deploy/github.ts        pull request deploy + revert
 src/deploy/rest-client.ts   GitHub REST implementation
+src/deploy/shopify.ts       Shopify plan, apply and rollback
+src/deploy/shopify-client.ts Shopify Admin REST client, rate-limit aware
 src/measure/verify.ts       is the deploy actually live?
 src/measure/lift.ts         direction, confidence, control-adjusted lift
 src/measure/winrate.ts      lift records -> ranker input
@@ -511,6 +513,46 @@ spent for nothing.
   Dozens of generated passages appearing across a domain at once is the shape
   that trips spam classification, and that damage lands on the whole site rather
   than the pages we touched. Held-back blocks are named in the PR body.
+
+### Shopify
+
+Shopify has **no pull request and no draft**, so the git target's whole safety
+story — a person reads a diff before anything ships — does not exist here. A
+write lands on the storefront the moment it succeeds. Two things carry the
+weight instead: the plan is built and shown before it is applied, and every
+change stores its previous content *before* the write, so the rollback exists
+before the thing it undoes. The UI says this in as many words and the button
+reads **Apply to storefront**, not *Open pull request*.
+
+| Action | Where it goes |
+|---|---|
+| `answer_block` | the product's `body_html` — server-rendered by every theme, and the page's main content |
+| `crawl_fix` | `templates/robots.txt.liquid` on the **published** theme |
+| `schema` | **refused** — see below |
+| everything else | by hand |
+
+A metafield would need a theme edit to render at all, and a theme edit changes
+every product at once: a blast radius no automated deploy should have.
+
+**Schema is refused, not unimplemented.** Shopify themes already emit Product
+JSON-LD, so adding a second block is the same duplicate-type conflict the git
+target refuses — engines pick one unpredictably and the conflict would be ours.
+
+Two Shopify-specific traps the code handles:
+
+- **A robots.txt template that does not exist yet.** Shopify generates one when
+  the store has never customised it. Writing a template containing only our
+  allow group *replaces* that generated file and silently deletes every default
+  rule, exposing `/cart`, `/checkout` and `/account`. A template created from
+  scratch therefore emits `robots.default_groups` first, and a rollback restores
+  the defaults rather than an empty file.
+- **The leaky bucket.** Forty requests of headroom refilling at two a second.
+  The client reads `X-Shopify-Shop-Api-Call-Limit` and slows down as it fills
+  rather than waiting for a 429 — which, hit partway through a batch, leaves
+  some products updated and some not.
+
+Writes stop at the first failure. A half-applied catalogue is worse than a
+partial one that says exactly where it stopped.
 
 ### Rollback
 

@@ -37,12 +37,14 @@ export default async function ActionsPage({
   params: Promise<{ project: string }>;
 }) {
   const { project } = await params;
-  const [actions, refusals, outcome, rollback] = await Promise.all([
+  const [summary, actions, refusals, outcome, rollback] = await Promise.all([
+    data.project(project),
     data.actions(project),
     data.refusals(project),
     readLastOutcome(project),
     readLastRollback(project),
   ]);
+  const live = summary?.cmsKind === 'shopify';
 
   const approved = actions.filter((a) => a.status === 'approved');
   const shippable = approved.filter((a) => DEPLOYABLE.has(a.actionType));
@@ -68,7 +70,12 @@ export default async function ActionsPage({
       {outcome === null ? null : <OutcomeBanner outcome={outcome} project={project} />}
       {rollback === null ? null : <RollbackBanner outcome={rollback} project={project} />}
 
-      <DeployBar project={project} approved={approved.length} shippable={shippable.length} />
+      <DeployBar
+        project={project}
+        approved={approved.length}
+        shippable={shippable.length}
+        live={live}
+      />
 
       {actions.map((action, index) => (
         <details key={action.id} className="action" open={action.priority > 2.5}>
@@ -174,8 +181,8 @@ function RowControls({ project, action }: { project: string; action: ActionRow }
     return (
       <div className="row-actions">
         <span className="gate">
-          Shipped. Rolling back opens a revert pull request from the snapshot taken
-          before the deploy.
+          Shipped. Rolling back restores the content from the snapshot taken before the
+          deploy.
         </span>
         {/* Two clicks, because this writes to a production repository. */}
         <details className="confirm">
@@ -237,10 +244,12 @@ function DeployBar({
   project,
   approved,
   shippable,
+  live,
 }: {
   project: string;
   approved: number;
   shippable: number;
+  live: boolean;
 }) {
   return (
     <div className="deploybar">
@@ -252,8 +261,17 @@ function DeployBar({
             <strong>
               {shippable} of {approved} approved
             </strong>{' '}
-            {shippable === 1 ? 'action can' : 'actions can'} be shipped as one draft pull
-            request. Placement and internal-link work is done by hand.
+            {shippable === 1 ? 'action' : 'actions'}{' '}
+            {live ? (
+              <>
+                will be written <strong>straight to the live storefront</strong>. Shopify has
+                no draft to review first, so this is the last step — the rollback snapshot is
+                taken before anything is written.
+              </>
+            ) : (
+              <>can be shipped as one draft pull request.</>
+            )}{' '}
+            Placement and internal-link work is done by hand.
           </>
         )}
       </div>
@@ -261,10 +279,10 @@ function DeployBar({
         <input type="hidden" name="project" value={project} />
         <SubmitButton
           className="btn btn-primary"
-          pendingLabel="Opening pull request…"
+          pendingLabel={live ? 'Writing to the store…' : 'Opening pull request…'}
           disabled={shippable === 0}
         >
-          Open draft pull request
+          {live ? 'Apply to storefront' : 'Open draft pull request'}
         </SubmitButton>
       </form>
     </div>
@@ -273,7 +291,7 @@ function DeployBar({
 
 function OutcomeBanner({ outcome, project }: { outcome: DeployOutcome; project: string }) {
   const tone =
-    outcome.kind === 'opened'
+    outcome.kind === 'opened' || outcome.kind === 'applied'
       ? 'banner-good'
       : outcome.kind === 'planned'
         ? 'banner-info'
@@ -289,6 +307,17 @@ function OutcomeBanner({ outcome, project }: { outcome: DeployOutcome; project: 
           <p>
             Nothing is live until someone merges it.{' '}
             <a href={outcome.prUrl}>#{outcome.prNumber}</a>
+          </p>
+          <FileList files={outcome.files} capped={outcome.capped} />
+        </>
+      ) : null}
+
+      {outcome.kind === 'applied' ? (
+        <>
+          <h3>Live on {outcome.target}</h3>
+          <p>
+            Written to the storefront. There is nothing left to merge — use <em>Roll back</em>
+            {' '}on an action to restore its previous content.
           </p>
           <FileList files={outcome.files} capped={outcome.capped} />
         </>

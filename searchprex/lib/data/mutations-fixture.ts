@@ -120,8 +120,9 @@ export const fixtureMutations: MutationSource = {
       files: plan.changes.map(toPlannedFile),
       capped: plan.cappedCount,
       why:
-        'GitHub is not configured for this project, so the plan was built and nothing was ' +
-        'pushed. Set SEARCHPREX_GITHUB_TOKEN, _OWNER and _REPO to open the pull request.',
+        'Fixture environment — the plan was built and nothing was written. This project ' +
+        'deploys to Shopify, where an approved change goes to the live storefront with no ' +
+        'pull request in between. Set SHOPIFY_SHOP and SHOPIFY_ACCESS_TOKEN to apply it.',
     };
   },
 };

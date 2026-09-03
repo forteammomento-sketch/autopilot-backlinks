@@ -29,6 +29,7 @@ const PROJECT: ProjectSummary = {
   citationsGained: 14,
   promptCount: 48,
   engines: ['perplexity', 'openai'],
+  cmsKind: 'shopify',
 };
 
 const PROMPTS: PromptRow[] = [
