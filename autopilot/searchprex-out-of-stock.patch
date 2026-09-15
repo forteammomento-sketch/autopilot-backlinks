@@ -1,0 +1,144 @@
+diff --git a/.env.example b/.env.example
+index 1e7ceb7..b341278 100644
+--- a/.env.example
++++ b/.env.example
+@@ -107,3 +107,43 @@ WP_TEST_URL=
+ WP_TEST_URL_PUBLIC=
+ WP_TEST_USERNAME=
+ WP_TEST_APP_PASSWORD=
++
++# -----------------------------------------------------------------------------
++# MSO autopilot quality gate (optional — all default to ON)
++# -----------------------------------------------------------------------------
++# Read by lib/autopilot/quality-gate.ts before anything is spent on a product,
++# so a page that cannot convert costs no Gemini call, no Indexing API slot and
++# no crawl budget. A product that fails is PARKED, not retired: every run puts
++# every 'skipped_gate' row back in the queue before it picks its batch, so a
++# product returns on its own once the reason it failed goes away.
++#
++# Set to "false" to switch a requirement off. NOTE: only "true" and "1" count as
++# on, so any typo ("False", "yes", "TRUE") reads as OFF.
++#
++# NicheSEO Pro runs the identical rules in server/mso-quality-gate.ts against
++# the same catalogue and the same queue. Change a flag in BOTH or the two
++# engines will fight: one publishes a product the other keeps parking.
++
++# Require at least one photograph. Keep this on — a product page with no image
++# looks broken and Google has no reason to index it.
++GATE_REQUIRE_IMAGE=true
++
++# Require the product to be in stock.
++# Set to false to publish out-of-stock products too. They still convert on
++# long-tail and carry internal links, and INDEX_OUT_OF_STOCK below keeps them
++# out of the Indexing API so the crawled-not-indexed pile does not grow.
++GATE_REQUIRE_IN_STOCK=true
++
++# Require a non-zero price.
++GATE_REQUIRE_PRICE=true
++
++# Require product attributes (steel, blade length, lock…) — the specs table is
++# the only part of the page that is not duplicated from the wholesale feed.
++GATE_REQUIRE_ATTRIBUTES=true
++GATE_MIN_ATTRIBUTES=1
++
++# Submit out-of-stock pages to the Google Indexing API as well.
++# Default (unset/false): out-of-stock products are published and left
++# crawlable, but Google is not asked to index them — the queue row lands on
++# 'published_not_submitted'. Only turn this on if the indexed ratio is healthy.
++INDEX_OUT_OF_STOCK=false
+diff --git a/lib/autopilot/pipeline.ts b/lib/autopilot/pipeline.ts
+index 97d56f0..78ceea5 100644
+--- a/lib/autopilot/pipeline.ts
++++ b/lib/autopilot/pipeline.ts
+@@ -88,7 +88,14 @@ export async function runAutopilotBatch(clientId: string) {
+   //  a site setting, and the guessed one has been wrong all along.
+   const termLinks = await loadTermLinks(wpCreds.baseUrl, wpCreds);
+ 
+-  const stats = { published: 0, skipped: 0, errors: 0, gated: 0, dryRun: isDryRun };
++  const stats = {
++    published: 0,
++    skipped: 0,
++    errors: 0,
++    gated: 0,
++    notSubmitted: 0,
++    dryRun: isDryRun,
++  };
+   const gateConfig = gateConfigFromEnv()
+   const gatedReasons: string[][] = []
+ 
+@@ -295,9 +302,37 @@ export async function runAutopilotBatch(clientId: string) {
+           appPassword: wpCreds.appPassword,
+         });
+ 
+-        const submission = await submitUrl(published.liveUrl, 'new');
+-
+-        if (!submission.success) {
++        //  Out-of-stock pages are published, but Google is not asked to index
++        //  them.
++        //
++        //  The gate can now be told to let out-of-stock products through
++        //  (GATE_REQUIRE_IN_STOCK=false): the catalogue still converts on
++        //  long-tail and those pages carry internal links, so removing them
++        //  costs real revenue. Asking Google to index them is a separate
++        //  decision, and the answer is no — an unbuyable page is what the
++        //  27,510 crawled-and-declined pile is made of, and every submit
++        //  spends a slot out of a finite daily 2,000. Publish it, link it,
++        //  leave it crawlable; just stop asking.
++        //
++        //  Set INDEX_OUT_OF_STOCK=true to submit them anyway. Facts that could
++        //  not be read (`facts === null`) count as in stock, which is the same
++        //  fail-open rule the gate itself applies.
++        const outOfStock = facts !== null && facts.stockStatus !== 'instock';
++        const indexOutOfStock =
++          process.env.INDEX_OUT_OF_STOCK === 'true' ||
++          process.env.INDEX_OUT_OF_STOCK === '1';
++
++        const submission =
++          outOfStock && !indexOutOfStock
++            ? null
++            : await submitUrl(published.liveUrl, 'new');
++
++        if (submission === null) {
++          console.log(
++            `[autopilot] Published ${published.liveUrl} without an indexing submit — out of stock.`
++          );
++          stats.notSubmitted++;
++        } else if (!submission.success) {
+           console.warn(
+             `[autopilot] Indexing submit failed for ${published.liveUrl}: ${submission.message}`
+           );
+@@ -313,11 +348,18 @@ export async function runAutopilotBatch(clientId: string) {
+               quality,
+               productData,
+               liveUrl: published.liveUrl,
+-              indexingSubmission: {
+-                success: submission.success,
+-                account: submission.account,
+-                message: submission.message ?? null,
+-              },
++              indexingSubmission: submission
++                ? {
++                    success: submission.success,
++                    account: submission.account,
++                    message: submission.message ?? null,
++                  }
++                : {
++                    success: false,
++                    account: null,
++                    skipped: 'out_of_stock',
++                    message: 'out of stock — published but not submitted for indexing',
++                  },
+             } as any,
+           },
+         });
+@@ -325,8 +367,8 @@ export async function runAutopilotBatch(clientId: string) {
+         await db.indexingQueue.update({
+           where: { id: queued.id },
+           data: {
+-            status: submission.success ? 'submitted' : 'published_not_submitted',
+-            submittedAt: submission.success ? new Date() : null,
++            status: submission?.success ? 'submitted' : 'published_not_submitted',
++            submittedAt: submission?.success ? new Date() : null,
+           },
+         });
+ 

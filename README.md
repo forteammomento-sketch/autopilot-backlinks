@@ -8,6 +8,7 @@ SEO strategy and execution assets for **michigansportsoutdoor.com** (MSO).
 |---|---|
 | [`strategy/mso-q4-2026-seo-gameplan.md`](strategy/mso-q4-2026-seo-gameplan.md) | Full Q4 2026 diagnosis, goal maths, and 5-phase plan |
 | [`strategy/september-sprint.md`](strategy/september-sprint.md) | The 30-day checklist for Phase 0 + Phase 1 |
+| [`autopilot/OUT-OF-STOCK-REVERT.md`](autopilot/OUT-OF-STOCK-REVERT.md) | Switching the autopilot's out-of-stock publish gate off, and what happens to the products it already skipped |
 
 > **Note:** the knife-laws-by-state build was dropped. It was a Phase 2 item
 > that could not contribute to the September revenue target, so the effort

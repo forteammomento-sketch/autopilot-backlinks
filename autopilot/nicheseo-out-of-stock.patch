@@ -1,0 +1,245 @@
+diff --git a/scripts/mso-status.ts b/scripts/mso-status.ts
+new file mode 100644
+index 0000000..bd4846d
+--- /dev/null
++++ b/scripts/mso-status.ts
+@@ -0,0 +1,92 @@
++//  Read-only health check for the MSO autopilot on this engine.
++//
++//  scripts/check-queue-status.ts reads like the obvious way to do this, but it
++//  is not: before printing anything it clears circuit_breaker_alert, forces
++//  scheduler_enabled to true and writes daily_limit = 500. Running it to "just
++//  look" halves the cap the two engines share and erases the record of why the
++//  breaker tripped. This script only reads.
++//
++//    npx tsx scripts/mso-status.ts
++
++import { db } from '../server/db.js';
++import {
++  getMsoSetting,
++  getMsoDailyQuota,
++  getGateConfig,
++  refreshMsoSharedState,
++} from '../server/mso-worker.js';
++
++function rows<T>(sql: string, ...params: unknown[]): T[] {
++  return db.prepare(sql).all(...(params as never[])) as T[];
++}
++
++async function main() {
++  //  Pulls the shared limit and the cross-engine published count from Neon, so
++  //  the numbers below match what Searchprex sees rather than this engine's
++  //  local tally. Read-only; safe to force.
++  await refreshMsoSharedState(true).catch((err: Error) =>
++    console.warn(`(could not reach Neon — numbers are local only: ${err.message})\n`)
++  );
++
++  const quota = getMsoDailyQuota();
++  const gate = getGateConfig();
++  const breaker = getMsoSetting('circuit_breaker_alert', '');
++
++  console.log('=== Scheduler ===');
++  console.log(`  enabled           ${getMsoSetting('scheduler_enabled', 'false')}`);
++  console.log(`  circuit breaker   ${breaker ? `TRIPPED — ${breaker}` : 'clear'}`);
++
++  console.log('\n=== Daily cap (shared with Searchprex) ===');
++  console.log(`  limit             ${quota.limit}`);
++  console.log(`  published today   ${quota.publishedToday}`);
++  console.log(`  remaining         ${quota.remainingToday}`);
++  console.log(`  limit reached     ${quota.limitReached}`);
++
++  console.log('\n=== Quality gate ===');
++  console.log(`  require image     ${gate.requireImage}`);
++  console.log(`  require in stock  ${gate.requireInStock}`);
++  console.log(`  require price     ${gate.requirePrice}`);
++  console.log(`  require attrs     ${gate.requireAttributes} (min ${gate.minAttributes})`);
++  console.log(`  index out of stock ${getMsoSetting('index_out_of_stock', 'false')}`);
++
++  console.log('\n=== Queue ===');
++  const queue = rows<{ status: string; n: number }>(
++    `SELECT status, count(*) AS n
++       FROM mso_products_queue
++      GROUP BY status
++      ORDER BY n DESC`
++  );
++  if (queue.length === 0) console.log('  (empty — has the Neon seed been imported?)');
++  for (const r of queue) console.log(`  ${r.status.padEnd(28)} ${r.n}`);
++
++  console.log('\n=== Most recent publishes ===');
++  const recent = rows<{ url: string; published_at: string; indexing_status: string }>(
++    `SELECT url, published_at, indexing_status
++       FROM mso_products_queue
++      WHERE published_at IS NOT NULL
++      ORDER BY published_at DESC
++      LIMIT 5`
++  );
++  if (recent.length === 0) console.log('  (nothing published yet)');
++  for (const r of recent) {
++    console.log(`  ${r.published_at}  ${r.indexing_status ?? '-'}  ${r.url}`);
++  }
++
++  console.log('\n=== Indexing submits, last 24h ===');
++  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
++  const logs = rows<{ http_status: number; n: number }>(
++    `SELECT http_status, count(*) AS n
++       FROM mso_indexing_logs
++      WHERE timestamp >= ?
++      GROUP BY http_status
++      ORDER BY n DESC`,
++    since
++  );
++  if (logs.length === 0) console.log('  (none — the engine has not submitted anything in 24h)');
++  for (const r of logs) console.log(`  HTTP ${String(r.http_status).padEnd(6)} ${r.n}`);
++}
++
++main().catch((err: Error) => {
++  console.error(err.message);
++  process.exit(1);
++});
+diff --git a/scripts/set-gate-in-stock.ts b/scripts/set-gate-in-stock.ts
+new file mode 100644
+index 0000000..06fb093
+--- /dev/null
++++ b/scripts/set-gate-in-stock.ts
+@@ -0,0 +1,64 @@
++//  Turns the out-of-stock publish gate on or off.
++//
++//  NicheSEO Pro keeps its gate settings in the SQLite mso_settings table, not
++//  in the environment — so the GATE_REQUIRE_IN_STOCK variable that switches
++//  Searchprex has no effect here, and this script is how the same change is
++//  made on this engine. Both engines have to agree: they work the same
++//  catalogue, and if only one is switched it publishes what the other keeps
++//  parking.
++//
++//    npx tsx scripts/set-gate-in-stock.ts off   # publish out-of-stock products
++//    npx tsx scripts/set-gate-in-stock.ts on    # go back to skipping them
++//
++//  Switching it off also returns the products the gate already parked. They
++//  were never lost — requeueGatedProducts() brings parked products back on its
++//  own — but it only releases products parked more than seven days ago, so the
++//  backlog would otherwise trickle in over a week instead of arriving now.
++
++import { db } from '../server/db.js';
++import { setMsoSetting, getMsoSetting } from '../server/mso-worker.js';
++
++const arg = (process.argv[2] ?? '').toLowerCase();
++
++if (arg !== 'on' && arg !== 'off') {
++  console.error('Usage: npx tsx scripts/set-gate-in-stock.ts <on|off>');
++  process.exit(1);
++}
++
++const requireInStock = arg === 'on';
++
++setMsoSetting('gate_require_in_stock', requireInStock ? 'true' : 'false');
++console.log(
++  `gate_require_in_stock = ${getMsoSetting('gate_require_in_stock', '(unset)')}` +
++    (requireInStock
++      ? '  — out-of-stock products will be skipped.'
++      : '  — out-of-stock products will be published.')
++);
++
++if (!requireInStock) {
++  //  Every parked product is released, not just the out-of-stock ones, because
++  //  that is what requeueGatedProducts() does too: the gate re-reads the live
++  //  facts on the next run, so anything still failing for another reason is
++  //  simply parked again. The only cost is one WooCommerce read each.
++  const res = db
++    .prepare(
++      `UPDATE mso_products_queue
++          SET status = 'queued', updated_at = ?
++        WHERE status = 'skipped_gate'`
++    )
++    .run(new Date().toISOString());
++
++  console.log(`${Number(res.changes)} parked products returned to the queue now.`);
++}
++
++const counts = db
++  .prepare(
++    `SELECT status, count(*) AS n
++       FROM mso_products_queue
++      GROUP BY status
++      ORDER BY n DESC`
++  )
++  .all() as Array<{ status: string; n: number }>;
++
++console.log('\nQueue:');
++for (const row of counts) console.log(`  ${row.status.padEnd(28)} ${row.n}`);
+diff --git a/server/mso-worker.ts b/server/mso-worker.ts
+index 225e7ae..34f56fc 100644
+--- a/server/mso-worker.ts
++++ b/server/mso-worker.ts
+@@ -920,29 +920,56 @@ export async function runMsoAutopilotBatch(options: BatchOptions) {
+           }
+         }
+ 
+-        // 2. Submit to 10-Key Indexing Pool
++        // 2. Submit to 10-Key Indexing Pool — unless the product is unbuyable.
++        //
++        //  Out-of-stock products can now be published: gate_require_in_stock is
++        //  a setting, and the client wants them live. They still convert on
++        //  long-tail and they carry internal links, so dropping them costs real
++        //  revenue. Asking Google to INDEX them is a separate decision, and the
++        //  answer is no — an unbuyable page is what the 27,510
++        //  crawled-and-declined pile is made of, and each submit spends a slot
++        //  out of a finite daily 2,000. Publish it, link it, leave it
++        //  crawlable; just stop asking.
++        //
++        //  Set index_out_of_stock = 'true' in mso_settings to submit them
++        //  anyway. Facts that could not be read count as in stock, which is the
++        //  same fail-open rule the gate itself applies.
++        const outOfStock = facts !== null && facts.stockStatus !== 'instock';
++        const skipIndexing =
++          outOfStock && getMsoSetting('index_out_of_stock', 'false') !== 'true';
++
+         let idxRes: IndexSubmissionResult | null = null;
+-        try {
+-          idxRes = await submitMsoUrl(prod.url);
+-          db.prepare(`
+-            INSERT INTO mso_indexing_logs (id, url, account_used, http_status, message, timestamp)
+-            VALUES (?, ?, ?, ?, ?, ?)
+-          `).run(
+-            `log_${Date.now()}_${i}`,
+-            prod.url,
+-            idxRes?.account || 'unknown',
+-            idxRes?.status || 0,
+-            idxRes?.message || 'Submitted',
+-            new Date().toISOString()
++        if (skipIndexing) {
++          console.log(
++            `[MSO Worker] Published ${prod.url} without an indexing submit — out of stock.`
+           );
+-        } catch (e: any) {
+-          console.warn(`[MSO Worker] Indexing failed for ${prod.url}:`, e.message);
++        } else {
++          try {
++            idxRes = await submitMsoUrl(prod.url);
++            db.prepare(`
++              INSERT INTO mso_indexing_logs (id, url, account_used, http_status, message, timestamp)
++              VALUES (?, ?, ?, ?, ?, ?)
++            `).run(
++              `log_${Date.now()}_${i}`,
++              prod.url,
++              idxRes?.account || 'unknown',
++              idxRes?.status || 0,
++              idxRes?.message || 'Submitted',
++              new Date().toISOString()
++            );
++          } catch (e: any) {
++            console.warn(`[MSO Worker] Indexing failed for ${prod.url}:`, e.message);
++          }
+         }
+ 
+         updateProduct.run(
+           'published_nicheseo',
+           quality.score,
+-          idxRes?.success ? 'submitted' : 'failed',
++          skipIndexing
++            ? 'not_submitted_out_of_stock'
++            : idxRes?.success
++              ? 'submitted'
++              : 'failed',
+           idxRes?.account || null,
+           new Date().toISOString(),
+           new Date().toISOString(),
