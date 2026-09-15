@@ -1,0 +1,147 @@
+diff --git a/scripts/set-gate-in-stock.ts b/scripts/set-gate-in-stock.ts
+new file mode 100644
+index 0000000..06fb093
+--- /dev/null
++++ b/scripts/set-gate-in-stock.ts
+@@ -0,0 +1,64 @@
++//  Turns the out-of-stock publish gate on or off.
++//
++//  NicheSEO Pro keeps its gate settings in the SQLite mso_settings table, not
++//  in the environment — so the GATE_REQUIRE_IN_STOCK variable that switches
++//  Searchprex has no effect here, and this script is how the same change is
++//  made on this engine. Both engines have to agree: they work the same
++//  catalogue, and if only one is switched it publishes what the other keeps
++//  parking.
++//
++//    npx tsx scripts/set-gate-in-stock.ts off   # publish out-of-stock products
++//    npx tsx scripts/set-gate-in-stock.ts on    # go back to skipping them
++//
++//  Switching it off also returns the products the gate already parked. They
++//  were never lost — requeueGatedProducts() brings parked products back on its
++//  own — but it only releases products parked more than seven days ago, so the
++//  backlog would otherwise trickle in over a week instead of arriving now.
++
++import { db } from '../server/db.js';
++import { setMsoSetting, getMsoSetting } from '../server/mso-worker.js';
++
++const arg = (process.argv[2] ?? '').toLowerCase();
++
++if (arg !== 'on' && arg !== 'off') {
++  console.error('Usage: npx tsx scripts/set-gate-in-stock.ts <on|off>');
++  process.exit(1);
++}
++
++const requireInStock = arg === 'on';
++
++setMsoSetting('gate_require_in_stock', requireInStock ? 'true' : 'false');
++console.log(
++  `gate_require_in_stock = ${getMsoSetting('gate_require_in_stock', '(unset)')}` +
++    (requireInStock
++      ? '  — out-of-stock products will be skipped.'
++      : '  — out-of-stock products will be published.')
++);
++
++if (!requireInStock) {
++  //  Every parked product is released, not just the out-of-stock ones, because
++  //  that is what requeueGatedProducts() does too: the gate re-reads the live
++  //  facts on the next run, so anything still failing for another reason is
++  //  simply parked again. The only cost is one WooCommerce read each.
++  const res = db
++    .prepare(
++      `UPDATE mso_products_queue
++          SET status = 'queued', updated_at = ?
++        WHERE status = 'skipped_gate'`
++    )
++    .run(new Date().toISOString());
++
++  console.log(`${Number(res.changes)} parked products returned to the queue now.`);
++}
++
++const counts = db
++  .prepare(
++    `SELECT status, count(*) AS n
++       FROM mso_products_queue
++      GROUP BY status
++      ORDER BY n DESC`
++  )
++  .all() as Array<{ status: string; n: number }>;
++
++console.log('\nQueue:');
++for (const row of counts) console.log(`  ${row.status.padEnd(28)} ${row.n}`);
+diff --git a/server/mso-worker.ts b/server/mso-worker.ts
+index 225e7ae..34f56fc 100644
+--- a/server/mso-worker.ts
++++ b/server/mso-worker.ts
+@@ -920,29 +920,56 @@ export async function runMsoAutopilotBatch(options: BatchOptions) {
+           }
+         }
+ 
+-        // 2. Submit to 10-Key Indexing Pool
++        // 2. Submit to 10-Key Indexing Pool — unless the product is unbuyable.
++        //
++        //  Out-of-stock products can now be published: gate_require_in_stock is
++        //  a setting, and the client wants them live. They still convert on
++        //  long-tail and they carry internal links, so dropping them costs real
++        //  revenue. Asking Google to INDEX them is a separate decision, and the
++        //  answer is no — an unbuyable page is what the 27,510
++        //  crawled-and-declined pile is made of, and each submit spends a slot
++        //  out of a finite daily 2,000. Publish it, link it, leave it
++        //  crawlable; just stop asking.
++        //
++        //  Set index_out_of_stock = 'true' in mso_settings to submit them
++        //  anyway. Facts that could not be read count as in stock, which is the
++        //  same fail-open rule the gate itself applies.
++        const outOfStock = facts !== null && facts.stockStatus !== 'instock';
++        const skipIndexing =
++          outOfStock && getMsoSetting('index_out_of_stock', 'false') !== 'true';
++
+         let idxRes: IndexSubmissionResult | null = null;
+-        try {
+-          idxRes = await submitMsoUrl(prod.url);
+-          db.prepare(`
+-            INSERT INTO mso_indexing_logs (id, url, account_used, http_status, message, timestamp)
+-            VALUES (?, ?, ?, ?, ?, ?)
+-          `).run(
+-            `log_${Date.now()}_${i}`,
+-            prod.url,
+-            idxRes?.account || 'unknown',
+-            idxRes?.status || 0,
+-            idxRes?.message || 'Submitted',
+-            new Date().toISOString()
++        if (skipIndexing) {
++          console.log(
++            `[MSO Worker] Published ${prod.url} without an indexing submit — out of stock.`
+           );
+-        } catch (e: any) {
+-          console.warn(`[MSO Worker] Indexing failed for ${prod.url}:`, e.message);
++        } else {
++          try {
++            idxRes = await submitMsoUrl(prod.url);
++            db.prepare(`
++              INSERT INTO mso_indexing_logs (id, url, account_used, http_status, message, timestamp)
++              VALUES (?, ?, ?, ?, ?, ?)
++            `).run(
++              `log_${Date.now()}_${i}`,
++              prod.url,
++              idxRes?.account || 'unknown',
++              idxRes?.status || 0,
++              idxRes?.message || 'Submitted',
++              new Date().toISOString()
++            );
++          } catch (e: any) {
++            console.warn(`[MSO Worker] Indexing failed for ${prod.url}:`, e.message);
++          }
+         }
+ 
+         updateProduct.run(
+           'published_nicheseo',
+           quality.score,
+-          idxRes?.success ? 'submitted' : 'failed',
++          skipIndexing
++            ? 'not_submitted_out_of_stock'
++            : idxRes?.success
++              ? 'submitted'
++              : 'failed',
+           idxRes?.account || null,
+           new Date().toISOString(),
+           new Date().toISOString(),
