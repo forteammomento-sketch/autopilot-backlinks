@@ -138,15 +138,36 @@ solved. Both engines carry the same comment:
 The client gets the pages. The indexed ratio does not pay for them.
 
 The Searchprex patch also documents every `GATE_*` flag in `.env.example` —
-they were listed nowhere, which is why the switch was invisible.
+they were listed nowhere, which is why the switch was invisible. The NicheSEO
+Pro patch adds two scripts: `set-gate-in-stock.ts`, which flips the setting and
+releases the parked backlog in one step, and `mso-status.ts`, a genuinely
+read-only health check (see the warning in section 4).
 
 ---
 
 ## 4. Verifying it worked
 
+**Searchprex** answers over HTTP:
+
 ```bash
 curl "https://www.searchprex.com/api/mso/status?key=$CRON_SECRET"
 ```
+
+**NicheSEO Pro** runs on a workstation against a local SQLite file, so it has
+to be asked there:
+
+```bash
+npx tsx scripts/mso-status.ts
+```
+
+> **Do not use `scripts/check-queue-status.ts` for this.** Despite the name it
+> is not a read-only check — before printing anything it runs
+> `setMsoSetting('circuit_breaker_alert', '')`,
+> `setMsoSetting('scheduler_enabled', 'true')` and
+> `setMsoSetting('daily_limit', '500')`. Running it to "just look" silently
+> halves the cap the two engines share and erases the record of why the breaker
+> tripped. `scripts/set-daily-limit.ts` and `scripts/run-mso-daemon.ts` write
+> the same 500. `mso-status.ts` only reads.
 
 After the next run of each engine:
 

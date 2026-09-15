@@ -1,3 +1,101 @@
+diff --git a/scripts/mso-status.ts b/scripts/mso-status.ts
+new file mode 100644
+index 0000000..bd4846d
+--- /dev/null
++++ b/scripts/mso-status.ts
+@@ -0,0 +1,92 @@
++//  Read-only health check for the MSO autopilot on this engine.
++//
++//  scripts/check-queue-status.ts reads like the obvious way to do this, but it
++//  is not: before printing anything it clears circuit_breaker_alert, forces
++//  scheduler_enabled to true and writes daily_limit = 500. Running it to "just
++//  look" halves the cap the two engines share and erases the record of why the
++//  breaker tripped. This script only reads.
++//
++//    npx tsx scripts/mso-status.ts
++
++import { db } from '../server/db.js';
++import {
++  getMsoSetting,
++  getMsoDailyQuota,
++  getGateConfig,
++  refreshMsoSharedState,
++} from '../server/mso-worker.js';
++
++function rows<T>(sql: string, ...params: unknown[]): T[] {
++  return db.prepare(sql).all(...(params as never[])) as T[];
++}
++
++async function main() {
++  //  Pulls the shared limit and the cross-engine published count from Neon, so
++  //  the numbers below match what Searchprex sees rather than this engine's
++  //  local tally. Read-only; safe to force.
++  await refreshMsoSharedState(true).catch((err: Error) =>
++    console.warn(`(could not reach Neon — numbers are local only: ${err.message})\n`)
++  );
++
++  const quota = getMsoDailyQuota();
++  const gate = getGateConfig();
++  const breaker = getMsoSetting('circuit_breaker_alert', '');
++
++  console.log('=== Scheduler ===');
++  console.log(`  enabled           ${getMsoSetting('scheduler_enabled', 'false')}`);
++  console.log(`  circuit breaker   ${breaker ? `TRIPPED — ${breaker}` : 'clear'}`);
++
++  console.log('\n=== Daily cap (shared with Searchprex) ===');
++  console.log(`  limit             ${quota.limit}`);
++  console.log(`  published today   ${quota.publishedToday}`);
++  console.log(`  remaining         ${quota.remainingToday}`);
++  console.log(`  limit reached     ${quota.limitReached}`);
++
++  console.log('\n=== Quality gate ===');
++  console.log(`  require image     ${gate.requireImage}`);
++  console.log(`  require in stock  ${gate.requireInStock}`);
++  console.log(`  require price     ${gate.requirePrice}`);
++  console.log(`  require attrs     ${gate.requireAttributes} (min ${gate.minAttributes})`);
++  console.log(`  index out of stock ${getMsoSetting('index_out_of_stock', 'false')}`);
++
++  console.log('\n=== Queue ===');
++  const queue = rows<{ status: string; n: number }>(
++    `SELECT status, count(*) AS n
++       FROM mso_products_queue
++      GROUP BY status
++      ORDER BY n DESC`
++  );
++  if (queue.length === 0) console.log('  (empty — has the Neon seed been imported?)');
++  for (const r of queue) console.log(`  ${r.status.padEnd(28)} ${r.n}`);
++
++  console.log('\n=== Most recent publishes ===');
++  const recent = rows<{ url: string; published_at: string; indexing_status: string }>(
++    `SELECT url, published_at, indexing_status
++       FROM mso_products_queue
++      WHERE published_at IS NOT NULL
++      ORDER BY published_at DESC
++      LIMIT 5`
++  );
++  if (recent.length === 0) console.log('  (nothing published yet)');
++  for (const r of recent) {
++    console.log(`  ${r.published_at}  ${r.indexing_status ?? '-'}  ${r.url}`);
++  }
++
++  console.log('\n=== Indexing submits, last 24h ===');
++  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
++  const logs = rows<{ http_status: number; n: number }>(
++    `SELECT http_status, count(*) AS n
++       FROM mso_indexing_logs
++      WHERE timestamp >= ?
++      GROUP BY http_status
++      ORDER BY n DESC`,
++    since
++  );
++  if (logs.length === 0) console.log('  (none — the engine has not submitted anything in 24h)');
++  for (const r of logs) console.log(`  HTTP ${String(r.http_status).padEnd(6)} ${r.n}`);
++}
++
++main().catch((err: Error) => {
++  console.error(err.message);
++  process.exit(1);
++});
 diff --git a/scripts/set-gate-in-stock.ts b/scripts/set-gate-in-stock.ts
 new file mode 100644
 index 0000000..06fb093
